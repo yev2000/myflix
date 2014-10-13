@@ -1,0 +1,437 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"class",
+				"classes_path"
+			],
+			[
+				"to",
+				"total_vote_score"
+			],
+			[
+				"vote",
+				"vote"
+			],
+			[
+				"ti",
+				"title"
+			],
+			[
+				"d",
+				"dow	downto(0) { |n| .. }"
+			],
+			[
+				"cla",
+				"cla	class .. < ParentClass .. initialize .. end"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 242.0,
+		"selected_items":
+		[
+		],
+		"width": 472.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_form.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_entry.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/_search_results.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/_contact_form.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_list.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_list_UNUSED.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/_address_form.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/_address_entry.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/edit.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/new.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/addresses_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/contacts_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/edit.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/new.html.haml",
+		"//192.168.1.19/vbox/pta_directory/Gemfile",
+		"//192.168.1.19/vbox/pta_directory/config/environments/production.rb",
+		"//192.168.1.19/vbox/pta_directory/config/environment.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/user.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/users_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/users/_user_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/schoolclasses_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/home_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/parent.rb",
+		"//192.168.1.19/vbox/pta_directory/lib/searchable.rb",
+		"//192.168.1.19/vbox/pta_directory/blog_writeup.txt",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/freshuser.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/teachers_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/address.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/contact.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/family.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/student.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/teacher.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/schoolclass.rb",
+		"//192.168.1.19/vbox/postit_nas/app/controllers/posts_controller.rb",
+		"//192.168.1.19/vbox/postit_nas/app/helpers/application_helper.rb",
+		"//192.168.1.19/vbox/postit_nas/app/controllers/sessions_controller.rb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/search.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/show.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/controllers/application_controller.rb",
+		"//192.168.1.19/vbox/postit_nas/app/controllers/users_controller.rb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/_post_form.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/_post_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/assets/stylesheets/yev_bootstrap.scss",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/_search_results.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/layouts/_navigation.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/search.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/sessions/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/helpers/application_helper.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/application_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/developer.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/layouts/application.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/parents_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/_student_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/_teacher_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/_teachers_list.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/_address_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/_schoolclass_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/config/routes.rb",
+		"//192.168.1.19/vbox/pta_directory/db/schema.rb",
+		"//192.168.1.19/vbox/postit_nas/app/models/user.rb",
+		"//192.168.1.19/vbox/postit_nas/app/models/post.rb",
+		"//192.168.1.19/vbox/postit_nas/app/views/users/_user_form.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/views/layouts/_navigation.html.erb",
+		"//192.168.1.19/vbox/postit_nas/config/routes.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/families_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/students_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/index.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/home/administer_families.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/index.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/shared/_content_title.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/index.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/index.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/index.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/_parents_list.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/_students_list.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/_teacher_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/_student_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/_parent_entry.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/users/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/sessions_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/lib/sluggable.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141009152028_add_slug_to_users.rb",
+		"//192.168.1.19/vbox/postit_nas/db/migrate/20140919172832_add_foreign_key_to_posts.rb",
+		"//192.168.1.19/vbox/postit_nas/db/migrate/20140929163830_add_password_digest_to_users.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/users/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141009055424_create_user.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141009055844_add_user_to_family.rb",
+		"//192.168.1.19/vbox/postit_nas/db/migrate/20140919172524_create_users.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/_schoolclass_list.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/assets/stylesheets/application.scss",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/add_students.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/add_teachers.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/_schoolclass_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/models/schoolclass_student.rb",
+		"//192.168.1.19/vbox/pta_directory/app/models/schoolclass_teacher.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/teachers/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/models/concerns/../teacher.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141008125943_create_schoolclass_students.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141008125930_create_schoolclass_teachers.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141008125459_create_schoolclass.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141007042752_create_address.rb",
+		"//192.168.1.19/vbox/pta_directory/db/migrate/20141008125434_create_teacher.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/students/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/controllers/concerns/students_controller.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/addresses/_address_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/show.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/_parent_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/contacts/_contact_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/parents/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_list.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/models/category.rb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_form.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/new.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/edit.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/edit.html.erb"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"\\\\192.168.1.19\\vbox\\pta_directory",
+			"\\\\192.168.1.19\\vbox\\postit_nas",
+			"\\\\192.168.1.19\\vbox\\pta_directory",
+			"\\\\192.168.1.19\\vbox\\postit_nas",
+			"\\\\192.168.1.19\\vbox\\pta_directory",
+			"\\\\192.168.1.19\\vbox\\postit_nas",
+			"\\\\192.168.1.19\\vbox\\postit_nas\\",
+			"\\\\192.168.1.19\\vbox\\postit_nas\\app\\views\\users",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"family_entry",
+			"admin_edit_users_path",
+			"switch user",
+			"require_admin",
+			"require_admin_user",
+			"search_for",
+			"f.collection",
+			"collect_select",
+			"binding.pry",
+			"add teacher",
+			"def icon_action",
+			"def icon_acion",
+			"def icon_action_link",
+			"<table",
+			"icon_action_link",
+			"memo",
+			"search_for",
+			"string_db_columnsa",
+			"gsub",
+			"search",
+			"redirect_to_original",
+			"redirec_to_original",
+			"you do not",
+			"allow_object_edit",
+			"binding.pry",
+			"superadmin_logged_in",
+			"superadmin_logged",
+			"require_user",
+			"binding.pry",
+			"add_student",
+			"pull-right",
+			"icon-home",
+			"category_ids",
+			".require(",
+			"uniq",
+			"teacher_params",
+			"Teacher.",
+			"@schoolclasss",
+			"@teacher",
+			"student_params",
+			"@student ",
+			"student.",
+			"students",
+			"siblings",
+			"parent",
+			"name_string",
+			"family_var",
+			"contact",
+			"Contact",
+			"@contact",
+			"select",
+			"parents_list",
+			"form_for",
+			"parent_entry",
+			"\"parent_entry\"",
+			"parent_list",
+			"parent_entry",
+			"icon",
+			"form_for",
+			"parents",
+			"post_list",
+			"form-horizontal",
+			"inputpassword",
+			"edit category",
+			"auto",
+			"binding.pry",
+			"config.time",
+			"file",
+			"+t",
+			"allow_object_edit",
+			"allow_post_edit",
+			"require_creator_or_admin",
+			"edit post",
+			"require_user",
+			"require_logged",
+			"select_tag",
+			"users_",
+			"users_posts_path",
+			"params.require",
+			"url_for",
+			"url_up_var",
+			"params[",
+			"link_to",
+			".where",
+			"post.where",
+			"require_logged_in_user",
+			"access_denied",
+			"require_user",
+			"vote score",
+			"[vote score]",
+			"slug",
+			"include Slugg",
+			"score}",
+			"count(",
+			"score(",
+			"total_vote_score",
+			"total_vote",
+			"total_vo",
+			"total_vote_score",
+			"slugger",
+			"compute_slug",
+			"edited_obj",
+			"voteable_obj",
+			"box_color",
+			"binding.pry",
+			".id",
+			"params[:id]",
+			"voted_entry_color",
+			"fix_url",
+			"post",
+			"title",
+			"record_vote",
+			"post_",
+			".slug",
+			".id",
+			"post_path",
+			"comment_path",
+			"post_comment_path",
+			"post_path",
+			"binding",
+			"post.find",
+			"binding",
+			"params[:id]",
+			".where(",
+			":id",
+			"[:id]",
+			"params[:id]",
+			"pec"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"schoolclass_params",
+			"Schoolclass.",
+			"@schoolclasses",
+			"@schoolclass",
+			"teacher_params",
+			"@teacher ",
+			"teacher.",
+			"teachers",
+			"student",
+			"address",
+			"Address",
+			"@address"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 118.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 415.0,
+	"status_bar_visible": true
+}

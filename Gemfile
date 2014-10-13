@@ -1,13 +1,15 @@
 source 'https://rubygems.org'
-ruby '2.1.1'
+ruby '2.1.2'
 
-gem 'bootstrap-sass'
+##gem 'bootstrap-sass', '~> 2.3.2.0'
+gem 'bootstrap-sass', '~> 3.1.1.1'
 gem 'coffee-rails'
-gem 'rails', '4.1.1'
+gem 'rails', '4.1.5'
 gem 'haml-rails'
 gem 'sass-rails'
 gem 'uglifier'
 gem 'jquery-rails'
+gem 'json'
 
 group :development do
   gem 'sqlite3'

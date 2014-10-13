@@ -1,0 +1,42 @@
+[
+  {
+    "title" : "The Hunt for Red October",
+    "description" : "When a Soviet nuclear sub headed toward American waters drops off U.S. scanners, the Yanks and CIA analyst Jack Ryan scramble to respond.",
+    "cover_small_url" : "/tmp/red_october_small.png",
+    "cover_large_url" : "/tmp/red_october_large.png",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "Forrest Gump",
+    "description" : "Forrest Gump, a friendly, simpleminded man, finds himself in the middle of nearly every major event of the 1960s and '70s.",
+    "cover_small_url" : "/tmp/forrest_gump_small.PNG",
+    "cover_large_url" : "/tmp/forrest_gump_large.PNG",
+    "categories" : [ { "name" : "Comedy" }, { "name" : "Drama" } ]
+  },
+
+  {
+    "title" : "The Usual Suspects",
+    "description" : "When five unacquainted crooks are hauled into a police station to appear in a criminal lineup, they decide to pull off a heist together.",
+    "cover_small_url" : "/tmp/usual_suspects_small.PNG",
+    "cover_large_url" : "/tmp/usual_suspects_small.PNG",
+    "categories" : [ { "name" : "Suspense/Thriller" } ]
+  },
+
+  {
+    "title" : "Glengarry Glen Ross",
+    "description" : "Jack Lemmon, Al Pacino, Ed Harris and Alan Arkin star as Chicago real estate salesmen vying for the best leads at a firm that sells resort properties.",
+    "cover_small_url" : "/tmp/ggross_small.PNG",
+    "cover_large_url" : "/tmp/ggross_large.PNG",
+    "categories" : [ { "name" : "Drama" } ]
+  },
+
+  {
+    "title" : "Fargo",
+    "description" : "When a car dealer conspires with dim-bulb criminals to kidnap his wife for a hefty ransom, a folksy -- and pregnant -- police chief is on the case.",
+    "cover_small_url" : "/tmp/fargo_small.PNG",
+    "cover_large_url" : "/tmp/fargo_large.PNG",
+    "categories" : [ { "name" : "Comedy" }, { "name" : "Suspense/Thriller" } ]
+  }
+]
+
