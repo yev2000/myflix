@@ -57,7 +57,40 @@ describe Video do
           Video.find_by(title: "The Usual Suspects"),
           Video.find_by(title: "Forrest Gump")
           ])            
-
     end
+
+    # I did not think of the following - got this after
+    # viewing the solution.
+    it "returns matches ordered by created_at" do
+
+      # modify the created_at timestamps of certain records
+      v = Video.find_by(title: "The Usual Suspects")
+      v.created_at = 1.day.ago
+      v.save
+
+      v = Video.find_by(title: "The Hunt for Red October")
+      v.created_at = 2.day.ago
+      v.save
+
+      v = Video.find_by(title: "Forrest Gump")
+      v.created_at = 3.day.ago
+      v.save
+
+      expect(Video.search_by_title("u")).to eq([
+        Video.find_by(title: "The Usual Suspects"),
+        Video.find_by(title: "The Hunt for Red October"),
+        Video.find_by(title: "Forrest Gump")
+        ])
+    end
+
+    it "returns empty array for an empty string" do
+      expect(Video.search_by_title("")).to eq([])
+    end
+
+    it "returns empty array for a nil input" do
+      expect(Video.search_by_title(nil)).to eq([])
+    end
+
+
   end
 end

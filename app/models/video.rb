@@ -41,7 +41,8 @@ class Video < ActiveRecord::Base
   def self.search_by_title(title_name)
     # returns array of videos whose title contains title_name
     # search is case insensitive
-    self.where("title #{DATABASE_OPERATOR[:like_operator]} \'%#{title_name}%\'")
+    return [] if title_name.blank?
+    self.where("title #{DATABASE_OPERATOR[:like_operator]} ?", "%#{title_name}%").order("created_at DESC")
   end
 
 end
