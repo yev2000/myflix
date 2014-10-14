@@ -21,6 +21,8 @@ end
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
+  # ygurevich: 10/14/2014: experimenting with updating rspec-rails version to latest stable, from prior 2.99
+  # ygurevich: 10/14/2014: reverting to spec 2.99
   gem 'rspec-rails', '2.99'
 end
 

@@ -1,7 +1,7 @@
 class Category < ActiveRecord::Base
 
   has_many :video_categories
-  has_many :videos, through: :video_categories  
+  has_many :videos, -> {order 'title'}, through: :video_categories
 
   def Category.create_from_json(json_obj)
     c = self.new
