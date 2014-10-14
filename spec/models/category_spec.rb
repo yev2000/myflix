@@ -4,34 +4,7 @@ describe Category do
 
   # this is using the shoulda notation
   it { should have_many(:videos) }
-
-  # I can't find a way of making this be expressed via shoulda
-  # so decided to implement explicitly
-  it "can have many videos ordered by video name" do
-    c = Category.create(name: "multi-video-order-test")
-
-    test_video_set = {
-        title: "Test Title2",
-        cover_small_url: "Test Cover URL Small",
-        cover_large_url: "Test Cover URL Large ",
-        description: "A basic description.",
-      }
-
-    video_array = []
-    ["A", "D", "C", "B"].each do |str|
-      v = Video.new
-      test_video_set.each do |key, entry|
-        v[key.to_s] = entry + str
-      end
-
-      v.save
-      c.videos << v
-      video_array << v
-    end
-
-    loaded_category = Category.find_by(name: "multi-video-order-test")
-    expect(loaded_category.videos).to eq(video_array.sort {|x,y| x.title <=> y.title})
-  end
+  it { should have_many(:videos).order("title") }
 
 #  # the following are just
 #  # for reference, examples, exercise code
