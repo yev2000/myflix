@@ -15,27 +15,7 @@ describe Video do
   # this is using the shoulda notation
   it { should validate_presence_of(:title) }
   it { should validate_presence_of(:description) }
-  it { should have_many(:categories) }
-
-  # I can't find a way of making this be expressed via shoulda
-  # so decided to implement explicitly
-  it "can have many categories ordered by category name" do
-    # we create many categories and assign them to a video
-  
-    v = Video.create(title: "multi-category-order-test", description: "a description", cover_small_url: "small.png", cover_large_url: "large.png")
-
-    category_array = []
-    ["A", "D", "C", "B"].each do |str|
-      c = Category.create(name: "Category_" + str)  
-  
-      v.categories << c
-      category_array << c
-    end
-
-    # now test that the video has all of these categories
-    loaded_video = Video.find_by(title: "multi-category-order-test")
-    expect(loaded_video.categories).to eq(category_array.sort {|x,y| x.name <=> y.name})
-  end
+  it { should have_many(:categories).order("name") }
 
   # the following are just
   # for reference, examples, exercise code
