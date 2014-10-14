@@ -17,4 +17,9 @@ Myflix::Application.configure do
   config.i18n.fallbacks = true
 
   config.active_support.deprecation = :notify
+
+  DATABASE_OPERATOR = {
+    like_operator: 'ILIKE'
+  }
+
 end
