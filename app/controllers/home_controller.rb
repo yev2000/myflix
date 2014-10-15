@@ -1,14 +1,8 @@
 class HomeController < ApplicationController
+  before_action :require_user
 
   def index
     @categories = Category.all
-  end
-
-  def front
-  end
-
-  def register
-    redirect_to new_user_path
   end
 
 end

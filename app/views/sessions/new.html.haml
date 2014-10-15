@@ -2,8 +2,9 @@
   .row
     .col-sm-10.col-sm-offset-1
       = bootstrap_form_tag do |f|
-        = f.static_control label: "<header><h1>Sign In<header><h1>".html_safe do
-          %p
+        %header
+          %h1
+            Sign In
         = f.email_field :email, label: "Email Address", value: @login_email, autofocus: true
         = f.password_field :password
         = f.submit "Sign In"

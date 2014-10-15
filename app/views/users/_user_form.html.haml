@@ -3,8 +3,8 @@
     .col-sm-10.col-sm-offset-1
       = bootstrap_form_for(@user, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-6") do |f|
         = f.alert_message "Please fix the errors below."
-        = f.static_control label: "<header><h1>#{title_var}<header><h1>".html_safe do
-          %p
+        %header
+          %h1= title_var
         = f.email_field :email, label: "Email Address"
         = f.password_field :password
         = f.password_field :password_confirm, label: "Confirm Password"

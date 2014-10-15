@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :require_user, except: [:new, :create]
+
   def new
     @user = User.new
   end
@@ -25,7 +27,21 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @user = User.find(params[:id])
   end
+
+  def update
+    # if password was supplied, then set it
+    if (password_confirm!(@user) && @user.update(user_params) && @user.valid?)
+      # (will validations make sure duplicate username is not set?)
+      flash[:notice] = "The account for \"#{@user.email}\" was updated."
+      redirect_to user_path(@user)
+    else
+      render :edit
+    end     
+
+  end
+
 
   private
 

@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    flash[:notice] = "User #{current_user_get.username} logged out."
+    flash[:notice] = "User #{current_user_get.email} logged out."
     
     session[:userid] = nil
 
