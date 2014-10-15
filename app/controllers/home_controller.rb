@@ -4,4 +4,11 @@ class HomeController < ApplicationController
     @categories = Category.all
   end
 
+  def front
+  end
+
+  def register
+    redirect_to new_user_path
+  end
+
 end

@@ -32,10 +32,18 @@
 	"buffers":
 	[
 		{
-			"file": "app/models/video.rb",
+			"file": "app/models/category.rb",
 			"settings":
 			{
-				"buffer_size": 1639,
+				"buffer_size": 832,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spec/models/category_spec.rb",
+			"settings":
+			{
+				"buffer_size": 2629,
 				"line_ending": "Windows"
 			}
 		},
@@ -43,8 +51,16 @@
 			"file": "spec/models/video_spec.rb",
 			"settings":
 			{
-				"buffer_size": 2912,
+				"buffer_size": 3125,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/seed_support.rb",
+			"settings":
+			{
+				"buffer_size": 1560,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -72,40 +88,47 @@
 	},
 	"file_history":
 	[
+		"//192.168.1.19/vbox/myflix/app/models/video_category.rb",
+		"//192.168.1.19/vbox/myflix/app/views/home/index.html.haml",
+		"//192.168.1.19/vbox/myflix/db/seeds.rb",
 		"//192.168.1.19/vbox/myflix/db/movie_text.json",
+		"//192.168.1.19/vbox/myflix/app/views/shared/_header.html.haml",
+		"//192.168.1.19/vbox/myflix/app/views/videos/search.html.haml",
+		"//192.168.1.19/vbox/myflix/app/controllers/videos_controller.rb",
+		"//192.168.1.19/vbox/myflix/app/models/video.rb",
+		"//192.168.1.19/vbox/myflix/config/routes.rb",
+		"//192.168.1.19/vbox/myflix/db/movie_category.json",
+		"//192.168.1.19/vbox/myflix/spec/models/video_spec.rb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/search.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/controllers/posts_controller.rb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/_post_entry.html.erb",
+		"//192.168.1.19/vbox/postit_nas/app/views/posts/edit.html.erb",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_form.html.haml",
+		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_entry.html.haml",
+		"//192.168.1.19/vbox/postit_nas/config/routes.rb",
 		"//192.168.1.19/vbox/myflix/config/environments/production.rb",
 		"//192.168.1.19/vbox/myflix/config/environment.rb",
 		"//192.168.1.19/vbox/myflix/app/views/ui/home.html.haml",
-		"//192.168.1.19/vbox/myflix/spec/models/video_spec.rb",
 		"//192.168.1.19/vbox/myflix/lib/seed_support.rb",
-		"//192.168.1.19/vbox/myflix/db/seeds.rb",
 		"//192.168.1.19/vbox/myflix/spec/models/category_spec.rb",
-		"//192.168.1.19/vbox/myflix/app/models/video_category.rb",
 		"//192.168.1.19/vbox/myflix/app/models/category.rb",
 		"//192.168.1.19/vbox/myflix/Gemfile",
 		"//192.168.1.19/vbox/myflix/spec/rails_helper.rb",
-		"//192.168.1.19/vbox/myflix/app/views/home/index.html.haml",
 		"//192.168.1.19/vbox/myflix/app/views/categories/index.html.haml",
 		"//192.168.1.19/vbox/myflix/app/views/categories/show.html.haml",
 		"//192.168.1.19/vbox/myflix/app/controllers/home_controller.rb",
-		"//192.168.1.19/vbox/myflix/config/routes.rb",
 		"//192.168.1.19/vbox/myflix/app/controllers/categories_controller.rb",
 		"//192.168.1.19/vbox/myflix/spec/foo_spec.rb",
 		"//192.168.1.19/vbox/myflix/.gitignore",
 		"//192.168.1.19/vbox/myflix/Gemfile.lock",
-		"//192.168.1.19/vbox/myflix/db/movie_category.json",
 		"//192.168.1.19/vbox/myflix/db/migrate/20141013043345_add_categories.rb",
 		"//192.168.1.19/vbox/myflix/app/views/videos/show.html.haml",
 		"//192.168.1.19/vbox/myflix/app/views/videos/index.html.haml",
-		"//192.168.1.19/vbox/myflix/app/controllers/videos_controller.rb",
 		"//192.168.1.19/vbox/myflix/app/assets/javascripts/application.js",
 		"//192.168.1.19/vbox/myflix/app/assets/stylesheets/application.css",
-		"//192.168.1.19/vbox/myflix/app/models/video.rb",
 		"//192.168.1.19/vbox/myflix/db/migrate/20141012193744_create_video.rb",
 		"//192.168.1.19/vbox/myflix/.ruby-version",
 		"//192.168.1.19/vbox/myflix/public/tmp/movie_text.json",
-		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_form.html.haml",
-		"//192.168.1.19/vbox/pta_directory/app/views/families/_family_entry.html.haml",
 		"//192.168.1.19/vbox/pta_directory/app/views/families/show.html.erb",
 		"//192.168.1.19/vbox/pta_directory/app/views/home/_search_results.html.haml",
 		"//192.168.1.19/vbox/pta_directory/app/views/contacts/_contact_form.html.haml",
@@ -138,15 +161,12 @@
 		"//192.168.1.19/vbox/pta_directory/app/models/student.rb",
 		"//192.168.1.19/vbox/pta_directory/app/models/teacher.rb",
 		"//192.168.1.19/vbox/pta_directory/app/models/schoolclass.rb",
-		"//192.168.1.19/vbox/postit_nas/app/controllers/posts_controller.rb",
 		"//192.168.1.19/vbox/postit_nas/app/helpers/application_helper.rb",
 		"//192.168.1.19/vbox/postit_nas/app/controllers/sessions_controller.rb",
-		"//192.168.1.19/vbox/postit_nas/app/views/posts/search.html.erb",
 		"//192.168.1.19/vbox/postit_nas/app/views/posts/show.html.erb",
 		"//192.168.1.19/vbox/postit_nas/app/controllers/application_controller.rb",
 		"//192.168.1.19/vbox/postit_nas/app/controllers/users_controller.rb",
 		"//192.168.1.19/vbox/postit_nas/app/views/posts/_post_form.html.erb",
-		"//192.168.1.19/vbox/postit_nas/app/views/posts/_post_entry.html.erb",
 		"//192.168.1.19/vbox/pta_directory/app/assets/stylesheets/yev_bootstrap.scss",
 		"//192.168.1.19/vbox/pta_directory/app/views/home/_search_results.html.erb",
 		"//192.168.1.19/vbox/pta_directory/app/views/layouts/_navigation.html.erb",
@@ -169,7 +189,6 @@
 		"//192.168.1.19/vbox/postit_nas/app/models/post.rb",
 		"//192.168.1.19/vbox/postit_nas/app/views/users/_user_form.html.erb",
 		"//192.168.1.19/vbox/postit_nas/app/views/layouts/_navigation.html.erb",
-		"//192.168.1.19/vbox/postit_nas/config/routes.rb",
 		"//192.168.1.19/vbox/pta_directory/app/controllers/families_controller.rb",
 		"//192.168.1.19/vbox/pta_directory/app/controllers/students_controller.rb",
 		"//192.168.1.19/vbox/pta_directory/app/views/home/index.html.erb",
@@ -196,10 +215,7 @@
 		"//192.168.1.19/vbox/postit_nas/db/migrate/20140919172524_create_users.rb",
 		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/_schoolclass_list.html.erb",
 		"//192.168.1.19/vbox/pta_directory/app/assets/stylesheets/application.scss",
-		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/add_students.html.erb",
-		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/add_teachers.html.erb",
-		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/_schoolclass_form.html.erb",
-		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/edit.html.erb"
+		"//192.168.1.19/vbox/pta_directory/app/views/schoolclasses/add_students.html.erb"
 	],
 	"find":
 	{
@@ -227,6 +243,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"search",
 			"public/tmp",
 			"bootstrap",
 			"2.1.1",
@@ -353,8 +370,7 @@
 			"binding",
 			"post.find",
 			"binding",
-			"params[:id]",
-			".where("
+			"params[:id]"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -390,18 +406,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "app/models/video.rb",
+					"file": "app/models/category.rb",
 					"settings":
 					{
-						"buffer_size": 1639,
+						"buffer_size": 832,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1520,
-								1520
+								452,
+								452
 							]
 						],
 						"settings":
@@ -418,18 +434,44 @@
 				},
 				{
 					"buffer": 1,
-					"file": "spec/models/video_spec.rb",
+					"file": "spec/models/category_spec.rb",
 					"settings":
 					{
-						"buffer_size": 2912,
+						"buffer_size": 2629,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2443,
-								2443
+								990,
+								990
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "spec/models/video_spec.rb",
+					"settings":
+					{
+						"buffer_size": 3125,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								254,
+								254
 							]
 						],
 						"settings":
@@ -439,7 +481,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 663.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/seed_support.rb",
+					"settings":
+					{
+						"buffer_size": 1560,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								79,
+								79
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -507,6 +577,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 217.0,
+	"side_bar_width": 220.0,
 	"status_bar_visible": true
 }
