@@ -55,30 +55,35 @@ describe Video do
         [
           Video.find_by(title: "The Hunt for Red October"),
           Video.find_by(title: "The Usual Suspects"),
-          Video.find_by(title: "Forrest Gump")
+          Video.find_by(title: "Forrest Gump"),
+          Video.find_by(title: "Apocalypse Now Redux")
           ])            
     end
 
     # I did not think of the following - got this after
     # viewing the solution.
     it "returns matches ordered by created_at" do
-
       # modify the created_at timestamps of certain records
       v = Video.find_by(title: "The Usual Suspects")
-      v.created_at = 1.day.ago
+      v.created_at = 10.day.ago
       v.save
 
       v = Video.find_by(title: "The Hunt for Red October")
-      v.created_at = 2.day.ago
+      v.created_at = 11.day.ago
+      v.save
+
+      v = Video.find_by(title: "Apocalypse Now Redux")
+      v.created_at = 12.day.ago
       v.save
 
       v = Video.find_by(title: "Forrest Gump")
-      v.created_at = 3.day.ago
+      v.created_at = 13.day.ago
       v.save
 
       expect(Video.search_by_title("u")).to eq([
         Video.find_by(title: "The Usual Suspects"),
         Video.find_by(title: "The Hunt for Red October"),
+        Video.find_by(title: "Apocalypse Now Redux"),
         Video.find_by(title: "Forrest Gump")
         ])
     end

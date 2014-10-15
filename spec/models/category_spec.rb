@@ -1,71 +1,84 @@
 require 'rails_helper'
 
+def set_days_ago(video)
+  video.created_at = video.title.to_i.days.ago
+  video.save
+end
+
+def create_base_data_set
+  c = Category.create(name: "test-cat")
+  v1 = Video.create(title: "6", description: "B", categories: [c])
+  v2 = Video.create(title: "4", description: "B", categories: [c])
+  v3 = Video.create(title: "2", description: "B", categories: [c])
+  v4 = Video.create(title: "3", description: "B", categories: [c])
+  v5 = Video.create(title: "5", description: "B", categories: [c])
+  v6 = Video.create(title: "7", description: "B", categories: [c])
+  v7 = Video.create(title: "1", description: "B", categories: [c])
+  v8 = Video.create(title: "8", description: "B", categories: [c])
+
+  Video.all.each do |v|
+    set_days_ago(v)
+  end
+
+end
+
 describe Category do
+  before do
+    create_base_data_set
+  end
 
   # this is using the shoulda notation
   it { should have_many(:videos) }
-  it { should have_many(:videos).order("title") }
+  it { should have_many(:videos).order(:title) }
 
-#  # the following are just
-#  # for reference, examples, exercise code
-#  it "saves itself" do
-#
-#    test_set = {
-#        name: "Test Category Name"
-#      }
-#
-#    c = Category.new
-#    test_set.each do |key, entry|
-#      c[key.to_s] = entry
-#    end
-#
-#    c.save
-#
-#    # now we read back in from the DB and the video we just saved
-#    # should be accessible    
-#    read_from_db_category = Category.first
-#    
-#    test_set.each do |key, entry|
-#      expect(read_from_db_category[key.to_s]).to eq(entry)
-#    end
-#
-#    expect(read_from_db_category).to eq(c)
-#  end
+  describe "#recent_videos" do
+    it "should return 6 videos if category has more than 6" do
+      c = Category.first   
+      expect(c.recent_videos.size).to eq(6)
+    end
 
-  # we create a category and assign many videos to it
-#  it "can have many videos" do
-#
-#    c = Category.create(name: "multi-video-test")
-#
-#    test_video_set = {
-#        title: "Test Title",
-#        cover_small_url: "Test Cover URL Small",
-#        cover_large_url: "Test Cover URL Large ",
-#        description: "A basic description.",
-#      }
-#
-#    video_array = []
-#    ["A", "B", "C", "D"].each do |str|
-#      v = Video.new
-#      test_video_set.each do |key, entry|
-#        v[key.to_s] = entry + str
-#      end
-#
-#      v.save
-#      c.videos << v
-#      video_array << v
-#    end
-#
-#    # now test that the specific category has those videos
-#    loaded_category = Category.find_by(name: "multi-video-test")
-#    expect(loaded_category.videos.size).to eq(video_array.size)
-#
-#    video_array.each do |v|
-#      expect(loaded_category.videos.find_by(title: v.title)).to eq(v)
-#    end
-#    
-#    expect(loaded_category.videos).to match_array(video_array)
-#  end
-#
+    it "should return videos in reverse chronological order" do
+      c = Category.first
 
+      video_array = []
+      video_array << Video.find_by(title: "1")
+      video_array << Video.find_by(title: "2")
+      video_array << Video.find_by(title: "3")
+      video_array << Video.find_by(title: "4")
+      video_array << Video.find_by(title: "5")
+      video_array << Video.find_by(title: "6")
+      
+      expect(c.recent_videos).to eq(video_array)
+
+      # if we add a new video that is more recent, it will "bump" the oldest
+      # video from the result set
+      new_vid = Video.create(title: "0", description: "B", categories: [c])
+      expect(c.recent_videos).to include(new_vid)
+      expect(c.recent_videos).not_to include(video_array[6])
+    end
+
+
+    it "should return as many videos as there are, if less than 6 in the category" do
+
+      Video.find_by(title: "1").destroy
+      Video.find_by(title: "2").destroy
+      Video.find_by(title: "3").destroy
+      Video.find_by(title: "4").destroy
+
+      video_array = []
+      video_array << Video.find_by(title: "5")
+      video_array << Video.find_by(title: "6")
+      video_array << Video.find_by(title: "7")
+      video_array << Video.find_by(title: "8")
+      
+      c = Category.first
+      expect(c.recent_videos).to eq(video_array)
+
+    end
+
+    it "should return the empty array if there are no videos in the category" do
+      c = Category.create(name: "empty-cat")
+      expect(c.recent_videos).to eq([])
+    end
+  end
 end

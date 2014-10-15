@@ -1,6 +1,7 @@
 [
   {
     "title" : "The Hunt for Red October",
+    "age" : 1990,
     "description" : "When a Soviet nuclear sub headed toward American waters drops off U.S. scanners, the Yanks and CIA analyst Jack Ryan scramble to respond.",
     "cover_small_url" : "/tmp/red_october_small.png",
     "cover_large_url" : "/tmp/red_october_large.png",
@@ -9,6 +10,7 @@
 
   {
     "title" : "Forrest Gump",
+    "age" : 1994,
     "description" : "Forrest Gump, a friendly, simpleminded man, finds himself in the middle of nearly every major event of the 1960s and '70s.",
     "cover_small_url" : "/tmp/forrest_gump_small.PNG",
     "cover_large_url" : "/tmp/forrest_gump_large.PNG",
@@ -17,6 +19,7 @@
 
   {
     "title" : "The Usual Suspects",
+    "age" : 1995,
     "description" : "When five unacquainted crooks are hauled into a police station to appear in a criminal lineup, they decide to pull off a heist together.",
     "cover_small_url" : "/tmp/usual_suspects_small.PNG",
     "cover_large_url" : "/tmp/usual_suspects_small.PNG",
@@ -25,6 +28,7 @@
 
   {
     "title" : "Glengarry Glen Ross",
+    "age" : 1992,
     "description" : "Jack Lemmon, Al Pacino, Ed Harris and Alan Arkin star as Chicago real estate salesmen vying for the best leads at a firm that sells resort properties.",
     "cover_small_url" : "/tmp/ggross_small.PNG",
     "cover_large_url" : "/tmp/ggross_large.PNG",
@@ -33,10 +37,84 @@
 
   {
     "title" : "Fargo",
+    "age" : 1996,
     "description" : "When a car dealer conspires with dim-bulb criminals to kidnap his wife for a hefty ransom, a folksy -- and pregnant -- police chief is on the case.",
     "cover_small_url" : "/tmp/fargo_small.PNG",
     "cover_large_url" : "/tmp/fargo_large.PNG",
     "categories" : [ { "name" : "Comedy" }, { "name" : "Suspense/Thriller" } ]
+  },
+
+  {
+    "title" : "Skyfall",
+    "age" : 2012,
+    "description" : "When a serious menace threatens MI6, James Bond is on the case -- putting aside his own life and personal issues to hunt and destroy the perpetrators.",
+    "cover_small_url" : "/tmp/skyfall_small.PNG",
+    "cover_large_url" : "/tmp/skyfall_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "Gladiator",
+    "age" : 2000,
+    "description" : "Tapped for the throne after the death of the emperor, a Roman general instead finds himself condemned to die by the late ruler's power-hungry son.",
+    "cover_small_url" : "/tmp/gladiator_small.PNG",
+    "cover_large_url" : "/tmp/gladiator_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" }, { "name" : "Drama" } ]
+  },
+
+  {
+    "title" : "Kill Bill, Vol. 1",
+    "age" : 2003,
+    "description" : "An assassin is shot by her ruthless employer, Bill, and other members of their assassination circle. But she lives -- and plots her vengeance.",
+    "cover_small_url" : "/tmp/killbill_v1_small.PNG",
+    "cover_large_url" : "/tmp/killbill_v1_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "Terminator 2",
+    "age" : 1991,
+    "description" : "A reprogrammed Terminator arrives from the future to protect young John Connor from a relentless shape-shifting cyborg in this sequel to Terminator.",
+    "cover_small_url" : "/tmp/t2_small.PNG",
+    "cover_large_url" : "/tmp/t2_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "13 Assassins",
+    "age" : 2011,
+    "description" : "To stop a tyrant from murdering and exploiting innocent civilians, 13 samurai warriors unite and prepare to assassinate the evildoer.",
+    "cover_small_url" : "/tmp/13_assassins_small.PNG",
+    "cover_large_url" : "/tmp/13_assassins_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "Apocalypse Now Redux",
+    "age" : 1979,
+    "description" : "The reedit of this Vietnam War epic that follows an Army captain's search for a renegade colonel features new footage and a fade-to-black ending.",
+    "cover_small_url" : "/tmp/apocalypse_now_small.PNG",
+    "cover_large_url" : "/tmp/apocalypse_now_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" }, { "name" : "Drama" } ]
+  },
+
+  {
+    "title" : "Star Trek II",
+    "age" : 1982,
+    "description" : "Kirk assists Spock in a training mission for Starfleet cadets. But the novice crew is put to the test when they must confront escaped villain Khan.",
+    "cover_small_url" : "/tmp/star_trek_ii_small.PNG",
+    "cover_large_url" : "/tmp/star_trek_ii_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" } ]
+  },
+
+  {
+    "title" : "Jack Reacher",
+    "age" : 2012,
+    "description" : "When an ex-military cop investigates a sniper charged with five homicides, he's drawn into a dangerous cat-and-mouse game in this exciting thriller.",
+    "cover_small_url" : "/tmp/jack_reacher_small.PNG",
+    "cover_large_url" : "/tmp/jack_reacher_large.PNG",
+    "categories" : [ { "name" : "Action/Adventure" }, { "name" : "Suspense/Thriller" } ]
   }
+
 ]
 

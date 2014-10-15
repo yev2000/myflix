@@ -1,3 +1,12 @@
+def seed_video_age
+  # set the creation time to be keyed off the movie year.
+  # this is a bit of a hack but attempts to create some distribution of years.
+  Video.all.each do |v|
+    v.created_at = (2014 - v.year).days.ago
+    v.save
+  end
+end
+
 def seed_categories(filename, options = {})
   json_str = File.read(filename)
   json_obj_array = JSON.parse(json_str)

@@ -31,6 +31,7 @@ class Video < ActiveRecord::Base
     v.description = json_obj["description"]
     v.cover_small_url = json_obj["cover_small_url"]
     v.cover_large_url = json_obj["cover_large_url"]
+    v.year = json_obj["age"].to_i
 
     # now handle setting categories
     set_categories_from_json(json_obj, v, options) unless options[:skip_category]
