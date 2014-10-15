@@ -6,8 +6,6 @@
       %li= link_to "Videos"
       %li= link_to "My Queue"
       %li= link_to "People"
-
-
     = form_tag(search_videos_path, :method => "get", class: "span5 for-search") do
       - if params[:title_string]
         = text_field_tag(:title_string, params[:title_string], {class: "input search-query"})

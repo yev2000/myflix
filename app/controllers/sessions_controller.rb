@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
 
   def new
+    redirect_to home_path if logged_in?
     @login_email = nil
   end
 
@@ -18,15 +19,14 @@ class SessionsController < ApplicationController
       # try to go where the user was originally going before they
       # hit the authentication challenge
       redirect_to_original_action
-      clear_original_action
     else
       # create errors
-      flash[:error] = "Invalid username or password"
+      flash[:error] = "Invalid email or password"
 
       # save away the username that was entered so that when we
       # render the form again, we will preserve the contents of
       # the username entry field.  Saves the user time if they simply
-      # mistyped their username.
+      # mistyped their password or had a minor type in email.
       @login_email = params[:email]
 
       # re-render the login form so that they can re-enter the data.
@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    flash[:notice] = "User #{current_user_get.email} logged out."
+    flash[:notice] = "User #{current_user_get.email} has logged out."
     
     session[:userid] = nil
 
