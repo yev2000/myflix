@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
 
   def require_user
     if !logged_in?
-      flash[:error] = "Must be logged in to do this"
+      flash[:danger] = "Must be logged in to do this"
 
       ## is there a way to know what the current path is, so
       ## that once we've logged in we can redirect to there?

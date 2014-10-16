@@ -14,14 +14,14 @@ class SessionsController < ApplicationController
       # create the session
       session[:userid] = user.id
 
-      flash[:notice] = "Welcome, #{user.email}!"
+      flash[:success] = "Welcome, #{user.email}!"
 
       # try to go where the user was originally going before they
       # hit the authentication challenge
       redirect_to_original_action
     else
       # create errors
-      flash[:error] = "Invalid email or password"
+      flash[:danger] = "Invalid email or password"
 
       # save away the username that was entered so that when we
       # render the form again, we will preserve the contents of
@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    flash[:notice] = "User #{current_user_get.email} has logged out."
+    flash[:success] = "User #{current_user_get.email} has logged out."
     
     session[:userid] = nil
 
