@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  before_action :require_user, except: [:new, :create]
+  before_action :set_user, only: [:edit, :update]
+
   def new
     @user = User.new
   end
@@ -11,7 +14,7 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user)
     if (test1 && test2 && @user.save)
-      flash[:notice] = "Your user account (for #{@user.email}) was created.  You are logged in."
+      flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
       # if we want to log the user in, we simply create
       # a session for the user implicitly.
@@ -27,6 +30,19 @@ class UsersController < ApplicationController
   def edit
   end
 
+  def update
+    # if password was supplied, then set it
+    if (password_confirm!(@user) && @user.update(user_params) && @user.valid?)
+      # (will validations make sure duplicate username is not set?)
+      flash[:success] = "The account for \"#{@user.email}\" was updated."
+      redirect_to user_path(@user)
+    else
+      render :edit
+    end     
+
+  end
+
+
   private
 
   def user_params
@@ -40,7 +56,7 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
     if @user.nil? 
-      flash[:notice] = "There is no user account for #{params[:id]}." 
+      flash[:danger] = "There is no user account for #{params[:id]}." 
       redirect_to front_path
     end
   end

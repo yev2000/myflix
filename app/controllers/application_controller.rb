@@ -14,10 +14,14 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_original_action
+    # the user was going somewhere before being intercepted,
+    # then send them there now.  Otherwise, we direct to the
+    # home path.
     if session[:prior_url]
       redirect_to session[:prior_url]
+      clear_original_action
     else
-      redirect_to root_path
+      redirect_to home_path
     end
   end
 
@@ -41,7 +45,7 @@ class ApplicationController < ActionController::Base
 
   def require_user
     if !logged_in?
-      flash[:error] = "Must be logged in to do this"
+      flash[:danger] = "Must be logged in to do this"
 
       ## is there a way to know what the current path is, so
       ## that once we've logged in we can redirect to there?
