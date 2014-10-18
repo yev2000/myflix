@@ -12,6 +12,8 @@ gem 'jquery-rails'
 gem 'json'
 gem 'bcrypt'
 gem 'bootstrap_form'
+gem 'faker'
+gem 'fabrication'
 
 group :development do
   gem 'sqlite3'
