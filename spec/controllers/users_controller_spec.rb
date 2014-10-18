@@ -16,25 +16,46 @@ describe UsersController do
   end
 
   describe "POST create" do
-    it "creates a new user if user does not already exist" do
-      post :create, { user: {email: "a@b.c", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
-      u = User.first
-      expect(u.email).to eq("a@b.c")
+    context "valid user creation" do
+      before do
+        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
+      end
+
+      it "creates a new user if user does not already exist" do
+        u = User.first
+        expect(u.email).to eq("joe@company.com")
+      end
+
+      it "renders home template if user created" do
+        expect(response).to redirect_to home_path
+      end
+
+      it "logs user in, if user created" do
+        expect(session[:userid]).to eq(1)
+      end
     end
 
-    it "fails to create a new user if the password confirmation does not match password" do
-      post :create, { user: {email: "a@b.c", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+    context "invalid user creation" do
+      it "fails to create a new user if the password confirmation does not match password" do
+        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
 
-      u = User.first
-      expect(u).to eq(nil)
-    end
+        u = User.first
+        expect(u).to eq(nil)
+      end
 
-    it "fails to create a new user if the email already exists, and renders the new template again" do
-      post :create, { user: {email: "a@b.c", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
-      post :create, { user: {email: "a@b.c", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
+      it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
+        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+        expect(assigns(:user).email).to eq("joe@company.com")
+        expect(assigns(:user).fullname).to eq("joe smith")
+      end
 
-      expect(User.all.size).to eq(1)
-      expect(response).to render_template :new
+      it "fails to create a new user if the email already exists, and renders the new template again" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
+
+        expect(User.all.size).to eq(1)
+        expect(response).to render_template :new
+      end
     end
   end
 

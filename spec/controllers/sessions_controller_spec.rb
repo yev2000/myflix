@@ -6,7 +6,7 @@ describe SessionsController do
   describe "GET new" do
     it "redirects to the home screen for already logged in user" do
       u = Fabricate(:user)
-      session[:userid] = 1
+      session[:userid] = u.id
       
       get :new
       expect(response).to redirect_to home_path
@@ -21,60 +21,79 @@ describe SessionsController do
       get :new
       expect(assigns(:login_email)).to eq(nil)
     end
-  end
+  end # GET new
 
   describe "POST create" do
-    before do
-      u = Fabricate(:user, { email: "foo@company.com", password: "password" })
+    let(:the_user) { Fabricate(:user) }
+
+    context "invalid email address" do
+      before { post :create, email: (the_user.email + "XX"), password: the_user.password }
+
+      it "renders new session template" do
+        expect(response).to render_template :new
+      end
+
+      it "sets error message" do
+        expect(flash[:danger]).not_to be_blank
+      end
+
+      it "sets @login_email to user email entered in form" do
+        expect(assigns(:login_email)).to eq(the_user.email + "XX")
+      end
     end
 
-    it "renders new session template if user email was not found" do
-      post :create, email: "bar@company.com", password: "password"
-      expect(response).to render_template :new
+    context "invalid password" do
+      before { post :create, email: the_user.email, password: (the_user.password + "XX") }
+
+      it "renders new session template" do
+        expect(response).to render_template :new
+      end
+
+      it "sets error message" do
+        expect(flash[:danger]).not_to be_blank
+      end
+
+      it "sets @login_email to value entered in form" do
+        expect(assigns(:login_email)).to eq(the_user.email)
+      end
+
+      it "leaves session key for user_id as nil" do
+        expect(session[:userid]).to eq(nil)
+      end
+
     end
 
-    it "sets login_email instance variable to user email entered if user not found" do
-      post :create, email: "bar@company.com", password: "password"
-      expect(assigns(:login_email)).to eq("bar@company.com")
-    end
+    context "valid credentials" do
+      before { post :create, email: the_user.email, password: the_user.password }
 
-    it "renders new session template if user password was incorrect" do
-      post :create, email: "foo@company.com", password: "pass"
-      expect(response).to render_template :new
-    end
+      it "sets session ID if user authenticated" do
+        expect(session[:userid]).to eq(the_user.id)
+      end
 
-    it "sets login_email instance variable to user email entered if user password was incorrect" do
-      post :create, email: "foo@company.com", password: "pass"
-      expect(assigns(:login_email)).to eq("foo@company.com")
-    end
+      it "redirects to home_path if user authenticated" do
+        expect(response).to redirect_to home_path
+      end
 
-    it "sets session ID if user authenticated" do
-      post :create, email: "foo@company.com", password: "password"
-      expect(session[:userid]).to eq(1)
-    end
-
-    it "redirects to home_path if user authenticated" do
-      post :create, email: "foo@company.com", password: "password"
-      expect(response).to redirect_to home_path
     end
 
     it "redirects to categories path if prior to posting to session/create, the prior URL was the categories path" do
       session[:prior_url] = categories_path
-      post :create, email: "foo@company.com", password: "password"
+      post :create, email: the_user.email, password: the_user.password
       expect(response).to redirect_to categories_path
     end
 
-  end
+  end # POST create
 
   describe "GET destroy" do
+
     context "no logged in user" do
+      before { get :destroy }
+
       it "clears out session information" do
-        get :destroy
         expect(session[:userid]).to eq(nil)
       end
 
       it "redirects to application root path" do
-        get :destroy
         expect(response).to redirect_to root_path
       end
     end
@@ -82,19 +101,23 @@ describe SessionsController do
     context "logged in user" do
       before do
         u = Fabricate(:user)
-        session[:userid] = 1
+        session[:userid] = u.id
+        get :destroy        
       end
 
       it "clears out session information" do
-        get :destroy
         expect(session[:userid]).to eq(nil)
       end
 
       it "redirects to application root path" do
-        get :destroy
         expect(response).to redirect_to root_path
       end
+
+      it "sets the notice for logout" do
+        expect(flash[:success]).not_to be_blank
+      end
+
     end
 
-  end
+  end # GET destroy
 end
