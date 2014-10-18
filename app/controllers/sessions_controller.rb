@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    flash[:success] = "User #{current_user_get.email} has logged out."
+    flash[:success] = "User #{current_user_get.email} has logged out." if current_user_get
     
     session[:userid] = nil
 
