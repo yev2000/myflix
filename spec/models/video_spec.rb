@@ -127,11 +127,7 @@ describe Video do
 
         6.times do
           u = Fabricate(:user)
-          r = Fabricate(:review)
-          r.video = video
-          r.rating = 0
-          r.user = u
-          r.save
+          r = Fabricate(:review, video: video, rating: 0, user: u)
         end
 
         expect(Review.all.size).to eq(7)
@@ -141,12 +137,9 @@ describe Video do
       it "returns the rating value of all reviews if they all have the same value" do
         6.times do
           u = Fabricate(:user)
-          r = Fabricate(:review)
-          r.video = video
-          r.user = u
-          r.rating = 4
-          r.save
+          r = Fabricate(:review, video: video, rating: 4, user: u)
         end
+
         expect(Review.all.size).to eq(6)
         expect(video.average_rating).to eq(4)
       end
@@ -199,11 +192,7 @@ describe Video do
 
         2.times do
           u = Fabricate(:user)
-          r = Fabricate(:review)
-          r.video = video
-          r.user = u
-          r.rating = 3
-          r.save
+          r = Fabricate(:review, video: video, user: u, rating: 3)
         end
 
         expect(video.average_rating_string).to eq(sprintf("%.1f / 5.0", (4.0+3.0+3.0)/3.0))

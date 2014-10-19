@@ -7,11 +7,7 @@ def seed_reviews
   Video.all.each do |v|
     index = 1
     rand(0..8).times do
-      r = Fabricate(:review)
-      r.user = User.find(index)
-      r.video = v
-      r.rating = rand(0..5)
-      r.save
+      r = Fabricate(:review, user: User.find(index), video: v)
       index += 1
     end
   end
