@@ -2,9 +2,18 @@
   .container
     .row
       .video_large_cover.col-sm-7.col-sm-offset-1
-        %img{src: @video.cover_small_url}
+        %img{src: @video.cover_large_url}
       .video_info.col-sm-3
         %header
           %h3= @video.title
-          %span Rating: 4.5/5.0
+          %span= "Rating: #{@video.average_rating_string}"
         %p= @video.description
+
+%section.reviews.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      %header
+        %h3= "User Reviews (#{@video.reviews.size})"
+      %ul
+        - @video.reviews.each do |review|
+          = render "reviews/review_entry", review: review

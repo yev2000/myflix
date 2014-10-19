@@ -10,3 +10,4 @@ require Rails.root.to_s + "/lib/seed_support"
 seed_categories(Rails.root.to_s + "/db/movie_category.json")
 seed_videos(Rails.root.to_s + "/db/movie_text.json")
 seed_video_age
+seed_reviews

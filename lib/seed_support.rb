@@ -1,3 +1,34 @@
+def seed_reviews
+  # use fabricators to create a random set of reviews
+  8.times do
+    u = Fabricate(:user)
+  end
+
+  Video.all.each do |v|
+    index = 1
+    rand(0..8).times do
+      r = Fabricate(:review)
+      r.user = User.find(index)
+      r.video = v
+      r.rating = rand(0..5)
+      r.save
+      index += 1
+    end
+  end
+
+  # set age in order of number of characters in the body so that we can visually eyeball that
+  # sorting seems to work right
+  review_list = Review.all.sort { |r1, r2| r1.body.length <=> r2.body.length }
+
+  days_ago = 1
+  review_list.each do |review|
+    review.created_at = days_ago.days.ago
+    review.save
+    days_ago += 1
+  end
+
+end
+
 def seed_video_age
   # set the creation time to be keyed off the movie year.
   # this is a bit of a hack but attempts to create some distribution of years.
