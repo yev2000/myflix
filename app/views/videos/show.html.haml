@@ -17,7 +17,7 @@
           %label Rate this video
           = f.select :rating, [["Not Rated", 0]] + ((1..5).inject([]) { |memo,n| memo << ["#{n} " + "Star".pluralize(n), n ] }).reverse, {label: "Rating"}
           = f.text_field :title, label: "Review Title"
-          = f.text_area :body, label: "Write Review"
+          = f.text_area :body, label: "Write Review", rows: 6
           = f.submit "Submit"
 
       %header
