@@ -11,3 +11,7 @@ seed_categories(Rails.root.to_s + "/db/movie_category.json")
 seed_videos(Rails.root.to_s + "/db/movie_text.json")
 seed_video_age
 seed_reviews
+
+# create a fresh user account with known password
+Fabricate(:user, email: "alice@aaa.com", fullname: "Alice Doe", password: "pass")
+

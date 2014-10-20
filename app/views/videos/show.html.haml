@@ -12,6 +12,14 @@
 %section.reviews.container
   .row
     .col-sm-10.col-sm-offset-1
+      - if @review
+        = bootstrap_form_for(@review, url: create_review_video_path(@video)) do |f|
+          %label Rate this video
+          = f.select :rating, [["Not Rated", 0]] + ((1..5).inject([]) { |memo,n| memo << ["#{n} " + "Star".pluralize(n), n ] }).reverse, {label: "Rating"}
+          = f.text_field :title, label: "Review Title"
+          = f.text_area :body, label: "Write Review"
+          = f.submit "Submit"
+
       %header
         %h3= "User Reviews (#{@video.reviews.size})"
       %ul

@@ -14,6 +14,10 @@ Myflix::Application.routes.draw do
     collection do
       get 'search'
     end
+
+    member do
+      post "create_review"
+    end
   end
 
   resources :categories, only: [:index, :show]
