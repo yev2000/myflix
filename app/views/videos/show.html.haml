@@ -2,9 +2,26 @@
   .container
     .row
       .video_large_cover.col-sm-7.col-sm-offset-1
-        %img{src: @video.cover_small_url}
+        %img{src: @video.cover_large_url}
       .video_info.col-sm-3
         %header
           %h3= @video.title
-          %span Rating: 4.5/5.0
+          %span= "Rating: #{@video.average_rating_string}"
         %p= @video.description
+
+%section.reviews.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      - if @review
+        = bootstrap_form_for([@video, @review]) do |f|
+          %label Rate this video
+          = f.select :rating, [["Not Rated", 0]] + ((1..5).inject([]) { |memo,n| memo << ["#{n} " + "Star".pluralize(n), n ] }).reverse, {label: "Rating"}
+          = f.text_field :title, label: "Review Title"
+          = f.text_area :body, label: "Write Review", rows: 6
+          = f.submit "Submit"
+
+      %header
+        %h3= "User Reviews (#{@video.reviews.size})"
+      %ul
+        - @video.reviews.each do |review|
+          = render "reviews/review_entry", review: review

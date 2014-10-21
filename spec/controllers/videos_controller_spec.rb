@@ -20,7 +20,7 @@ describe VideosController do
 
   describe "GET show" do
     context "no logged in user" do
-      it "redirects to the front page" do
+      it "redirects to the sign in page" do
         get :show, {id: "1"}
         expect(response).to redirect_to sign_in_path
       end
@@ -34,7 +34,7 @@ describe VideosController do
 
       it "sets the @video instance variable to nil if there are no videos in the database" do
         get :show, {id: "1"}
-        assigns(:video).should be_nil
+        expect(assigns(:video)).to be_nil
       end
 
       it "redirects to the videos/index URL if there are no videos in the database" do
@@ -46,7 +46,7 @@ describe VideosController do
         video = Fabricate(:video)
 
         get :show, {id: "1"}
-        assigns(:video).should eq(video)
+        expect(assigns(:video)).to eq(video)
       end
 
       it "sets the @video instance variable to the record identified by the id parameter if there is more than one video in the system" do
@@ -82,6 +82,20 @@ describe VideosController do
         get :show, {id: "3"}
         assigns(:video).should be_nil
       end
+
+      it "sets the @review instance variable to a new/blank review if the current user has not yet reviewed the shown video" do
+        video = Fabricate(:video)
+        get :show, {id: "1"}
+        expect(assigns(:review)).not_to be_nil
+      end
+
+      it "sets the @review instance variable to nil if the user has already reviewed the video being shown" do
+        video = Fabricate(:video)
+        review = Fabricate(:review, video: video, user: User.first)
+        get :show, {id: "1"}
+        expect(assigns(:review)).to be_nil
+      end
+
 
     end
 
