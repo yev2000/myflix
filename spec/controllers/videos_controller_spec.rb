@@ -75,7 +75,7 @@ describe VideosController do
         expect(response).to redirect_to videos_path
       end
 
-      it "sets the @video instance variable to nil if the video identified by the id parameter does not exist" do
+      it "sets @video to nil if the video identified by the id parameter does not exist" do
         video1 = Fabricate(:video)
         video2 = Fabricate(:video)
         
@@ -83,23 +83,41 @@ describe VideosController do
         assigns(:video).should be_nil
       end
 
-      it "sets the @review instance variable to a new/blank review if the current user has not yet reviewed the shown video" do
+      it "sets @review to a new/blank review if the current user has not yet reviewed the shown video" do
         video = Fabricate(:video)
         get :show, {id: "1"}
         expect(assigns(:review)).not_to be_nil
       end
 
-      it "sets the @review instance variable to nil if the user has already reviewed the video being shown" do
+      it "sets @review to nil if the user has already reviewed the video being shown" do
         video = Fabricate(:video)
         review = Fabricate(:review, video: video, user: User.first)
         get :show, {id: "1"}
         expect(assigns(:review)).to be_nil
       end
 
+      context "My Queue button enablement" do
+        before do
+          Fabricate(:video)
+          video2 = Fabricate(:video)
+          Fabricate(:video_queue_entry, video: video2, user: User.first)
+        end
+  
+        it "sets @video_queue_entry with information on video to be added if the video identified ID is not in the user's queue" do
+          get :show, id: "1"
+          expect(assigns(:video_queue_entry).video_id).to eq(1)
+          expect(assigns(:video_queue_entry).position).to eq(2)
+        end
 
-    end
+        it "does not set @video_queue_entry if the video identified ID is already listed in the user's queue" do
+          get :show, id: "2"
+          expect(assigns(:video_queue_entry)).to eq(nil)
+        end
+        
+      end # context of my queue button
 
-  end
+    end # context user is logged in
+  end # GET show
 
 
   #####################################

@@ -8,6 +8,16 @@
           %h3= @video.title
           %span= "Rating: #{@video.average_rating_string}"
         %p= @video.description
+        .actions
+          %a.btn.btn-primary(href="") Watch Now
+          - if @video_queue_entry
+            = bootstrap_form_for(@video_queue_entry, url: add_queue_entry_path) do |f|
+              = f.text_field :video_id, wrapper: { hidden: true}
+              = f.text_field :position, wrapper: { hidden: true }
+              = f.text_field :user_id, wrapper: { hidden: true }
+              = f.submit "+ My Queue", class: "btn btn-default"
+          - else
+            %a.btn.btn-default(href="#{my_queue_path}") Show My Queue
 
 %section.reviews.container
   .row

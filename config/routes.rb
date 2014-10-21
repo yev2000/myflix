@@ -7,9 +7,10 @@ Myflix::Application.routes.draw do
   get 'sign_in',    to: 'sessions#new'
   get 'logout',     to: 'sessions#destroy'
   get 'my_queue',   to: 'videoqueue#index'
+  post 'my_queue',  to: 'videoqueue#create', as: :add_queue_entry
 
   resources :users,  only: [:create, :edit, :update] do
-    resources :videoqueue, only: [:index]
+    resources :videoqueue, only: [:index, :create]
   end
 
   resources :sessions, only: [:create]
