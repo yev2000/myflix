@@ -174,8 +174,7 @@ describe VideoQueueEntryController do
         end
 
         it("adds the video as the last video in the queue") do
-          expect(user.queued_videos.size).to eq(3)
-          expect(user.queued_videos).to include(Video.first)
+          expect(user.queued_videos.last).to eq(Video.first)
         end
 
         it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
@@ -188,6 +187,7 @@ describe VideoQueueEntryController do
           post :create, video_queue_entry: { position: 2, video_id: 1 }
         end
 
+        it("does not add the video to the queue") { expect(user.video_queue_entries.size).to eq(1) }
         it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
         it("redirects to my queue path") { expect(response).to redirect_to my_queue_path }
       end
