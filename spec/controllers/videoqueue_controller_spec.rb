@@ -43,17 +43,17 @@ describe VideoqueueController do
         context "no video queue entries for user" do
           before { get :index, user_id: user.id }
 
-          it("sets @videos to empty array") { expect(assigns(:videos)).to eq([]) }
+          it("sets @queue_entries to empty array") { expect(assigns(:queue_entries)).to eq([]) }
           it("renders index template") { expect(response).to render_template :index }
         end
 
         context "a video exists in the user's queue" do
-          it "sets @videos to set of user's queued videos" do
+          it "sets @queue_entries" do
             video = Fabricate(:video)
-            Fabricate(:video_queue_entry, user: user, video: video)
+            vqe = Fabricate(:video_queue_entry, user: user, video: video)
 
             get :index, user_id: user.id
-            expect(assigns(:videos)).to eq([Video.first])
+            expect(assigns(:queue_entries)).to eq([vqe])
           end
 
         end
@@ -68,17 +68,17 @@ describe VideoqueueController do
         context "no video queue entries for user" do
           before { get :index }
 
-          it("sets @videos to empty array") { expect(assigns(:videos)).to eq([]) }
+          it("sets @queue_entries to empty array") { expect(assigns(:queue_entries)).to eq([]) }
           it("renders index template") { expect(response).to render_template :index }
         end
 
-        context "a video in the user's queue" do
-          it "sets @videos to set of user's queued videos" do
+        context "a video exists in the user's queue" do
+          it "sets @queue_entries" do
             video = Fabricate(:video)
-            Fabricate(:video_queue_entry, user: user, video: video)
+            vqe = Fabricate(:video_queue_entry, user: user, video: video)
 
             get :index
-            expect(assigns(:videos)).to eq([Video.first])
+            expect(assigns(:queue_entries)).to eq([vqe])
           end
         end
 

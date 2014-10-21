@@ -22,10 +22,10 @@ class VideoqueueController < ApplicationController
     # we set up an instance variable to contain the array
     # of queued videos for the user in question
     # if no videos are queued, an empty array is created
-    if current_user_get.queued_videos.size == 0
-      @videos = []
+    if @user.video_queue_entries.size == 0
+      @queue_entries = []
     else
-      @videos = @user.queued_videos
+      @queue_entries = @user.video_queue_entries
     end
 
   end

@@ -6,7 +6,7 @@ def set_days_ago(video)
 end
 
 def create_base_data_set
-  c = Category.create(name: "test-cat")
+  c = Fabricate(:category)
   v1 = Video.create(title: "6", description: "B", categories: [c])
   v2 = Video.create(title: "4", description: "B", categories: [c])
   v3 = Video.create(title: "2", description: "B", categories: [c])
@@ -30,6 +30,7 @@ describe Category do
   # this is using the shoulda notation
   it { should have_many(:videos) }
   it { should have_many(:videos).order(:title) }
+  it { should validate_presence_of(:name) }
 
   describe "#recent_videos" do
     it "should return 6 videos if category has more than 6" do
@@ -77,8 +78,8 @@ describe Category do
     end
 
     it "should return the empty array if there are no videos in the category" do
-      c = Category.create(name: "empty-cat")
-      expect(c.recent_videos).to eq([])
+      category = Fabricate(:category)
+      expect(category.recent_videos).to eq([])
     end
   end
 end

@@ -1,14 +1,14 @@
 %tr
   %td
-    %input.form-control(type="text" value="#{index_value}")
+    %input.form-control(type="text" value="#{queue_entry.position}")
   %td
-    = link_to(video.title, video_path(video))
+    = link_to(queue_entry.video.title, video_path(queue_entry.video))
   %td
     = button_to "Play", nil, class: "btn btn-default"
   %td
-    = rating_string 
+    = queue_entry.rating_string 
   %td
-    - video.categories.each do |c|
+    - queue_entry.categories.each do |c|
       = link_to c.name, category_path(c)
   %td
     = link_to "", method: :post do
