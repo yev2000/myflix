@@ -11,7 +11,7 @@
         .actions
           %a.btn.btn-primary(href="") Watch Now
           - if @video_queue_entry
-            = bootstrap_form_for(@video_queue_entry, url: add_queue_entry_path) do |f|
+            = bootstrap_form_for(@video_queue_entry, url: user_video_queue_entry_index_path(@video_queue_entry.user, user_id: @video_queue_entry.user_id, format: :html)) do |f|
               = f.text_field :video_id, wrapper: { hidden: true}
               = f.text_field :position, wrapper: { hidden: true }
               = f.text_field :user_id, wrapper: { hidden: true }

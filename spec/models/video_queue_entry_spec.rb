@@ -73,7 +73,6 @@ describe VideoQueueEntry do
       user = Fabricate(:user)
       video = Fabricate(:video)
       Fabricate(:video_queue_entry, video: video, user: user, position: 1)
-
     end
 
     it "returns the array of categories associated with the video of the queue entry" do
@@ -85,7 +84,7 @@ describe VideoQueueEntry do
       expect(VideoQueueEntry.first.categories).to match_array([c1,c2])
     end
 
-    it "returns emoty array if no categories are associated with the video" do
+    it "returns empty array if no categories are associated with the video" do
       expect(VideoQueueEntry.first.categories).to eq([])
     end
 

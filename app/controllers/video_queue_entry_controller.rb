@@ -1,4 +1,4 @@
-class VideoqueueController < ApplicationController
+class VideoQueueEntryController < ApplicationController
   before_action :require_user
   before_action :set_user
   before_action :require_current_user

@@ -6,11 +6,11 @@ Myflix::Application.routes.draw do
   get 'register',   to: 'users#new'
   get 'sign_in',    to: 'sessions#new'
   get 'logout',     to: 'sessions#destroy'
-  get 'my_queue',   to: 'videoqueue#index'
-  post 'my_queue',  to: 'videoqueue#create', as: :add_queue_entry
+  get 'my_queue',   to: 'video_queue_entry#index'
+  post 'my_queue',  to: 'video_queue_entry#create', as: :add_queue_entry
 
   resources :users,  only: [:create, :edit, :update] do
-    resources :videoqueue, only: [:index, :create]
+    resources :video_queue_entry, only: [:index, :create]
   end
 
   resources :sessions, only: [:create]

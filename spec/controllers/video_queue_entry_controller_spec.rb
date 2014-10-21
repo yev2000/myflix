@@ -2,7 +2,7 @@ require 'rails_helper'
 
 require Rails.root.to_s + "/lib/seed_support"
 
-describe VideoqueueController do
+describe VideoQueueEntryController do
 
   describe "GET index" do
     context "no logged in user" do
