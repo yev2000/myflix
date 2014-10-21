@@ -31,7 +31,7 @@ describe VideoQueueEntryController do
           before { get :index, user_id: user2.id }
           
           it("redirects to root") { expect(response).to redirect_to home_path }
-          it("sets a flash message") { expect(flash[:danger]).not_to be_nil }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
         end
 
         it "sets @user to the user specified by the ID" do
@@ -102,7 +102,7 @@ describe VideoQueueEntryController do
 
       context "user_id is not supplied" do
         it "redirects to the sign in page" do
-          post :create, user_id: 1, video_id: 1
+          post :create, video_id: 1
           expect(response).to redirect_to sign_in_path
         end
       end
@@ -118,15 +118,15 @@ describe VideoQueueEntryController do
       context "user_id explicitly supplied" do
         context "user_id in params does not match current logged in user" do
           let(:user2) { Fabricate(:user) }
-          before { post :create, video_queue_entry: { user_id: user2.id, position: 1, video_id: 1 } }
+          before { post :create, user_id: user2.id, video_queue_entry: { user_id: user2.id, position: 1, video_id: 1 } }
           
           it("redirects to home path") { expect(response).to redirect_to home_path }
-          it("sets a flash message") { expect(flash[:danger]).not_to be_nil }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
         end
 
         it "sets @user to the user specified by the ID" do
           user2 = Fabricate(:user)
-          post :create, video_queue_entry: { user_id: user2.id, position: 1, video_id: 1 }
+          post :create, user_id: user2.id, video_queue_entry: { user_id: user2.id, position: 1, video_id: 1 }
           expect(assigns(:user)).to eq(user2)
         end
 
@@ -152,7 +152,7 @@ describe VideoQueueEntryController do
       context "omitted video field" do
         before { post :create, video_queue_entry: { position: 1 } }
 
-        it("sets a flash message if video_id is omitted") { expect(flash[:danger]).not_to be_nil }
+        it("sets a danger flash message if video_id is omitted") { expect(flash[:danger]).not_to be_nil }
         it("redirects to home_path if video_id is omitted") { expect(response).to redirect_to home_path }
       end
 
@@ -202,5 +202,129 @@ describe VideoQueueEntryController do
 
   end # POST create
 
+  describe "DELETE destroy" do
+    before do
+      Fabricate(:user)
+      Fabricate(:video)
+    end
+
+    context "no logged in user" do
+      it "redirects to the sign in page" do
+        delete :destroy, user_id: 1, id: 1
+        expect(response).to redirect_to sign_in_path
+      end
+    end # no logged in user
+
+    context "logged in user" do
+      let(:user) { Fabricate(:user) }
+      before do
+        session[:userid] = user.id
+      end
+
+      context "user_id in params does not match current logged in user" do
+        let(:user2) { Fabricate(:user) }
+        before { delete :destroy, user_id: user2.id, id: 1 }
+          
+        it("redirects to home path") { expect(response).to redirect_to home_path }
+        it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+      end
+
+      context "the id does not match a video queue entry" do
+        before do
+          video = Fabricate(:video)
+          vqe = Fabricate(:video_queue_entry, video: video, user: user)
+          delete :destroy, user_id: user.id, id: 2
+        end
+
+        it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+        it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+        it("keeps number of queued videos the same") { expect(user.queued_videos.size).to eq(1) }
+      end
+
+      context "the id identified a video queue entry for a different user than user_id parameter" do
+        before do
+          user2 = Fabricate(:user)
+          video1 = Fabricate(:video)
+          video2 = Fabricate(:video)
+          vqe1 = Fabricate(:video_queue_entry, video: video1, user: user)
+          vqe2 = Fabricate(:video_queue_entry, video: video2, user: user2)
+          
+          delete :destroy, user_id: user.id, id: vqe2.id
+        end
+
+        it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+        it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+        it("keeps number of queued videos the same") { expect(user.queued_videos.size).to eq(1) }
+      end
+
+      context "the id represents a valid queue entry for the user_id" do
+        before do
+          @videos_array = [1,2,3,4].each.collect { |num| Fabricate(:video) }
+          index = 0
+          @vqe_array = @videos_array.collect { |video| Fabricate(:video_queue_entry, video: video, user: user, position: (index += 1)) }
+        end
+                
+        it "sets the @queue_entry to the queue entry" do
+          delete :destroy, user_id: user.id, id: @vqe_array[0].id
+
+          expect(assigns(:queue_entry)).to eq(@vqe_array[0])
+        end
+
+        it "redirects to my_queue" do
+          delete :destroy, user_id: user.id, id: @vqe_array[0].id
+          expect(response).to redirect_to my_queue_path
+        end
+
+        it "sets a success flash message" do
+          delete :destroy, user_id: user.id, id: @vqe_array[0].id
+          expect(flash[:success]).not_to be_nil
+        end
+
+        context "the id represents the users's first queued video" do
+          before { delete :destroy, user_id: user.id, id: @vqe_array[0].id }
+
+          it "removes the first video from the user's queued videos" do
+            expect(user.video_queue_entries.size).to eq(3)
+            expect(user.video_queue_entries).to include(@vqe_array[1])
+            expect(user.video_queue_entries).not_to include(@vqe_array[0])
+          end
+
+          it "adjusts the position values of the remaining queue items in the user's queue" do
+            expect(user.video_queue_entries.map { |entry| entry.position }).to eq([1,2,3])
+          end
+
+        end
+
+        context "the id represents the users's last queued video" do
+          before { delete :destroy, user_id: user.id, id: @vqe_array[3].id }
+
+          it "removes the last video from the user's queued videos" do
+            expect(user.video_queue_entries.size).to eq(3)
+            expect(user.video_queue_entries).to include(@vqe_array[1])
+            expect(user.video_queue_entries).not_to include(@vqe_array[3])
+          end
+
+          it "adjusts the position values of the remaining queue items in the user's queue" do
+            expect(user.video_queue_entries.map { |entry| entry.position }).to eq([1,2,3])
+          end
+        end
+
+        context "the id represents a users's middle queued video" do
+          before { delete :destroy, user_id: user.id, id: @vqe_array[2].id }
+
+          it "removes the video from the user's queued videos" do  
+            expect(user.video_queue_entries.size).to eq(3)
+            expect(user.video_queue_entries).to include(@vqe_array[1])
+            expect(user.video_queue_entries).not_to include(@vqe_array[2])
+          end
+
+          it "adjusts the position values of the remaining queue items in the user's queue" do
+            expect(user.video_queue_entries.map { |entry| entry.position }).to eq([1,2,3])
+          end
+        end
+      end
+
+    end # context logged in user 
+  end # DELETE destroy
 end
 

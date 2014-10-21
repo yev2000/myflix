@@ -43,6 +43,24 @@ class VideoQueueEntryController < ApplicationController
     end
   end
 
+  def destroy
+    @queue_entry = VideoQueueEntry.find_by(id: params[:id])
+    if @queue_entry.nil?
+      flash[:danger] = "No queued video has an ID of #{params[:id]}."
+    elsif @queue_entry.user == @user
+      VideoQueueEntry.destroy(@queue_entry)
+      if adjust_positions(@user.video_queue_entries)
+        flash[:success] = "Removed #{@queue_entry.video.title} from the queue."
+      else
+        flash[:danger] = "Unable to adjust positions of queue items."
+      end
+    else
+      flash[:danger] = "Editing a different user's video queue is not allowed."
+    end
+
+    redirect_to my_queue_path
+  end
+
   private
 
   def set_user
@@ -72,5 +90,20 @@ class VideoQueueEntryController < ApplicationController
     params.require(:video_queue_entry).permit(:video_id, :user_id, :position)
   end
 
+  def adjust_positions(video_queue_entry_array)
+    index = 1
+    video_queue_entry_array.each do |entry|
+      entry.position = index
+      index += 1
+    end
+
+    video_queue_entry_array.each do |entry|
+      if (entry.save == false)
+        return false
+      end
+    end
+
+    return true
+  end
 
 end

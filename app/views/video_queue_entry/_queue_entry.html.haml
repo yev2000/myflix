@@ -11,5 +11,5 @@
     - queue_entry.categories.each do |c|
       = link_to c.name, category_path(c)
   %td
-    = link_to "", method: :post do
+    = link_to user_video_queue_entry_path(queue_entry.user, queue_entry), method: :delete do
       %i.glyphicon.glyphicon-remove
