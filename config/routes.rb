@@ -5,9 +5,13 @@ Myflix::Application.routes.draw do
 
   get 'register',   to: 'users#new'
   get 'sign_in',    to: 'sessions#new'
-  get 'logout',    to: 'sessions#destroy'
+  get 'logout',     to: 'sessions#destroy'
+  get 'my_queue',   to: 'videoqueue#index'
 
-  resources :users,  only: [:create, :edit, :update]
+  resources :users,  only: [:create, :edit, :update] do
+    resources :videoqueue, only: [:index]
+  end
+
   resources :sessions, only: [:create]
 
   resources :videos, only: [:index, :show] do

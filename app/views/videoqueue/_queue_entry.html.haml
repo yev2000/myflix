@@ -1,0 +1,15 @@
+%tr
+  %td
+    %input.form-control(type="text" value="#{index_value}")
+  %td
+    = link_to(video.title, video_path(video))
+  %td
+    = button_to "Play", nil, class: "btn btn-default"
+  %td
+    = rating_string 
+  %td
+    - video.categories.each do |c|
+      = link_to c.name, category_path(c)
+  %td
+    = link_to "", method: :post do
+      %i.glyphicon.glyphicon-remove
