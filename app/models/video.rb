@@ -55,7 +55,7 @@ class Video < ActiveRecord::Base
         return sprintf("%.1f / 5.0", avg_val)
       else
         # this is an integer so just return the string value
-        return "#{avg_val.to_i.to_s} / 5.0"
+        return "#{avg_val.to_i} / 5.0"
       end
     else
       return "No ratings"
