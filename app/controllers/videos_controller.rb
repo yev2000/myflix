@@ -21,6 +21,23 @@ class VideosController < ApplicationController
       else
         @review = Review.new
       end
+
+      # we set @video_queue_entry based on whether the
+      # selected video is in the current user's queue or not
+
+      ### candidate for turning the below into an instance method of VideoQueueEntry
+      if current_user_get.queued_videos.include? @video
+        
+        # video is already in user's queue, so we set the instance variable to nil, to prevent the
+        # + My Queue button from being displayed.
+        @video_queue_entry = nil
+      else
+        ### candidate for turning the below into a Class method of VideoQueueEntry
+        @video_queue_entry = VideoQueueEntry.new(
+          position: current_user_get.queued_videos.size + 1, # position is at the end of the queue
+          user_id: current_user_get.id,
+          video_id: @video.id)
+      end
     end
   end
 

@@ -1,3 +1,18 @@
+def seed_specific_user_reviews(user_array)
+  # these are done so that we can log in as a specific user to see their reviews.
+  user_array.each do |user|
+    # create a review for all videos in the user's queue 
+    # except for the ones mod the user's ID
+
+    puts "Creating reviews by user #{user.email}"
+
+    user.queued_videos.each do |video|
+      Fabricate(:review, user: user, video: video) if (video.id % user.id)
+    end
+  end
+
+end
+
 def seed_reviews
   # use fabricators to create a random set of reviews
   8.times do
@@ -5,6 +20,7 @@ def seed_reviews
   end
 
   Video.all.each do |v|
+    puts "Creating reviews for #{v.title}"
     index = 1
     rand(0..8).times do
       r = Fabricate(:review, user: User.find(index), video: v)
@@ -75,4 +91,25 @@ def seed_videos(filename, options = {})
     end
   end
 
+end
+
+def seed_user_queue(user, video_index_array)
+  index = 1
+  video_index_array.each do |i|
+    VideoQueueEntry.create(position: index, video: Video.find(i), user: user)
+    index += 1
+  end
+end
+
+def seed_videoqueues()
+  # This must be run after users and videos have already been
+  # populated.
+
+  queue1_video_index_array = [1,2,4,8]
+  queue2_video_index_array = [1,3,5,7]
+  queue3_video_index_array = [4,6,8,10,1,3,5]
+
+  seed_user_queue(User.find_by(email: "alice@aaa.com"), queue1_video_index_array)
+  seed_user_queue(User.find_by(email: "bob@bbb.com"), queue2_video_index_array)
+  seed_user_queue(User.find_by(email: "charlie@ccc.com"), queue3_video_index_array)
 end

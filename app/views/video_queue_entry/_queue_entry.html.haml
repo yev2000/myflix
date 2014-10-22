@@ -1,0 +1,15 @@
+%tr
+  %td
+    %input.form-control(type="text" value="#{queue_entry.position}")
+  %td
+    = link_to(queue_entry.video.title, video_path(queue_entry.video))
+  %td
+    = button_to "Play", nil, class: "btn btn-default"
+  %td
+    = queue_entry.rating_string 
+  %td
+    - queue_entry.categories.each do |c|
+      = link_to c.name, category_path(c)
+  %td
+    = link_to user_video_queue_entry_path(queue_entry.user, queue_entry), method: :delete do
+      %i.glyphicon.glyphicon-remove

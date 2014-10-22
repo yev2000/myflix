@@ -9,6 +9,8 @@ class Category < ActiveRecord::Base
   has_many :videos, -> {order :title}, through: :video_categories
   has_many :videos_by_created_date, -> {order(created_at: :desc)}, {through: :video_categories, source: :video, foreign_key: "video_id"}
 
+  validates_presence_of :name
+
   def recent_videos
     videos_by_created_date.limit(6)
   end

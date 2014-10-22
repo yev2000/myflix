@@ -6,5 +6,7 @@ describe User do
   it { should validate_presence_of(:password) }
   it { should validate_presence_of(:fullname) }
   it { should have_many(:reviews)}
-  
+  it { should have_many(:video_queue_entries) }
+  it { should have_many(:queued_videos) }
+
 end
