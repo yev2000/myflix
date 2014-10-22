@@ -15,12 +15,13 @@ describe VideoQueueEntry do
   it { should allow_value(6).for(:position) }
 
   it "does not allow a video to be in a user's queue more than once" do
-    u = Fabricate(:user)
+    user = Fabricate(:user)
     video = Fabricate(:video)
-    Fabricate(:video_queue_entry, video: video, user: u, position: 1)
-    expect(VideoQueueEntry.all.size).to eq(1)
-    vqe = Fabricate.build(:video_queue_entry, video: video, user: u, position: 2)
+    Fabricate(:video_queue_entry, video: video, user: user, position: 1)
+    vqe = Fabricate.build(:video_queue_entry, video: video, user: user, position: 2)
+
     expect(vqe.save).to eq(false) 
+    expect(VideoQueueEntry.all.size).to eq(1)
   end
 
   describe "#review" do
@@ -47,7 +48,6 @@ describe VideoQueueEntry do
 
       expect(vqe.review).to be_nil
     end
-
   end
 
   describe "#rating_string" do

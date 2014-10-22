@@ -20,6 +20,7 @@ def seed_reviews
   end
 
   Video.all.each do |v|
+    puts "Creating reviews for #{v.title}"
     index = 1
     rand(0..8).times do
       r = Fabricate(:review, user: User.find(index), video: v)
