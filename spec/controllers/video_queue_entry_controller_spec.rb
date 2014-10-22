@@ -30,7 +30,7 @@ describe VideoQueueEntryController do
           let(:user2) { Fabricate(:user) }
           before { get :index, user_id: user2.id }
           
-          it("redirects to root") { expect(response).to redirect_to home_path }
+          it("redirects to home path") { expect(response).to redirect_to home_path }
           it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
         end
 

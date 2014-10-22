@@ -7,12 +7,7 @@ class VideoQueueEntryController < ApplicationController
     # we set up an instance variable to contain the array
     # of queued videos for the user in question
     # if no videos are queued, an empty array is created
-    if @user.video_queue_entries.size == 0
-      @queue_entries = []
-    else
-      @queue_entries = @user.video_queue_entries
-    end
-
+    @queue_entries = @user.video_queue_entries
   end
 
   def create
@@ -112,14 +107,11 @@ class VideoQueueEntryController < ApplicationController
     # renumber the position values of the videos in the array that is
     # passed in.  It is expected that the order of the videos in the array
     # is the intended "positional" order.
-    index = 1
-    video_queue_entry_array.each do |entry|
-      entry.position = index
+    video_queue_entry_array.each_with_index do |entry, index|
+      entry.position = index + 1
       if (entry.save == false)
         return false
       end
-
-      index += 1
     end
 
     return true
