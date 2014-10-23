@@ -8,5 +8,5 @@ describe User do
   it { should have_many(:reviews)}
   it { should have_many(:video_queue_entries) }
   it { should have_many(:queued_videos) }
-
+  it { should have_many(:sorted_video_queue_entries).order("position") }
 end

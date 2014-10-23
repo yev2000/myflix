@@ -56,6 +56,17 @@ describe VideoQueueEntryController do
             expect(assigns(:queue_entries)).to eq([vqe])
           end
 
+          it "sets @queue_entries to the queued videos, sorted by position" do
+            vqe_array = []
+            [1,2,3,4].each_with_index do |num, index|
+              vqe_array << Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: 5 - index)
+            end
+
+            get :index, user_id: user.id
+
+            expect(assigns(:queue_entries)).to eq(vqe_array.reverse)
+          end
+
         end
       end # user ID explicitly supplied
 
@@ -184,6 +195,165 @@ describe VideoQueueEntryController do
       end
     end # logged in user
   end # POST create
+
+  describe "POST update" do
+    context "no logged in user" do
+      it "redirects to the sign in page" do
+        post :update, video_queue_entry: {1 => 2, 2 => 1}
+        expect(response).to redirect_to sign_in_path
+      end
+    end
+
+    context "user is logged in" do
+      let(:user) { Fabricate(:user) }
+      before { session[:userid] = user.id }
+
+      context "user_id supplied in parameters" do
+        let(:user2) { Fabricate(:user) }
+        before { post :update, user_id: user2.id, video_queue_entry: {1 => 2, 2 => 1} }
+
+        context "user_id does not match current logged in user" do
+          it("redirects to home path") { expect(response).to redirect_to home_path }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+        end
+
+        it("sets @user to the user specified by the ID") { expect(assigns(:user)).to eq(user2) }
+      end # user ID in parameters
+
+      context "user_id not provided in parameters" do
+        it "sets @user to the current user" do
+          post :update, video_queue_entry: {1 => 2, 2 => 1}
+          expect(assigns(:user)).to eq(user)
+        end
+      end
+
+      context "valid inputs" do
+        context "full reordering" do
+          before do
+            @vqe1 = Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: 1)
+            @vqe2 = Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: 2)
+            post :update, video_queue_entry: {1 => 2, 2 => 1}
+          end
+
+          it "sets position values for queue elements to those provided in inputs" do
+            @vqe1.reload
+            @vqe2.reload
+            expect(@vqe1.position).to eq(2)
+            expect(@vqe2.position).to eq(1)
+          end
+
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+        end
+
+        context "reordering to the back" do
+          before { @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) } }
+
+          it "reorders positions starting with value 1 if the first queue item is placed after the end" do
+            post :update, video_queue_entry: {1 => 5, 2 => 2, 3 => 3, 4 => 4 }
+            @vqe_array.each { |vqe| vqe.reload }
+
+            expect(@vqe_array[0].position).to eq(4)
+            expect(@vqe_array[1].position).to eq(1)
+            expect(@vqe_array[2].position).to eq(2)
+            expect(@vqe_array[3].position).to eq(3)
+          end
+
+          it "reorders positions starting with value 1 if a middle queue item is placed after the end" do
+            post :update, video_queue_entry: {1 => 1, 2 => 5, 3 => 3, 4 => 4 }
+            @vqe_array.each { |vqe| vqe.reload }
+
+            expect(@vqe_array[0].position).to eq(1)
+            expect(@vqe_array[1].position).to eq(4)
+            expect(@vqe_array[2].position).to eq(2)
+            expect(@vqe_array[3].position).to eq(3)
+          end
+        
+        end # reordering to back
+
+      end # valid inputs
+
+      context "invalid inputs" do
+        context "non-integer position value supplied" do
+          before do
+            @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) }
+            post :update, video_queue_entry: {1 => 3, 2 => 2, 3 => 3, 4 => "foo" }
+            @vqe_array.each { |vqe| vqe.reload }
+          end
+
+          it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }          
+        end
+
+
+        context "position value < 1 supplied" do
+          before do
+            @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) }
+            post :update, video_queue_entry: {1 => 3, 2 => 2, 3 => 3, 4 => -5 }
+            @vqe_array.each { |vqe| vqe.reload }           
+          end
+
+          it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }          
+
+        end
+
+        context "duplicate position values supplied" do
+          before do
+            @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) }
+            post :update, video_queue_entry: {1 => 3, 2 => 2, 3 => 3, 4 => 1 }
+            @vqe_array.each { |vqe| vqe.reload }
+          end
+
+          it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+
+        end
+
+        context "missing values from order mapping" do
+          before do
+            @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) }
+            post :update, video_queue_entry: {1 => 3, 3 => 4, 4 => 5 }
+            @vqe_array.each { |vqe| vqe.reload }
+          end
+
+          it "does not alter queue positions" do
+            @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) }
+          end
+
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+
+        end
+
+        context "extraneous ids not belonging to user's queue" do
+          before do
+            @vqe_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: i) }
+            user2 = Fabricate(:user)
+            extra_array = [1,2,3,4].map { |i| Fabricate(:video_queue_entry, user: user2, video: Fabricate(:video), position: i) }
+
+            post :update, video_queue_entry: {1 => 2, 2 => 3, 3 => 4, 4 => 1, 5 => 5, 6 => 6 }
+            @vqe_array.each { |vqe| vqe.reload }
+          end
+
+          it "does not alter queue positions" do
+            @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) }
+          end
+
+          it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
+
+          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+
+        end
+      end # invalid inputs
+
+    end # logged in user
+
+  end # POST update
+
 
   describe "DELETE destroy" do
     before do

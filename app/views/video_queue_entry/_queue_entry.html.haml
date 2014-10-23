@@ -1,6 +1,7 @@
 %tr
   %td
-    %input.form-control(type="text" value="#{queue_entry.position}")
+    -# = text_field_tag("vqe[#{queue_entry.id}]", "#{queue_entry.position}", id: "vqe[#{queue_entry.id}]")
+    %input.form-control(type="text" name="video_queue_entry[#{queue_entry.id}]" value="#{queue_entry.position}")
   %td
     = link_to(queue_entry.video.title, video_path(queue_entry.video))
   %td
