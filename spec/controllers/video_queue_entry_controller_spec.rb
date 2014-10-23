@@ -256,6 +256,9 @@ describe VideoQueueEntryController do
             expect(@vqe_array[1].position).to eq(1)
             expect(@vqe_array[2].position).to eq(2)
             expect(@vqe_array[3].position).to eq(3)
+
+            ## alternative and possibly better assertion we can make
+            expect(user.sorted_video_queue_entries.map(&:id)).to eq([2,3,4,1])
           end
 
           it "reorders positions starting with value 1 if a middle queue item is placed after the end" do
@@ -266,6 +269,9 @@ describe VideoQueueEntryController do
             expect(@vqe_array[1].position).to eq(4)
             expect(@vqe_array[2].position).to eq(2)
             expect(@vqe_array[3].position).to eq(3)
+
+            ## alternative and possibly better assertion we can make
+            expect(user.sorted_video_queue_entries.map(&:id)).to eq([1,3,4,2])
           end
         
         end # reordering to back
@@ -296,7 +302,6 @@ describe VideoQueueEntryController do
           it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
           it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
           it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }          
-
         end
 
         context "duplicate position values supplied" do
@@ -309,7 +314,6 @@ describe VideoQueueEntryController do
           it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
           it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
           it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
-
         end
 
         context "missing values from order mapping" do
@@ -319,14 +323,9 @@ describe VideoQueueEntryController do
             @vqe_array.each { |vqe| vqe.reload }
           end
 
-          it "does not alter queue positions" do
-            @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) }
-          end
-
+          it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
           it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
-
           it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
-
         end
 
         context "extraneous ids not belonging to user's queue" do
@@ -339,14 +338,9 @@ describe VideoQueueEntryController do
             @vqe_array.each { |vqe| vqe.reload }
           end
 
-          it "does not alter queue positions" do
-            @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) }
-          end
-
+          it("does not alter queue positions") { @vqe_array.each_with_index { |vqe, index| expect(vqe.position).to eq(index+1) } }
           it("redirects to my_queue") { expect(response).to redirect_to my_queue_path }
-
           it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
-
         end
       end # invalid inputs
 
