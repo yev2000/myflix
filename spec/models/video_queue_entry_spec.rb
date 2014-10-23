@@ -90,5 +90,45 @@ describe VideoQueueEntry do
 
   end
 
+  describe "#self.renumber_positions!" do
+    it "reorders the queue entries" do
+      user = Fabricate(:user)
+      vqe1 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 9)
+      vqe2 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 7)
+      VideoQueueEntry.renumber_positions!([vqe1, vqe2])
+      vqe1.reload
+      vqe2.reload
+      expect(vqe1.position).to eq(1)
+      expect(vqe2.position).to eq(2)
+    end
+
+    it "returns true on successful reordering" do
+      user = Fabricate(:user)
+      vqe1 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 9)
+      vqe2 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 7)
+      expect(VideoQueueEntry.renumber_positions!([vqe1, vqe2])).to eq(true)
+    end
+
+    it "returns false if at least one record could not be saved" do
+      user = Fabricate(:user)
+      vqe1 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 9)
+      vqe2 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 7)
+      vqe2.video = nil
+      expect(VideoQueueEntry.renumber_positions!([vqe1, vqe2])).to eq(false)
+    end
+
+    it "does not persist any ordering changes if false is returned" do
+      user = Fabricate(:user)
+      vqe1 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 9)
+      vqe2 = Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 7)
+      vqe2.video = nil
+      VideoQueueEntry.renumber_positions!([vqe1, vqe2])
+
+      vqe1.reload
+      vqe2.reload
+      expect(vqe1.position).to eq(9)
+      expect(vqe2.position).to eq(7)
+    end
+  end # describe #self.renumber_positions!
 end
 

@@ -1,3 +1,5 @@
+require Rails.root.to_s + "/lib/myflix_exception"
+
 class VideoQueueEntryController < ApplicationController
   before_action :require_user
   before_action :set_user
@@ -62,7 +64,7 @@ class VideoQueueEntryController < ApplicationController
       @queue_entry.destroy
 
       # and re-sequence the remaining videos in the user's queue so that they are in order and "tight"
-      if adjust_positions(@user.video_queue_entries)
+      if VideoQueueEntry.renumber_positions!(@user.video_queue_entries)
         flash[:success] = "Removed #{@queue_entry.video.title} from the queue."
       else
         # should not ever happen but we catch this case here
@@ -75,84 +77,70 @@ class VideoQueueEntryController < ApplicationController
   end
 
   def update
-    # now as a result of position value changes, we may the queue elements not starting at the 1 position
-    # so let's sort the array by position and renumber
-    VideoQueueEntry.transaction do
-      update_queue_items(params[:video_queue_entry])
+    # Make changes to the positions of items in the user's video queue by
+    # processing the submitted post parameters.  The post parameters will contain
+    # a mapping of video queue entry ID to new position value.
+    begin
+      mapping_array = validate_position_update_parameters(params[:video_queue_entry])
+      VideoQueueEntry.update_queue_positions!(mapping_array) if mapping_array
+    rescue QueuePositionError => exception_val
+      flash[:danger] = exception_val.message
     end
 
     redirect_to my_queue_path
   end
 
-
   private
 
-  def normalize_queue_item_positions!(queue_item_array)
-    # now that we know the array contains only the relevant user's entries,
-    # we need to sort it so that we can renumber it starting from 1, but also
-    # to make sure that no duplicate positions are being supplied
-    queue_item_array.sort! do |x,y|
-      if (x.position == y.position)
-        flash[:danger] = "You cannot give the same position to more than one video.  \
-          Videos #{x.video.title} and #{y.video.title} were given the same position."
-        raise ActiveRecord::Rollback
-      end
+  def validate_position_parameter_string(parameter_input_string)
+    new_position_value = parameter_input_string.to_i
 
-      x.position <=> y.position
-    end
-
-    # and let's renumber starting at 1 (this is to handle the case that some ID
-    # was moved to the end of the array from the front or middle without other
-    # positions being renumbered by the user)
-    # we can reuse the adjust_positions() method we had written previously to
-    # deal with the destroy case.  We pass in flag to make the failed save
-    # raise an exception since we need that to roll back the enveloping
-    # transaction.
-    adjust_positions(queue_item_array, true)
+    # if the position is < 1, this means that the parameter value is either not representing a number
+    # or is a zero or negative value.  We will reject all of these
+    return nil if new_position_value < 1
+    new_position_value
   end
 
-  def update_queue_items(id_to_position_mapping_array)
-    replacement_array = []
-
-    id_to_position_mapping_array.each do |key,value|
-      vqe = VideoQueueEntry.find_by(id: key)
-      if (vqe)
-        # queue entry ids that are passed in must all belong to the passed in user (or current_user if user_id was not supplied)
-        if vqe.user != @user
-          flash[:danger] = "Video queue positions cannot be provided for a different user's queue."
-          raise ActiveRecord::Rollback 
-        end
-
-        vqe.position = value.to_i
-
-        # if the position is < 1, this means that the parameter value is either not representing a number
-        # or is a zero or negative value.  We will reject all of these
-        if vqe.position < 1
-          flash[:danger] = "Queue positions must be specified as integers, 1 or larger"
-          raise ActiveRecord::Rollback 
-        end
-        
-        replacement_array << vqe
-      end
-
-      # we don't need to worry about an else clause here - because if we're skipping some IDs that are invalid, but
-      # all of the IDs that we do need are provided, we will get a match in terms of replacement array size versus
-      # the user's video_queue_entry size -- see below.
-    end
-
+  def check_for_entry_completeness(mapping_array)
     # if the array size does not match the user's queue, then we have supplied too many or too few
     # entries
-    if replacement_array.size != @user.video_queue_entries.size
-      if replacement_array.size < @user.video_queue_entries.size
-        flash[:danger] = "Some position values for videos in the queue were not provided."
-      elsif replacement_array.size > @user.video_queue_entries.size
-        flash[:danger] = "Positions for one or more videos were provided more than once."
-      end
-
-      raise ActiveRecord::Rollback 
+    case
+    when mapping_array.length < @user.video_queue_entries.size
+      raise QueuePositionError, "Some position values for videos in the queue were not provided."
+    when mapping_array.length > @user.video_queue_entries.size
+      raise QueuePositionError, "Positions for one or more videos were provided more than once."
     end
 
-    normalize_queue_item_positions!(replacement_array)
+    return false
+  end
+
+  def validate_position_update_parameters(id_to_position_mapping_params)
+    validated_mapping_array = []
+
+    id_to_position_mapping_params.each do |queue_entry_id,position_string|
+      vqe = VideoQueueEntry.find_by(id: queue_entry_id)
+
+      # this is the case when an entry ID is invalid
+      return nil if vqe.nil?
+
+      # queue entry ids that are passed in must all belong to the passed in user
+      # (or current_user if user_id was not supplied)
+      raise(QueuePositionError, "Video queue positions cannot be provided for a different user's queue.") unless vqe.user == @user
+
+      # make sure position value that is being input in the parameters is
+      # a valid number that is greater than 0
+      new_position_value = validate_position_parameter_string(position_string)
+      raise(QueuePositionError, "Queue positions must be specified as integers, 1 or larger") if new_position_value.nil?
+
+      # finally if all is well, accumulate the queue_entry to position mapping
+      validated_mapping_array << {entry: vqe, new_position: new_position_value}
+    end
+
+    # we need to confirm that all IDs for the user's queue were provided.
+    # If any were omitted or provided more than once, that is an error
+    check_for_entry_completeness(validated_mapping_array)
+
+    return validated_mapping_array
   end
 
   def set_user
@@ -182,19 +170,11 @@ class VideoQueueEntryController < ApplicationController
     params.require(:video_queue_entry).permit(:video_id, :user_id, :position)
   end
 
-  def adjust_positions(video_queue_entry_array, raise_exception_on_failed_save = false)
-    # renumber the position values of the videos in the array that is
-    # passed in.  It is expected that the order of the videos in the array
-    # is the intended "positional" order.
-    video_queue_entry_array.each_with_index do |entry, index|
-      entry.position = index + 1
-      if (entry.save == false)
-        raise ActiveRecord::Rollback if raise_exception_on_failed_save
-        return false
-      end
-    end
-
-    return true
-  end
-
 end
+
+
+#if (<VideoQueueEntry.transaction do> { stuff }  == <success>)
+#  flash[:success] = "OK!"
+#else
+#  flash [:danger] = "Tx failed!"
+#end
