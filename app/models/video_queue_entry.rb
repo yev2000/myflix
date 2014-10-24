@@ -21,10 +21,20 @@ class VideoQueueEntry < ActiveRecord::Base
     video_review = Review.find_by(video_id: video.id, user_id: user.id)
   end
 
-  def rating_string
+  def rating_summary_string
     # returns the string representation of a user's review of the video
     # associated with this queue entry
-    self.review ? self.review.rating_string : "Not rated"
+    self.review ? self.review.rating_summary_string : Review.unrated_string
+  end
+
+  def rating_star_string
+    # returns the string representation of a user's review of the video
+    # associated with this queue entry
+    self.review ? self.review.rating_star_string : Review.unrated_string
+  end
+
+  def rating_value
+    self.review ? self.review.rating : Review.unrated_value
   end
 
   def self.update_queue_positions!(entry_to_position_mapping_array)

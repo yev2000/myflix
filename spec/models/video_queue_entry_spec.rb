@@ -50,7 +50,7 @@ describe VideoQueueEntry do
     end
   end
 
-  describe "#rating_string" do
+  describe "#rating_summary_string" do
     before do
       user = Fabricate(:user)
       video = Fabricate(:video)
@@ -59,11 +59,11 @@ describe VideoQueueEntry do
 
     it "returns the string representation of the rating of the review associated with the queue entry's user and video" do
       review = Fabricate(:review, video: Video.first, user: User.first, rating: 4)
-      expect(VideoQueueEntry.first.rating_string).to eq("4 / 5")
+      expect(VideoQueueEntry.first.rating_summary_string).to eq("4 / 5")
     end
 
     it "returns 'Not rated' if no review was found associated with the queue entry's user and video" do
-      expect(VideoQueueEntry.first.rating_string).to eq("Not rated")
+      expect(VideoQueueEntry.first.rating_summary_string).to eq("Not rated")
     end
 
   end
@@ -130,5 +130,21 @@ describe VideoQueueEntry do
       expect(vqe2.position).to eq(7)
     end
   end # describe #self.renumber_positions!
+
+  describe "#rating_value" do
+    before do
+      @user = Fabricate(:user)
+      @vqe = Fabricate(:video_queue_entry, video: Fabricate(:video), user: @user, position: 1)
+    end
+
+    it "returns the unrated_value string if there is no rating that the user provided for the video referenced by the queue entry" do
+      expect(@vqe.rating_value).to eq(Review.unrated_value)
+    end
+
+    it "returns the value of the rating in the review associated with the video of the queue entry" do
+      review = Fabricate(:review, video: @vqe.video, rating: 4, user: @user)
+      expect(@vqe.rating_value).to eq(4)
+    end
+  end #rating_value
 end
 

@@ -46,15 +46,15 @@ describe Review do
       expect(review2.save).to eq(false)
     end
 
-    describe "#rating_string" do
+    describe "#rating_summary_string" do
       it "returns 'Not rated' if the rating is 0" do
         review = Fabricate(:review, rating: 0)
-        expect(review.rating_string).to eq("Not rated")
+        expect(review.rating_summary_string).to eq("Not rated")
       end
 
       it "returns '<number> / 5' for a rating of 1 to 5" do
         review = Fabricate(:review, rating: 4)
-        expect(review.rating_string).to eq("4 / 5")
+        expect(review.rating_summary_string).to eq("4 / 5")
       end
     end
 

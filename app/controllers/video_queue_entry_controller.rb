@@ -81,9 +81,20 @@ class VideoQueueEntryController < ApplicationController
     # processing the submitted post parameters.  The post parameters will contain
     # a mapping of video queue entry ID to new position value.
     begin
-      mapping_array = validate_position_update_parameters(params[:video_queue_entry])
-      VideoQueueEntry.update_queue_positions!(mapping_array) if mapping_array
+      position_mapping_array = validate_position_update_parameters(params[:video_queue_entry])
+      VideoQueueEntry.update_queue_positions!(position_mapping_array) if position_mapping_array
     rescue QueuePositionError => exception_val
+      flash[:danger] = exception_val.message
+    end
+
+    begin
+      review_mapping_array = validate_review_update_parameters(params[:video_rating], @user)
+
+      # the review mapping array will contain entries that help determine if
+      # we found an already reviewed video, or whether we have a video with
+      # no pre-exisiting review by a user
+      Video.update_review_ratings!(review_mapping_array, @user) if review_mapping_array
+    rescue QueueReviewError => exception_val
       flash[:danger] = exception_val.message
     end
 
@@ -101,6 +112,16 @@ class VideoQueueEntryController < ApplicationController
     new_position_value
   end
 
+  def validate_rating_parameter_string(parameter_input_string)
+    new_rating_value = parameter_input_string.to_i
+
+    # if we got a zero, it may be that the string passed in was no number at all
+    # so double-check if it's a number representation
+    return nil if (new_rating_value < 1 && parameter_input_string != "0")
+    
+    new_rating_value
+  end
+
   def check_for_entry_completeness(mapping_array)
     # if the array size does not match the user's queue, then we have supplied too many or too few
     # entries
@@ -116,6 +137,8 @@ class VideoQueueEntryController < ApplicationController
 
   def validate_position_update_parameters(id_to_position_mapping_params)
     validated_mapping_array = []
+
+    return nil if id_to_position_mapping_params.nil?
 
     id_to_position_mapping_params.each do |queue_entry_id,position_string|
       vqe = VideoQueueEntry.find_by(id: queue_entry_id)
@@ -140,6 +163,36 @@ class VideoQueueEntryController < ApplicationController
     # If any were omitted or provided more than once, that is an error
     check_for_entry_completeness(validated_mapping_array)
 
+    return validated_mapping_array
+  end
+
+  def validate_review_update_parameters(video_id_to_position_mapping_params, user)
+    validated_mapping_array = []
+
+    return nil if video_id_to_position_mapping_params.nil?
+
+    video_id_to_position_mapping_params.each do |video_id,rating_string|
+      video = Video.find_by(id: video_id)
+
+      # this is the case when an entry ID is invalid
+      return nil if video.nil?
+
+      # make sure position value that is being input in the parameters is
+      # a valid number that is greater than 0
+      new_rating_value = validate_rating_parameter_string(rating_string)
+      raise(QueueRatingError, "Video Review ratings must be specified as integers, 0 - 5") if new_rating_value.nil?
+
+      # determine if there exists a review by the user.  If so, add the review to the mapping
+      # if not, then we record that there is no review but we know for what video a new
+      # review need to be created
+      validated_mapping_array << {
+        video: video, 
+        review: video.reviews.find_by(user_id: user.id),
+        new_rating: new_rating_value
+      }
+    end
+
+    # we do not check for entry completeness.  If some reviews were omitted this is not a problem.
     return validated_mapping_array
   end
 

@@ -7,7 +7,7 @@
   %td
     = button_to "Play", nil, class: "btn btn-default"
   %td
-    = queue_entry.rating_string 
+    = select_tag("video_rating[#{queue_entry.video.id}]", options_for_select(ReviewsController.rating_choice_selection_options, queue_entry.rating_value), class: "form-control")
   %td
     - queue_entry.categories.each do |c|
       = link_to c.name, category_path(c)

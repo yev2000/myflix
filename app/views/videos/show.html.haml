@@ -23,8 +23,7 @@
       - if @review
         = bootstrap_form_for([@video, @review]) do |f|
           %label Rate this video
-          -### REFACTOR Candidate for pushing down to a model (to compute star ratings string array)
-          = f.select :rating, [["Not Rated", 0]] + ((1..5).inject([]) { |memo,n| memo << ["#{n} " + "Star".pluralize(n), n ] }).reverse, {label: "Rating"}
+          = f.select :rating, ReviewsController.rating_choice_selection_options, {label: "Rating"}
           = f.text_field :title, label: "Review Title"
           = f.text_area :body, label: "Write Review", rows: 6
           = f.submit "Submit"

@@ -47,6 +47,25 @@ class Video < ActiveRecord::Base
     self.where("title #{DATABASE_OPERATOR[:like_operator]} ?", "%#{title_name}%").order("created_at DESC")
   end
 
+  def self.update_review_ratings!(entry_to_rating_mapping_array, user)
+    # incoming array is mapping videos to updated ratings and contains an entry for a review, if
+    # an existing review is found.
+    entry_to_rating_mapping_array.each do |entry|
+      review = entry[:review]
+      if review
+        # this will save the review even if it's invalid
+        review.update_attribute(:rating, entry[:new_rating])
+      else
+        # we have a video which has not yet been reviewed by the user
+        # so we have to create a "blank" review
+        Review.rating_only_review_create!(rating: entry[:new_rating], video: entry[:video], user: user)
+
+        ### to do: deal with errors
+      end
+    end
+  end
+
+
   def average_rating_string
     avg_val = self.average_rating
     if avg_val > 0

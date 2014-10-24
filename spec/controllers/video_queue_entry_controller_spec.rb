@@ -228,6 +228,72 @@ describe VideoQueueEntryController do
       end
 
       context "valid inputs" do
+        context "rating change" do
+          before do
+            @other_user1 = Fabricate(:user)
+            @other_user2 = Fabricate(:user)
+            @vqe = Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: 1)
+            Fabricate(:review, video: @vqe.video, user: @other_user1, rating: Review.unrated_value)
+            Fabricate(:review, video: @vqe.video, user: @other_user2, rating: Review.unrated_value)
+          end
+
+          context "existing reviewed video" do
+
+            it "redirects to my_queue" do
+              Fabricate(:review, video: @vqe.video, user: user, rating: Review.unrated_value)
+              post :update, video_rating: {1 => 2}             
+              expect(response).to redirect_to my_queue_path
+            end
+
+            it "sets the rating of an un-rated review to a rated value" do
+              Fabricate(:review, video: @vqe.video, user: user, rating: Review.unrated_value)
+              post :update, video_rating: {1 => 2}
+              expect(user.reviews.find_by(video_id: @vqe.video.id).rating).to eq(2)
+            end
+
+            it "does not modify reviews of other users for this video" do
+              Fabricate(:review, video: @vqe.video, user: user, rating: Review.unrated_value)
+              post :update, video_rating: {1 => 2}
+              expect(@other_user1.reviews.first.rating).to eq(Review.unrated_value)
+              expect(@other_user2.reviews.first.rating).to eq(Review.unrated_value)
+            end
+
+            it "sets the rating of a rated review to an un-rated value" do
+              Fabricate(:review, video: @vqe.video, user: user, rating: 4)
+              post :update, video_rating: {1 => Review.unrated_value}
+              expect(user.reviews.find_by(video_id: @vqe.video.id).rating).to eq(Review.unrated_value)
+            end
+
+            it "sets the rating of a rated review to a different rated value" do
+              Fabricate(:review, video: @vqe.video, user: user, rating: 4)
+              post :update, video_rating: {1 => 2}
+              expect(user.reviews.find_by(video_id: @vqe.video.id).rating).to eq(2)
+            end
+          end
+
+          context "not reviewed video" do
+            it "creates a review entry with a rated value" do
+              post :update, video_rating: {1 => 2}
+              expect(user.reviews.find_by(video_id: @vqe.video.id).rating).to eq(2)
+            end
+
+            it "creates a review entry with an un-rated value" do
+              post :update, video_rating: {1 => Review.unrated_value}
+              expect(user.reviews.find_by(video_id: @vqe.video.id).rating).to eq(Review.unrated_value)
+            end
+
+            it "adds just a single new review" do
+              post :update, video_rating: {1 => Review.unrated_value}
+              expect(Review.all.size).to eq(3)
+            end
+          end
+
+          context "invalid video id" do
+            it "does not change any ratings"
+            it "does not add any reviews"
+          end
+        end
+
         context "full reordering" do
           before do
             @vqe1 = Fabricate(:video_queue_entry, user: user, video: Fabricate(:video), position: 1)
