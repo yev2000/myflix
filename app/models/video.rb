@@ -58,9 +58,9 @@ class Video < ActiveRecord::Base
       else
         # we have a video which has not yet been reviewed by the user
         # so we have to create a "blank" review
-        Review.rating_only_review_create!(rating: entry[:new_rating], video: entry[:video], user: user)
+        review = Review.rating_only_review_create!(rating: entry[:new_rating], video: entry[:video], user: user)
 
-        ### to do: deal with errors
+        raise(ReviewCreationError, "Unable to create a review for video #{entry[:video] ? entry[:video].title : ''}") if review.nil?
       end
     end
   end

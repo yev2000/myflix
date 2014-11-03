@@ -78,8 +78,9 @@ class VideoQueueEntryController < ApplicationController
 
   def update
     # Make changes to the positions of items in the user's video queue by
-    # processing the submitted post parameters.  The post parameters will contain
-    # a mapping of video queue entry ID to new position value.
+    # processing the submitted post parameters.  The video_queue_entry key in
+    # post parameters will contain a mapping of
+    # video queue entry ID to new position value.
     begin
       position_mapping_array = validate_position_update_parameters(params[:video_queue_entry])
       VideoQueueEntry.update_queue_positions!(position_mapping_array) if position_mapping_array
@@ -87,6 +88,9 @@ class VideoQueueEntryController < ApplicationController
       flash[:danger] = exception_val.message
     end
 
+    # Make changes to the review rating values for the videos in the user's video queue by
+    # processing the submitted post parameters.  The video_rating key in the post parameters
+    # will contain a mapping of video ID to new rating value.
     begin
       review_mapping_array = validate_review_update_parameters(params[:video_rating], @user)
 
@@ -95,6 +99,8 @@ class VideoQueueEntryController < ApplicationController
       # no pre-exisiting review by a user
       Video.update_review_ratings!(review_mapping_array, @user) if review_mapping_array
     rescue QueueReviewError => exception_val
+      flash[:danger] = exception_val.message
+    rescue ReviewCreationError => exception_val
       flash[:danger] = exception_val.message
     end
 
@@ -183,8 +189,8 @@ class VideoQueueEntryController < ApplicationController
       raise(QueueRatingError, "Video Review ratings must be specified as integers, 0 - 5") if new_rating_value.nil?
 
       # determine if there exists a review by the user.  If so, add the review to the mapping
-      # if not, then we record that there is no review but we know for what video a new
-      # review need to be created
+      # if not, then we record that there is no review (review key will map to nil)
+      # but we know for what video a new review need to be created (since video key will map to non-nil video)
       validated_mapping_array << {
         video: video, 
         review: video.reviews.find_by(user_id: user.id),
@@ -224,10 +230,3 @@ class VideoQueueEntryController < ApplicationController
   end
 
 end
-
-
-#if (<VideoQueueEntry.transaction do> { stuff }  == <success>)
-#  flash[:success] = "OK!"
-#else
-#  flash [:danger] = "Tx failed!"
-#end

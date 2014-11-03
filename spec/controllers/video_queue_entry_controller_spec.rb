@@ -289,8 +289,17 @@ describe VideoQueueEntryController do
           end
 
           context "invalid video id" do
-            it "does not change any ratings"
-            it "does not add any reviews"
+            before { post :update, video_rating: {4 => 2} }
+
+            it "does not change any ratings" do
+              expect(@other_user1.reviews.first.rating).to eq(Review.unrated_value)
+              expect(@other_user2.reviews.first.rating).to eq(Review.unrated_value)
+            end
+
+            it "does not add any reviews" do
+              expect(Review.all.size).to eq(2)
+            end
+
           end
         end
 
