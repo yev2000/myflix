@@ -1,12 +1,13 @@
 %tr
   %td
-    %input.form-control(type="text" value="#{queue_entry.position}")
+    -# = text_field_tag("vqe[#{queue_entry.id}]", "#{queue_entry.position}", id: "vqe[#{queue_entry.id}]")
+    %input.form-control(type="text" name="video_queue_entry[#{queue_entry.id}]" value="#{queue_entry.position}")
   %td
     = link_to(queue_entry.video.title, video_path(queue_entry.video))
   %td
     = button_to "Play", nil, class: "btn btn-default"
   %td
-    = queue_entry.rating_string 
+    = select_tag("video_rating[#{queue_entry.video.id}]", options_for_select(ReviewsController.rating_choice_selection_options, queue_entry.rating_value), class: "form-control")
   %td
     - queue_entry.categories.each do |c|
       = link_to c.name, category_path(c)

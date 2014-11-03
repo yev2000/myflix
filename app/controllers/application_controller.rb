@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
   ########################
 
   def current_user_get
-    @current_user ||= User.find(session[:userid]) if session[:userid]
+    @current_user ||= User.find_by(id: session[:userid]) if session[:userid]
   end
 
   def logged_in?

@@ -1,3 +1,5 @@
+require Rails.root.to_s + "/lib/myflix_exception"
+
 class VideoQueueEntryController < ApplicationController
   before_action :require_user
   before_action :set_user
@@ -7,7 +9,7 @@ class VideoQueueEntryController < ApplicationController
     # we set up an instance variable to contain the array
     # of queued videos for the user in question
     # if no videos are queued, an empty array is created
-    @queue_entries = @user.video_queue_entries
+    @queue_entries = @user.sorted_video_queue_entries
   end
 
   def create
@@ -62,7 +64,7 @@ class VideoQueueEntryController < ApplicationController
       @queue_entry.destroy
 
       # and re-sequence the remaining videos in the user's queue so that they are in order and "tight"
-      if adjust_positions(@user.video_queue_entries)
+      if VideoQueueEntry.renumber_positions!(@user.video_queue_entries)
         flash[:success] = "Removed #{@queue_entry.video.title} from the queue."
       else
         # should not ever happen but we catch this case here
@@ -74,7 +76,131 @@ class VideoQueueEntryController < ApplicationController
     redirect_to my_queue_path
   end
 
+  def update
+    # Make changes to the positions of items in the user's video queue by
+    # processing the submitted post parameters.  The video_queue_entry key in
+    # post parameters will contain a mapping of
+    # video queue entry ID to new position value.
+    begin
+      position_mapping_array = validate_position_update_parameters(params[:video_queue_entry])
+      VideoQueueEntry.update_queue_positions!(position_mapping_array) if position_mapping_array
+    rescue QueuePositionError => exception_val
+      flash[:danger] = exception_val.message
+    end
+
+    # Make changes to the review rating values for the videos in the user's video queue by
+    # processing the submitted post parameters.  The video_rating key in the post parameters
+    # will contain a mapping of video ID to new rating value.
+    begin
+      review_mapping_array = validate_review_update_parameters(params[:video_rating], @user)
+
+      # the review mapping array will contain entries that help determine if
+      # we found an already reviewed video, or whether we have a video with
+      # no pre-exisiting review by a user
+      Video.update_review_ratings!(review_mapping_array, @user) if review_mapping_array
+    rescue QueueReviewError => exception_val
+      flash[:danger] = exception_val.message
+    rescue ReviewCreationError => exception_val
+      flash[:danger] = exception_val.message
+    end
+
+    redirect_to my_queue_path
+  end
+
   private
+
+  def validate_position_parameter_string(parameter_input_string)
+    new_position_value = parameter_input_string.to_i
+
+    # if the position is < 1, this means that the parameter value is either not representing a number
+    # or is a zero or negative value.  We will reject all of these
+    return nil if new_position_value < 1
+    new_position_value
+  end
+
+  def validate_rating_parameter_string(parameter_input_string)
+    new_rating_value = parameter_input_string.to_i
+
+    # if we got a zero, it may be that the string passed in was no number at all
+    # so double-check if it's a number representation
+    return nil if (new_rating_value < 1 && parameter_input_string != "0")
+    
+    new_rating_value
+  end
+
+  def check_for_entry_completeness(mapping_array)
+    # if the array size does not match the user's queue, then we have supplied too many or too few
+    # entries
+    case
+    when mapping_array.length < @user.video_queue_entries.size
+      raise QueuePositionError, "Some position values for videos in the queue were not provided."
+    when mapping_array.length > @user.video_queue_entries.size
+      raise QueuePositionError, "Positions for one or more videos were provided more than once."
+    end
+
+    return false
+  end
+
+  def validate_position_update_parameters(id_to_position_mapping_params)
+    validated_mapping_array = []
+
+    return nil if id_to_position_mapping_params.nil?
+
+    id_to_position_mapping_params.each do |queue_entry_id,position_string|
+      vqe = VideoQueueEntry.find_by(id: queue_entry_id)
+
+      # this is the case when an entry ID is invalid
+      return nil if vqe.nil?
+
+      # queue entry ids that are passed in must all belong to the passed in user
+      # (or current_user if user_id was not supplied)
+      raise(QueuePositionError, "Video queue positions cannot be provided for a different user's queue.") unless vqe.user == @user
+
+      # make sure position value that is being input in the parameters is
+      # a valid number that is greater than 0
+      new_position_value = validate_position_parameter_string(position_string)
+      raise(QueuePositionError, "Queue positions must be specified as integers, 1 or larger") if new_position_value.nil?
+
+      # finally if all is well, accumulate the queue_entry to position mapping
+      validated_mapping_array << {entry: vqe, new_position: new_position_value}
+    end
+
+    # we need to confirm that all IDs for the user's queue were provided.
+    # If any were omitted or provided more than once, that is an error
+    check_for_entry_completeness(validated_mapping_array)
+
+    return validated_mapping_array
+  end
+
+  def validate_review_update_parameters(video_id_to_position_mapping_params, user)
+    validated_mapping_array = []
+
+    return nil if video_id_to_position_mapping_params.nil?
+
+    video_id_to_position_mapping_params.each do |video_id,rating_string|
+      video = Video.find_by(id: video_id)
+
+      # this is the case when an entry ID is invalid
+      return nil if video.nil?
+
+      # make sure position value that is being input in the parameters is
+      # a valid number that is greater than 0
+      new_rating_value = validate_rating_parameter_string(rating_string)
+      raise(QueueRatingError, "Video Review ratings must be specified as integers, 0 - 5") if new_rating_value.nil?
+
+      # determine if there exists a review by the user.  If so, add the review to the mapping
+      # if not, then we record that there is no review (review key will map to nil)
+      # but we know for what video a new review need to be created (since video key will map to non-nil video)
+      validated_mapping_array << {
+        video: video, 
+        review: video.reviews.find_by(user_id: user.id),
+        new_rating: new_rating_value
+      }
+    end
+
+    # we do not check for entry completeness.  If some reviews were omitted this is not a problem.
+    return validated_mapping_array
+  end
 
   def set_user
     if params[:user_id]
@@ -94,27 +220,13 @@ class VideoQueueEntryController < ApplicationController
       # then someone is looking for the queue for a user other than
       # the currently logged in user.  We want to forbid that
       # unless later we add some "Admin" level functionality
-      flash[:danger] = "You can only see your own queue.  You cannot view the queue for another user."
+      flash[:danger] = "You can only see and edit your own queue.  You cannot view or edit the queue for another user."
       return redirect_to home_path
     end
   end
 
   def video_queue_params
     params.require(:video_queue_entry).permit(:video_id, :user_id, :position)
-  end
-
-  def adjust_positions(video_queue_entry_array)
-    # renumber the position values of the videos in the array that is
-    # passed in.  It is expected that the order of the videos in the array
-    # is the intended "positional" order.
-    video_queue_entry_array.each_with_index do |entry, index|
-      entry.position = index + 1
-      if (entry.save == false)
-        return false
-      end
-    end
-
-    return true
   end
 
 end

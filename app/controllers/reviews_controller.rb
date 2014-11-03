@@ -24,6 +24,12 @@ class ReviewsController < ApplicationController
     end
   end
 
+  def self.rating_choice_selection_options
+    Review.rating_choices_string_array.inject([]) { |memo, str| memo << [str, str[0].to_i] }
+  end
+
+  private
+
   def review_params
     params.require(:review).permit(:title, :body, :rating)
   end

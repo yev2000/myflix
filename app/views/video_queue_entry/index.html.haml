@@ -4,15 +4,20 @@
       %article
         %header
           %h2 My Queue
-        %table.table
-          %thead
-            %tr
-              %th(width="10%") List Order
-              %th(width="30%") Video Title
-              %th(width="10%") Play
-              %th(width="20%") Rating
-              %th(width="15%") Genre
-              %th(width="15%") Remove
-          %tbody
-            - @queue_entries.each do |queue_entry|
-              = render "queue_entry", queue_entry: queue_entry
+        - if @queue_entries.size > 0
+          = form_tag(update_queue_path, method: :post) do
+            %table.table
+              %thead
+                %tr
+                  %th(width="10%") List Order
+                  %th(width="30%") Video Title
+                  %th(width="10%") Play
+                  %th(width="20%") Rating
+                  %th(width="15%") Genre
+                  %th(width="15%") Remove
+              %tbody
+                - @queue_entries.each do |queue_entry|
+                  = render "queue_entry", queue_entry: queue_entry
+            = submit_tag "Update Instant Queue", class: "btn btn-default"
+              
+
