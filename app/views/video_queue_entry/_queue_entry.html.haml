@@ -1,7 +1,8 @@
 %tr
   %td
     -# = text_field_tag("vqe[#{queue_entry.id}]", "#{queue_entry.position}", id: "vqe[#{queue_entry.id}]")
-    %input.form-control(type="text" name="video_queue_entry[#{queue_entry.id}]" value="#{queue_entry.position}")
+    -# %input.form-control(type="text" name="video_queue_entry[#{queue_entry.id}]" value="#{queue_entry.position}", data="video-id-#{queue_entry.video.id}")
+    = text_field_tag "video_queue_entry[#{queue_entry.id}]", queue_entry.position, data: {video_id: queue_entry.video.id}, class: "form-control"
   %td
     = link_to(queue_entry.video.title, video_path(queue_entry.video))
   %td
