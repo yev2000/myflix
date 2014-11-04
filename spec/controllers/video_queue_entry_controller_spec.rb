@@ -7,23 +7,17 @@ describe VideoQueueEntryController do
   describe "GET index" do
     context "no logged in user" do
       context "user_id parameter is supplied" do
-        it "redirects to the sign in page" do
-          get :index, user_id: 1
-          expect(response).to redirect_to sign_in_path
-        end
+        it_behaves_like("require_sign_in") { let(:action) { get :index, user_id: 1 } }
       end
   
       context "user_id is not supplied" do
-        it "redirects to the sign in page" do
-          get :index
-          expect(response).to redirect_to sign_in_path
-        end
+        it_behaves_like("require_sign_in") { let(:action) { get :index } }
       end
     end # no logged in user
 
     context "logged in user" do
       let(:user) { Fabricate(:user) }
-      before { session[:userid] = user.id }
+      before { set_current_user(user) }
 
       context "user_id parameter supplied" do
         context "user_id does not match current logged in user" do
@@ -85,8 +79,7 @@ describe VideoQueueEntryController do
 
         context "a video exists in the user's queue" do
           it "sets @queue_entries" do
-            video = Fabricate(:video)
-            vqe = Fabricate(:video_queue_entry, user: user, video: video)
+            vqe = Fabricate(:video_queue_entry, user: user, video: Fabricate(:video))
 
             get :index
             expect(assigns(:queue_entries)).to eq([vqe])
@@ -103,20 +96,18 @@ describe VideoQueueEntryController do
     end
 
     context "no logged in user" do
-      it "redirects to the sign in page when user ID is supplied in parameters" do
-        post :create, user_id: 1, video_id: 1
-        expect(response).to redirect_to sign_in_path
+      context "user ID supplied in parameters" do
+        it_behaves_like("require_sign_in") { let(:action) { post :create, user_id: 1, video_id: 1 } }
       end
 
-      it "redirects to the sign in page if no user ID supplied in parameters" do
-        post :create, video_id: 1
-        expect(response).to redirect_to sign_in_path
+      context "no user ID supplied in parameters" do
+        it_behaves_like("require_sign_in") { let(:action) { post :create, video_id: 1 } }
       end
     end # no logged in user
 
     context "logged in user" do
       let(:user) { Fabricate(:user) }
-      before { session[:userid] = user.id }
+      before { set_current_user(user) }
 
       context "user_id supplied in parameters" do
         context "user_id does not match current logged in user" do
@@ -198,15 +189,12 @@ describe VideoQueueEntryController do
 
   describe "POST update" do
     context "no logged in user" do
-      it "redirects to the sign in page" do
-        post :update, video_queue_entry: {1 => 2, 2 => 1}
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { post :update, video_queue_entry: {1 => 2, 2 => 1} } }
     end
 
     context "user is logged in" do
       let(:user) { Fabricate(:user) }
-      before { session[:userid] = user.id }
+      before { set_current_user(user) }
 
       context "user_id supplied in parameters" do
         let(:user2) { Fabricate(:user) }
@@ -431,15 +419,12 @@ describe VideoQueueEntryController do
     end
 
     context "no logged in user" do
-      it "redirects to the sign in page" do
-        delete :destroy, user_id: 1, id: 1
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { delete :destroy, user_id: 1, id: 1 } }
     end # no logged in user
 
     context "logged in user" do
       let(:user) { Fabricate(:user) }
-      before { session[:userid] = user.id }
+      before { set_current_user(user) }
 
       context "user_id in params does not match current logged in user" do
         let(:user2) { Fabricate(:user) }

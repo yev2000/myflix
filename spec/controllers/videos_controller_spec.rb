@@ -5,10 +5,7 @@ require Rails.root.to_s + "/lib/seed_support"
 describe VideosController do 
   describe "GET index" do
     context "no logged in user" do
-      it "redirects to the front page" do
-        get :index
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { get :index } }
     end
   end
 
@@ -20,26 +17,14 @@ describe VideosController do
 
   describe "GET show" do
     context "no logged in user" do
-      it "redirects to the sign in page" do
-        get :show, {id: "1"}
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { get :show, {id: "1"} } }
     end
 
     context "user is logged in" do
-      before do
-        u = Fabricate(:user)
-        session[:userid] = 1
-      end
+      before { set_current_user }
 
-      it "sets the @video instance variable to nil if there are no videos in the database" do
-        get :show, {id: "1"}
-        expect(assigns(:video)).to be_nil
-      end
-
-      it "redirects to the videos/index URL if there are no videos in the database" do
-        get :show, {id: "1"}
-        expect(response).to redirect_to videos_path
+      context "no videos in database" do
+        it_behaves_like("require_valid_video") { let(:action) { get :show, {id: "1"} } }
       end
 
       it "sets the @video instance variable to the record identified by the id parameter if there is a single video in the system" do
@@ -67,20 +52,14 @@ describe VideosController do
         expect(response).to render_template :show
       end
 
-      it "redirects to the /videos URL if the videos identified by the ID does not exist in the database" do
-        video1 = Fabricate(:video)
-        video2 = Fabricate(:video)
-        
-        get :show, {id: "3"}
-        expect(response).to redirect_to videos_path
-      end
-
-      it "sets @video to nil if the video identified by the id parameter does not exist" do
-        video1 = Fabricate(:video)
-        video2 = Fabricate(:video)
-        
-        get :show, {id: "3"}
-        assigns(:video).should be_nil
+      context "parameter ID does not match existing video in the database" do
+        it_behaves_like("require_valid_video") do
+          let(:action) do
+            video1 = Fabricate(:video)
+            video2 = Fabricate(:video)
+            get :show, {id: "3"}
+          end
+        end
       end
 
       it "sets @review to a new/blank review if the current user has not yet reviewed the shown video" do
@@ -90,8 +69,7 @@ describe VideosController do
       end
 
       it "sets @review to nil if the user has already reviewed the video being shown" do
-        video = Fabricate(:video)
-        review = Fabricate(:review, video: video, user: User.first)
+        review = Fabricate(:review, video: Fabricate(:video), user: User.first)
         get :show, {id: "1"}
         expect(assigns(:review)).to be_nil
       end
@@ -99,8 +77,7 @@ describe VideosController do
       context "My Queue button enablement" do
         before do
           Fabricate(:video)
-          video2 = Fabricate(:video)
-          Fabricate(:video_queue_entry, video: video2, user: User.first)
+          Fabricate(:video_queue_entry, video: Fabricate(:video), user: User.first)
         end
   
         it "sets @video_queue_entry with information on video to be added if the video identified ID is not in the user's queue" do
@@ -127,67 +104,29 @@ describe VideosController do
 
   describe "GET search" do
     context "no logged in user" do
-      it "redirects to the front page" do
-        get :search
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { get :search } }
     end
 
     context "user is logged in" do
-      before do
-        u = Fabricate(:user)
-        session[:userid] = 1
-      end
+      before { set_current_user }
   
-      context "title_string parameter is nil or empty" do
-        
-        it "sets the search results to empty array when nil" do
-          get :search
-          assigns(:search_results).should eq([])
-        end
+      context "title_string parameter is nil" do
+        it_behaves_like("empty_search_results") { let(:action) { get :search } }
+      end
 
-
-        it "renders the search template when nil" do
-          get :search
-          expect(response).to render_template :search
-        end
-
-        it "sets the search results to empty array when empty string" do
-          get :search, { title_string: "" }
-          assigns(:search_results).should eq([])
-        end
-
-        it "renders the search template when empty string" do
-          get :search, { title_string: "" }
-          expect(response).to render_template :search
-        end
+      context "title_string parameter is empty" do
+        it_behaves_like("empty_search_results") { let(:action) { get :search, { title_string: "" } } }
       end
 
       context "title_string parameter is specified" do
         context "no videos in the database" do
-          it "sets the search results to empty array" do
-            get :search, { title_string: "goonies" }
-            assigns(:search_results).should eq([])
-          end
-
-          it "renders the search template" do
-            get :search, { title_string: "goonies" }
-            expect(response).to render_template :search
-          end
+          it_behaves_like("empty_search_results") { let(:action) { get :search, { title_string: "goonies" } } }
         end
 
         context "at least 1 video in the database" do
           let(:titanic) { Fabricate(:video, title: "Titanic") }
 
-          it "sets the search_results instance variable to empty array if title_string does not match" do
-            get :search, { title_string: "goonies" }
-            assigns(:search_results).should eq([])
-          end
-
-          it "renders the search template if title_string does not match" do
-            get :search, { title_string: "goonies" }
-            expect(response).to render_template :search           
-          end
+          it_behaves_like("empty_search_results") { let(:action) { get :search, { title_string: "goonies" } } }
 
           it "sets the search_results instance variable to an array containing the matching video if title_string does match" do
             get :search, { title_string: "ani" }
@@ -200,6 +139,6 @@ describe VideosController do
           end
         end
       end
-    end
-  end
-end
+    end # user is logged in
+  end # GET search
+end # VideosController
