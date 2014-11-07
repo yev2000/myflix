@@ -17,33 +17,35 @@ describe UsersController do
 
   describe "GET show" do
     context "no logged in user" do
-      it "redirects to the sign_in screen" do
-        u = Fabricate(:user)
-        expect(User.find(1)).not_to be_nil
-        get :edit, id: 1
-        expect(response).to redirect_to sign_in_path
-      end
+      it_behaves_like("require_sign_in") { let(:action) { get :show, id: 1 } }
     end
 
-    context "valid user ID supplied" do
-      before do
-        user = Fabricate(:user)
-        get :show, id: user.id
+    context "logged in user" do
+      let(:user) { Fabricate(:user) }
+      before { set_current_user(user) }
+
+      context "valid user ID supplied" do
+        before do
+          @user2 = Fabricate(:user)
+          get :show, id: @user2.id
+        end
+
+        it("shows show user template") { expect(response).to render_template "show" }
+        it("sets the user instance variable to the identified user") { expect(assigns(:user)).to eq(@user2) }
+      end
+      
+      context "invalid user ID supplied" do
+        before do
+          user2 = Fabricate(:user)
+          get :show, id: user2.id + 1
+        end
+
+        it("flashes a danger message") { expect_danger_flash }
+        it("redirects to home path") { expect(response).to redirect_to home_path }
       end
 
-      it("shows show user template") { expect(response).to render_template "show" }
-      it("sets the user instance variable to the identified user") { expect(assigns(:user)).to eq(User.first) }
-    end
+    end # logged in user
 
-    context "invalid user ID supplied" do
-      before do
-        user = Fabricate(:user)
-        get :show, id: user.id + 1
-      end
-
-      it("flashes a danger message")
-      it("redirects to home path")
-    end  
 
   end # GET show
 

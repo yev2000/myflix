@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
   has_secure_password validations: false
-  has_many :reviews
+
+  has_many :reviews, -> { order("created_at DESC") }
+
   has_many :video_queue_entries
   has_many :sorted_video_queue_entries, -> { order("position") }, class_name: "VideoQueueEntry"
   has_many :queued_videos, -> { order("position") }, {through: :video_queue_entries, source: :video}

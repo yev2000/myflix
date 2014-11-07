@@ -17,6 +17,17 @@ def sign_in_user(user)
   click_button "Sign In"
 end
 
+def expect_danger_flash
+  expect(flash[:danger]).not_to be_nil
+end
+
+
+####################
+#
+# Features
+#
+####################
+
 def click_video_image(video)
   video_selection = find(:xpath, "//a/img[@alt='#{video.title} (#{video.year.to_s})']/..")
   video_selection.click

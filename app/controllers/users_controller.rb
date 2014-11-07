@@ -32,6 +32,10 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by(id: params[:id])
+    if @user.nil?
+      flash[:danger] = "Request was for an invalid user" if @user.nil?
+      redirect_to home_path
+    end
 
   end
 
