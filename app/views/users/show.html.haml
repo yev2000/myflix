@@ -1,0 +1,25 @@
+%section.user.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      %article
+        %header
+          %img(src="http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest('#{@user.email}'.downcase)}?s=40")
+          %h2= "#{@user.fullname}'s video collections (#{@user.videos.size})"
+          %button.btn.btn-default Follow
+        %table.table
+          %thead
+            %tr
+              %th(width="30%") Video Title
+              %th(width="15%") Genre
+          %tbody
+            - @user.queued_videos.each do |video|
+              = render "user_video_row", video: video
+
+%section.user_reviews.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      %header
+        %h3= "#{@user.fullname}'s Reviews (#{@user.reviews.size})"
+      %ul
+        - @user.reviews.each do |review|
+          = render "reviews/review_entry"

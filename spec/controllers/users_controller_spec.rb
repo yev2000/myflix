@@ -15,6 +15,38 @@ describe UsersController do
     end
   end
 
+  describe "GET show" do
+    context "no logged in user" do
+      it "redirects to the sign_in screen" do
+        u = Fabricate(:user)
+        expect(User.find(1)).not_to be_nil
+        get :edit, id: 1
+        expect(response).to redirect_to sign_in_path
+      end
+    end
+
+    context "valid user ID supplied" do
+      before do
+        user = Fabricate(:user)
+        get :show, id: user.id
+      end
+
+      it("shows show user template") { expect(response).to render_template "show" }
+      it("sets the user instance variable to the identified user") { expect(assigns(:user)).to eq(User.first) }
+    end
+
+    context "invalid user ID supplied" do
+      before do
+        user = Fabricate(:user)
+        get :show, id: user.id + 1
+      end
+
+      it("flashes a danger message")
+      it("redirects to home path")
+    end  
+
+  end # GET show
+
   describe "POST create" do
     context "valid user creation" do
       before do

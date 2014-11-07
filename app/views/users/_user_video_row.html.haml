@@ -1,0 +1,8 @@
+%tr
+  %td
+    = link_to video.title, video_path(video)
+  %td
+    - video.categories.each do |category|
+      = link_to category.name, category_path(category)
+
+

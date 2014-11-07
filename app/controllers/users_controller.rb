@@ -30,6 +30,12 @@ class UsersController < ApplicationController
   def edit
   end
 
+  def show
+    @user = User.find_by(id: params[:id])
+
+  end
+
+
   def update
     # if password was supplied, then set it
     if (password_confirm!(@user) && @user.update(user_params) && @user.valid?)
