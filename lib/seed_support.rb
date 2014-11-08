@@ -108,8 +108,17 @@ def seed_videoqueues()
   queue1_video_index_array = [1,2,4,8]
   queue2_video_index_array = [1,3,5,7]
   queue3_video_index_array = [4,6,8,10,1,3,5]
+  queue4_video_index_array = [1,3,7,5,4]
+  queue5_video_index_array = [1,4,9,2]
 
   seed_user_queue(User.find_by(email: "alice@aaa.com"), queue1_video_index_array)
   seed_user_queue(User.find_by(email: "bob@bbb.com"), queue2_video_index_array)
   seed_user_queue(User.find_by(email: "charlie@ccc.com"), queue3_video_index_array)
+  seed_user_queue(User.find_by(email: "daisy@ddd.com"), queue4_video_index_array)
+  seed_user_queue(User.find_by(email: "emeril@eee.com"), queue5_video_index_array)
+end
+
+def seed_specific_followings(user, followed_user_array)
+  puts "Creating followings for #{user.fullname}"
+  followed_user_array.each { |f_user| Following.create(user: user, followed_user: f_user) }
 end

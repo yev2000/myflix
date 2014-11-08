@@ -1,0 +1,10 @@
+%tr
+  %td
+    %img(src="http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(following.followed_user.email.downcase)}?s=40")
+    = link_to following.followed_user.fullname, following.followed_user
+  %td.extra-padding= following.followed_user.queued_videos.size
+  %td.extra-padding= following.followed_user.reviews.size
+  %td.extra-padding
+    -# ### TODO: add the remove action
+    = link_to "", method: :post do
+      %i.glyphicon.glyphicon-remove

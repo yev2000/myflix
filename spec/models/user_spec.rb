@@ -9,4 +9,7 @@ describe User do
   it { should have_many(:video_queue_entries) }
   it { should have_many(:queued_videos) }
   it { should have_many(:sorted_video_queue_entries).order("position") }
+  it { should have_many(:followings) }
+  it { should have_many(:followed_users) }
+
 end
