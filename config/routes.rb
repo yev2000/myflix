@@ -27,6 +27,8 @@ Myflix::Application.routes.draw do
     resources :reviews, only: [:create]
   end
 
+  resources :followings, only: [:create, :destroy]
+
   resources :categories, only: [:index, :show]
 
   get 'ui(/:action)', controller: 'ui'

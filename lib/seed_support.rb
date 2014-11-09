@@ -120,5 +120,5 @@ end
 
 def seed_specific_followings(user, followed_user_array)
   puts "Creating followings for #{user.fullname}"
-  followed_user_array.each { |f_user| Following.create(user: user, followed_user: f_user) }
+  followed_user_array.each { |f_user| Following.create(follower: user, leader: f_user) }
 end

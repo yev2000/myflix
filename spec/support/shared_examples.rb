@@ -30,3 +30,15 @@ shared_examples "empty_search_results" do
     expect(response).to render_template :search
   end
 end
+
+shared_examples "invalid_followings_destroy" do
+  it "flashes a danger message" do
+    action
+    expect_danger_flash
+  end
+
+  it "redirects to the people path" do
+    action
+    expect(response).to redirect_to people_path
+  end
+end
