@@ -14,11 +14,11 @@
       %ul
         %li.dropdown
           %a(href="#" id="dlabel" role="button" data-toggle="dropdown" class="dropdown-toggle" data-target="#")
-            = "Welcome, #{current_user_get.fullname}"
+            = "Welcome, #{current_user.fullname}"
             %b.caret
           %ul.dropdown-menu(role="menu" aria-labelledby="dlabel")
             %li
-              %a{href: edit_user_path(current_user_get)} Account
+              %a{href: edit_user_path(current_user)} Account
               %a(href="#") Plan and Billing
               %a{href: logout_path} Sign Out
 

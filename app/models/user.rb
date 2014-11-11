@@ -8,12 +8,21 @@ class User < ActiveRecord::Base
   has_many :queued_videos, -> { order("position") }, {through: :video_queue_entries, source: :video}
 
   has_many :following_relationships, class_name: "Following", foreign_key: :follower_id
-  
+  has_many :followed_relationships, class_name: "Following", foreign_key: :leader_id
+
   validates :email, presence: true, uniqueness: true, length: {minimum: 3}
   validates :password, presence: true, on: :create, length: {minimum: 4}
   validates :fullname, presence: true
 
+  def followed_leaders
+    User.find(following_relationships.pluck(:leader_id))
+  end
+
   def followers
-    User.find(Following.where(leader: self.id).pluck(:follower_id))
+    User.find(followed_relationships.pluck(:follower_id))
+  end
+
+  def follows?(another_user)
+    followed_leaders.include?(another_user)
   end
 end

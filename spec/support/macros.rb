@@ -6,6 +6,10 @@ def set_current_user(user=nil)
   session[:userid] = user.id
 end
 
+def spec_get_current_user
+  User.find_by(id: session[:userid])
+end
+
 def clear_current_user
   session[:userid] = nil
 end

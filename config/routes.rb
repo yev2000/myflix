@@ -15,6 +15,7 @@ Myflix::Application.routes.draw do
 
   resources :users,  only: [:create, :edit, :update, :show] do
     resources :video_queue_entry, only: [:index, :create, :destroy]
+    resources :followings, only: [:create]
   end
 
   resources :sessions, only: [:create]
@@ -27,7 +28,7 @@ Myflix::Application.routes.draw do
     resources :reviews, only: [:create]
   end
 
-  resources :followings, only: [:create, :destroy]
+  resources :followings, only: [:destroy]
 
   resources :categories, only: [:index, :show]
 

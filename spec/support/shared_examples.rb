@@ -24,14 +24,13 @@ shared_examples "empty_search_results" do
     assigns(:search_results).should eq([])
   end
 
-
   it "renders the search template when nil" do
     action
     expect(response).to render_template :search
   end
 end
 
-shared_examples "invalid_followings_destroy" do
+shared_examples "danger_flash_and_people_path_redirect" do
   it "flashes a danger message" do
     action
     expect_danger_flash

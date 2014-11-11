@@ -211,12 +211,12 @@ class VideoQueueEntryController < ApplicationController
     else
       # if the user ID was not supplied, assume
       # that we are inquiring about the current (logged in) user's queue
-      @user = current_user_get
+      @user = current_user
     end
   end
 
   def require_current_user
-    if (@user != current_user_get)
+    if (@user != current_user)
       # then someone is looking for the queue for a user other than
       # the currently logged in user.  We want to forbid that
       # unless later we add some "Admin" level functionality

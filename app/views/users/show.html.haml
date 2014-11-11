@@ -5,7 +5,9 @@
         %header
           %img(src="http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(@user.email.downcase)}?s=40")
           %h2= "#{@user.fullname}'s video collections (#{@user.queued_videos.size})"
-          %button.btn.btn-default Follow
+          - if @fresh_following
+            = form_for([@user, @fresh_following], format: :html) do |f|
+              = f.submit "Follow", class: "btn btn-default"
         %table.table
           %thead
             %tr

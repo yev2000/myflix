@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_user, except: [:new, :create]
-  before_action :set_user, only: [:edit, :update]
+  before_action :set_user, only: [:show, :edit, :update]
 
   def new
     @user = User.new
@@ -31,14 +31,8 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find_by(id: params[:id])
-    if @user.nil?
-      flash[:danger] = "Request was for an invalid user" if @user.nil?
-      redirect_to home_path
-    end
-
+    @fresh_following = Following.new unless (@user.followers.include?(current_user) || @user == current_user)
   end
-
 
   def update
     # if password was supplied, then set it
@@ -57,10 +51,6 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :fullname)
-  end
-
-  def set_current_user
-    @user = current_user_get
   end
 
   def set_user
