@@ -10,11 +10,10 @@ describe User do
   it { should have_many(:queued_videos) }
   it { should have_many(:sorted_video_queue_entries).order("position") }
   it { should have_many(:following_relationships) }
-#  it { should have_many(:followers) }
 
   describe "#followers" do
 
-    it "should return empty collection if no followings refer to this user" do
+    it "should return empty collection if this user is not being followed by anyone" do
       user = Fabricate(:user)
 
       leader = Fabricate(:user)
@@ -25,7 +24,7 @@ describe User do
     end
 
 
-    it "should return the collection of followings that refer to this user" do
+    it "should return the collection of users who follow this user" do
       user = Fabricate(:user)
 
       follower1 = Fabricate(:user)
@@ -43,9 +42,7 @@ describe User do
       Following.create(leader: follower2, follower: non_follower1)
 
       expect(user.followers).to eq([follower1, follower2, follower3])
-
     end
-
   end # followers
 
   describe "#followed_leaders" do
@@ -72,17 +69,16 @@ describe User do
       Following.create(leader: alice, follower: user)
       Following.create(leader: bob, follower: user)
 
-      # plus someone follows charlie, a third person
+      # plus bob follows charlie, but this user does not
       Following.create(leader: charlie, follower: bob)
 
       expect(user.followed_leaders).to eq([alice, bob])
     end
-
   end # followed_leaders
 
   describe "#follows?" do
 
-    it "returns false if the leader specified in the input parameter is not being followed by the user" do
+    it "returns false if the leader specified in the input parameter is not being followed by this user" do
       user = Fabricate(:user)
 
       alice = Fabricate(:user)
@@ -96,7 +92,7 @@ describe User do
       expect(user.follows?(charlie)).to be false
     end
 
-    it "returns true if the leader specified in the input parameter is being followed by the user" do
+    it "returns true if the leader specified in the input parameter is being followed by this user" do
       user = Fabricate(:user)
 
       alice = Fabricate(:user)
@@ -113,10 +109,6 @@ describe User do
       expect(user.follows?(alice)).to be true
       expect(user.follows?(bob)).to be true
       expect(user.follows?(charlie)).to be false
-
     end
-    
   end # follows?
-
-
 end

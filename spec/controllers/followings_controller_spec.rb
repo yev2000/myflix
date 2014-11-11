@@ -15,12 +15,21 @@ describe FollowingsController do
         set_current_user(@user)
       end
 
-      it "sets @followings to the empty collection if there are no followings for the current user" do
+      it "sets @followings to the empty collection if there are no leader/follower relationships" do
         get :index
         expect(assigns(:followings)).to eq([])
       end
 
-      it "sets @followings to the set of followings entries for the current user" do
+      it "sets @followings to the empty collection if the current user does not follow anyone" do
+        alice = Fabricate(:user, fullname: "Alice Doe")
+        bob = Fabricate(:user, fullname: "Bob Doe")
+        alice_follows_bob = Following.create(follower: alice, leader: bob)
+
+        get :index
+        expect(assigns(:followings)).to eq([])
+      end
+
+      it "sets @followings to the set of following relationship entries where the current user is the follower" do
         alice = Fabricate(:user, fullname: "Alice Doe")
         bob = Fabricate(:user, fullname: "Bob Doe")
         charlie = Fabricate(:user, fullname: "Charlie Doe")
@@ -100,19 +109,19 @@ describe FollowingsController do
           before do
             leader = Fabricate(:user)
             alice = Fabricate(:user)
-            @alice_following = Following.create(leader: leader, follower: alice)
-            @my_following = Following.create(leader: leader, follower: @user)
+            @alice_following_leader = Following.create(leader: leader, follower: alice)
+            @user_following_leader = Following.create(leader: leader, follower: @user)
           end
 
           it "destroys the following relationship identified in the URL parameter" do
-            expect(Following.all).to eq([@alice_following, @my_following])
-            delete :destroy, id: @my_following.id
-            expect(Following.all).to eq([@alice_following])
+            expect(Following.all).to eq([@alice_following_leader, @user_following_leader])
+            delete :destroy, id: @user_following_leader.id
+            expect(Following.all).to eq([@alice_following_leader])
           end
 
 
           it "redirects to the people page" do
-            delete :destroy, id: @my_following.id
+            delete :destroy, id: @user_following_leader.id
             expect(response).to redirect_to people_path
           end
         end
@@ -170,7 +179,7 @@ describe FollowingsController do
       end
 
       context "the current user already follows the leader specified by the user ID in the parameters" do
-        it "does not create a relationship" do
+        it "does not create a new relationship" do
           @following = Following.create(leader: @leader, follower: @alice)        
           expect(Following.count).to eq(2)
           post :create, user_id: @leader.id

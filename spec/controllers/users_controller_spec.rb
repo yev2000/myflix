@@ -11,6 +11,7 @@ describe UsersController do
 
     it "sets @user a fresh user" do
       get :new
+      expect(assigns(:user)).to be_a(User)
       expect(assigns(:user).new_record?).to be true
     end
   end
@@ -29,13 +30,14 @@ describe UsersController do
           get :show, id: @alice.id
         end
 
-        it("shows show user template") { expect(response).to render_template "show" }
+        it("renders the show user template") { expect(response).to render_template "show" }
         
-        it "sets @user variable to the user specified in the URL parameters" do
+        it "sets @user to the user specified in the URL parameters" do
           expect(assigns(:user)).to eq(@alice)
         end
 
         it "sets @fresh_following if the user is not being followed by the current user" do
+          expect(assigns(:fresh_following)).to be_a(Following)
           expect(assigns(:fresh_following).new_record?).to be true
         end
       end
