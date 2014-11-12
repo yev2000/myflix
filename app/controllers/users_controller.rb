@@ -14,6 +14,9 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user)
     if (test1 && test2 && @user.save)
+
+      AppMailer.notify_on_new_user_account(@user).deliver
+
       flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
       # if we want to log the user in, we simply create

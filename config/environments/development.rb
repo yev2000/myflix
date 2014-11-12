@@ -18,4 +18,20 @@ Myflix::Application.configure do
   config.assets.debug = true
 
   config.eager_load = false
+
+  ## if not using MailTrap
+  ## config.action_mailer.delivery_method = :letter_opener
+
+  ## if using MailTrap
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :user_name => ENV['mailtrap_username'],
+    :password => ENV['mailtrap_password'],
+    :address => 'mailtrap.io',
+    :domain => 'mailtrap.io',
+    :port => '2525',
+    :authentication => :cram_md5
+  }
+
+  config.action_mailer.default_url_options = { host: ENV['myflix_email_host'] }
 end
