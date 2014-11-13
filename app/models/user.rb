@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true, length: {minimum: 3}
   validates :password, presence: true, on: :create, length: {minimum: 4}
+  validates :password, on: :update, length: {minimum: 4}, unless: Proc.new { |a| a.password.blank? }
   validates :fullname, presence: true
 
 end
