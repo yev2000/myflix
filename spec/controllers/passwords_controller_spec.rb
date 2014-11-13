@@ -141,10 +141,8 @@ describe PasswordsController do
         get :reset_password, token: token
       end
 
-      it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
-
-      it "redirects to the root path" do
-        expect(response).to redirect_to root_path
+      it "redirects to the invalid password reset token page" do
+        expect(response).to redirect_to invalid_password_reset_token_path
       end
 
       it "does not reset any user's password" do
@@ -192,16 +190,12 @@ describe PasswordsController do
           @alice.reload
         end
 
-        it "sets a danger flash if a second post to the same reset password token is performed" do
-          expect(flash[:danger]).not_to be_nil
+        it "redirects to the invalid password reset token page" do
+          expect(response).to redirect_to invalid_password_reset_token_path
         end
 
         it "does not change the user's password" do
           expect(@alice.authenticate("QQQQaa")).to eq(@alice)
-        end
-
-        it "redirects to the root path" do
-          expect(response).to redirect_to root_path
         end
       end
 
@@ -234,8 +228,9 @@ describe PasswordsController do
         @bob.reload
       end
 
-      it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
-      it("redirects to root_path") { expect(response).to redirect_to root_path }
+      it "redirects to the invalid password reset token page" do
+        expect(response).to redirect_to invalid_password_reset_token_path
+      end
 
       it "does not change the any user's password" do
         expect(@alice.authenticate("ABCD")).to eq(@alice)

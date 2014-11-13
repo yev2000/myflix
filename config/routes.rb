@@ -15,7 +15,7 @@ Myflix::Application.routes.draw do
   post  'email_reset_link',       to: 'passwords#email_reset_link'
   get   'confirm_password_reset', to: 'passwords#confirm_password_reset'
   post  'update_password',        to: 'passwords#update_password'
-
+  get   'invalid_token',          to: 'passwords#invalid_token', as: :invalid_password_reset_token
 
   resources :users,  only: [:create, :edit, :update] do
     resources :video_queue_entry, only: [:index, :create, :destroy]

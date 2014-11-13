@@ -41,8 +41,7 @@ class PasswordsController < ApplicationController
   def set_user_by_token
     @user = User.find_by_password_reset_token(params[:token]) if params[:token]
     if @user.nil?
-      flash[:danger] = "There is no user account for that password reset token"
-      redirect_to root_path
+      redirect_to invalid_password_reset_token_path
     end
   end
 
