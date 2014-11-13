@@ -9,11 +9,64 @@ describe UsersController do
       expect(response).to render_template "new"
     end
 
-    it "sets the user instance variable to a fresh user" do
+    it "sets @user a fresh user" do
       get :new
       expect(assigns(:user)).to be_a(User)
+      expect(assigns(:user).new_record?).to be true
     end
   end
+
+  describe "GET show" do
+    context "no logged in user" do
+      it_behaves_like("require_sign_in") { let(:action) { get :show, id: 1 } }
+    end
+
+    context "logged in user" do
+      before { set_current_user }
+
+      context "valid user ID supplied" do
+        before do
+          @alice = Fabricate(:user)
+          get :show, id: @alice.id
+        end
+
+        it("renders the show user template") { expect(response).to render_template "show" }
+        
+        it "sets @user to the user specified in the URL parameters" do
+          expect(assigns(:user)).to eq(@alice)
+        end
+
+        it "sets @fresh_following if the user is not being followed by the current user" do
+          expect(assigns(:fresh_following)).to be_a(Following)
+          expect(assigns(:fresh_following).new_record?).to be true
+        end
+      end
+
+      it "does not set @fresh_following if the user is already being followed by the current user" do
+        leader = Fabricate(:user)
+        Following.create(leader: leader, follower: spec_get_current_user)
+        get :show, id: leader.id
+        expect(assigns(:fresh_following)).to be_nil
+      end
+
+      it "does not set @fresh_following if the user is the current user" do
+        get :show, id: spec_get_current_user.id
+        expect(assigns(:fresh_following)).to be_nil
+      end
+      
+      context "invalid user ID supplied" do
+        before do
+          alice = Fabricate(:user)
+          get :show, id: User.last.id + 1
+        end
+
+        it("flashes a danger message") { expect_danger_flash }
+        it("redirects to root path") { expect(response).to redirect_to root_path }
+      end
+
+    end # logged in user
+
+  end # GET show
 
   describe "POST create" do
     context "valid user creation" do

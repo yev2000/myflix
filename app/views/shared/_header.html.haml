@@ -5,7 +5,7 @@
     %ul.col-md-4.clearfix
       %li= link_to("Videos", videos_path)
       %li= link_to("My Queue", my_queue_path)
-      %li= link_to "People"
+      %li= link_to "People", people_path
     = form_tag(search_videos_path, :method => "get", class: "col-md-5 navbar-form for-search") do
       .form-group
         %input.form-control#search_string{type: "text", placeholder: "Search for videos here", value: "#{params[:title_string]}", name: :title_string}
@@ -14,11 +14,11 @@
       %ul
         %li.dropdown
           %a(href="#" id="dlabel" role="button" data-toggle="dropdown" class="dropdown-toggle" data-target="#")
-            = "Welcome, #{current_user_get.fullname}"
+            = "Welcome, #{current_user.fullname}"
             %b.caret
           %ul.dropdown-menu(role="menu" aria-labelledby="dlabel")
             %li
-              %a{href: edit_user_path(current_user_get)} Account
+              %a{href: edit_user_path(current_user)} Account
               %a(href="#") Plan and Billing
               %a{href: logout_path} Sign Out
 
