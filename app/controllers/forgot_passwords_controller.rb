@@ -1,15 +1,12 @@
-class PasswordsController < ApplicationController
-  before_action :set_user_by_email, only: [:email_reset_link]
+class ForgotPasswordsController < ApplicationController
+  before_action :set_user_by_email, only: [:create]
   before_action :set_user_by_token, only: [:reset_password, :update_password]
 
-  def email_reset_link
+  def create
     @user.password_reset_token = SecureRandom.urlsafe_base64
     @user.save
     AppMailer.notify_password_reset(@user).deliver
     redirect_to confirm_password_reset_path
-  end
-
-  def reset_password
   end
 
   def update_password
@@ -19,7 +16,7 @@ class PasswordsController < ApplicationController
       @user.password_reset_token = nil
       @user.save
 
-      flash[:success] = "Your password has been reset.  You can sign in with your new password now."
+      flash[:success] = "Your password has been changed.  You can sign in with your new password now."
 
       redirect_to sign_in_path      
     else
@@ -31,10 +28,15 @@ class PasswordsController < ApplicationController
   private
 
   def set_user_by_email
-    @user = User.find_by_email(params[:email])
-    if @user.nil?
-      flash[:danger] = "There is no user account for with email #{params[:email]}"
-      redirect_to sign_in_path
+    if (!params[:email] || params[:email] == "")
+      flash[:danger] = "Email cannot be blank"
+      redirect_to forgot_password_path
+    else
+      @user = User.find_by_email(params[:email])
+      if @user.nil?
+        flash[:danger] = "There is no user account for with email #{params[:email]}"
+        redirect_to forgot_password_path
+      end
     end
   end
 
