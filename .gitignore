@@ -16,3 +16,6 @@
 
 myflix.sublime*
 public/tmp/Thumbs.db
+
+# Ignore application configuration
+/config/application.yml
