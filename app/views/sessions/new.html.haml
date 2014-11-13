@@ -8,3 +8,4 @@
         = f.email_field :email, label: "Email Address", value: @login_email, autofocus: true
         = f.password_field :password
         = f.submit "Sign In"
+        = link_to "Forgot password", forgot_password_path

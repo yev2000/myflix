@@ -21,6 +21,8 @@ describe UsersController do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
       end
 
+      after { ActionMailer::Base.deliveries.clear }
+
       it "creates a new user if user does not already exist" do
         u = User.first
         expect(u.email).to eq("joe@company.com")
@@ -32,6 +34,28 @@ describe UsersController do
 
       it "logs user in, if user created" do
         expect(session[:userid]).to eq(1)
+      end
+
+      it "sends an email" do
+        expect(ActionMailer::Base.deliveries).not_to be_empty
+      end
+
+      it "sends an email to the email address of the created user" do
+        message = ActionMailer::Base.deliveries.first
+        expect(message.to).to eq([User.first.email])
+      end
+
+      it "has a welcome message in the email body" do
+        message = ActionMailer::Base.deliveries.first
+        if message.parts.size > 0
+          message.parts.each do |part|
+            expect(part.body).to include("Welcome to MyFlix!")
+            expect(part.body).to include(User.first.fullname)
+          end
+        else
+          expect(message.body).to include("Welcome to MyFlix!")
+          expect(message.body).to include(User.first.fullname)
+        end
       end
     end
 
@@ -56,6 +80,16 @@ describe UsersController do
         expect(User.all.size).to eq(1)
         expect(response).to render_template :new
       end
+
+      it "does not send out a welcome email if user already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+
+        # this should fail because this is a duplicate email"
+        post :create, { user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
+        
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
+
     end
   end
 
@@ -148,5 +182,137 @@ describe UsersController do
 
     end
 
-  end
+  end # POST update
+
+  describe "POST email_reset_link" do   
+    context "email identifies a user in the system" do
+      before do
+        3.times do
+          Fabricate(:user)
+        end
+
+        @forgetful = Fabricate(:user, email: "forgetful@aaa.com")
+
+        post :email_reset_link, email: @forgetful.email
+      end
+
+      after { ActionMailer::Base.deliveries.clear }
+
+      it "sets @user instance variable to the user identified by the email parameter" do
+        @forgetful.reload
+        expect(assigns(:user)).to eq(@forgetful)
+      end
+
+      it "sets a one-time token for the user" do
+        @forgetful.reload
+        expect(@forgetful.password_reset_token).not_to be_nil
+      end
+
+      it "sends an email" do
+        expect(ActionMailer::Base.deliveries).not_to be_empty
+      end
+
+      it "sends an email to the email address specified in the reset request" do
+        message = ActionMailer::Base.deliveries.first
+        expect(message.to).to eq([@forgetful.email])
+      end
+
+      it "the reset email has the reset token link in its body" do
+        @forgetful.reload
+        message = ActionMailer::Base.deliveries.first
+        if message.parts.size > 0
+          message.parts.each do |part|
+            expect(part.body).to include(@forgetful.password_reset_token)
+          end
+        else
+          expect(message.body).to include(@forgetful.password_reset_token)
+        end
+      end
+
+      it "redirects to the confirm_password_reset page" do
+        expect(response).to redirect_to confirm_password_reset_path
+      end
+    end
+
+    context "email does not match any user's email" do
+      before do
+        3.times do
+          Fabricate(:user)
+        end  
+
+        post :email_reset_link, email: "NONEXISTENT@nowhere.org"
+      end
+
+      it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
+
+      it("redirects to the sign_in screen") { expect(response).to redirect_to sign_in_path }
+      it "does not send out an email" do
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
+
+      it "does not generate a reset token" do
+        User.all.each do |user|
+          expect(user.password_reset_token).to be_nil
+        end
+      end
+    end
+  end # POST email_reset_link
+
+  describe "GET confirm_password_reset" do
+    it "renders the confirm_password_reset page" do
+      get :confirm_password_reset
+
+      expect(response).to render_template :confirm_password_reset
+    end
+  end # GET confirm_password_reset
+
+  describe "GET reset_password" do
+    context "valid token" do
+      before do
+        @alice = Fabricate(:user, password: "ABCD")
+        @bob = Fabricate(:user, password: "DEFG", password_reset_token: SecureRandom.urlsafe_base64)
+
+        token = SecureRandom.urlsafe_base64
+        @charlie = Fabricate(:user, password: "GHIJ", password_reset_token: token)
+        
+        get :reset_password, token: token
+      end
+
+      it "sets @user to the user in the token URL parameter" do
+        expect(assigns(:user)).to eq(@charlie)
+      end
+
+      it "renders to reset_password form" do
+        expect(response).to render_template :reset_password
+      end
+
+    end
+
+    context "invalid token" do
+      before do
+        @alice = Fabricate(:user, password: "ABCD")
+        @bob = Fabricate(:user, password: "DEFG", password_reset_token: SecureRandom.urlsafe_base64)
+        
+        token = SecureRandom.urlsafe_base64
+
+        get :reset_password, token: token
+      end
+
+      it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
+
+      it "redirects to the root path" do
+        expect(response).to redirect_to root_path
+      end
+
+      it "does not reset any user's password" do
+        @alice.reload
+        expect(@alice.authenticate("ABCD")).to eq(@alice)
+
+        @bob.reload
+        expect(@bob.authenticate("DEFG")).to eq(@bob)
+      end
+
+    end
+  end # GET reset_password
+
 end

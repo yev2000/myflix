@@ -1,6 +1,9 @@
 class UsersController < ApplicationController
-  before_action :require_user, except: [:new, :create]
+  before_action :require_user, except: [:new, :create, :email_reset_link, :confirm_password_reset, :reset_password, :update]
+  before_action :require_user_or_reset_token, only: [:update]
   before_action :set_user, only: [:edit, :update]
+  before_action :set_user_by_email, only: [:email_reset_link]
+  before_action :set_user_by_token, only: [:reset_password]
 
   def new
     @user = User.new
@@ -41,10 +44,19 @@ class UsersController < ApplicationController
       redirect_to user_path(@user)
     else
       render :edit
-    end     
+    end
 
   end
 
+  def email_reset_link
+    @user.password_reset_token = SecureRandom.urlsafe_base64
+    @user.save
+    AppMailer.notify_password_reset(@user).deliver
+    redirect_to confirm_password_reset_path
+  end
+
+  def reset_password
+  end
 
   private
 
@@ -64,6 +76,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def set_user_by_email
+    @user = User.find_by_email(params[:email])
+    if @user.nil?
+      flash[:danger] = "There is no user account for with email #{params[:email]}"
+      redirect_to sign_in_path
+    end
+  end
+
+  def set_user_by_token
+    @user = User.find_by_password_reset_token(params[:token])
+    if @user.nil?
+      flash[:danger] = "There is no user account for that password reset token"
+      redirect_to root_path
+    end
+  end
+
   def password_confirm!(user)
     if (params[:user][:password] && (params[:user][:password] != params[:user][:password_confirm]))
       # user's password confirmation field did not match
@@ -74,4 +102,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def require_user_or_reset_token
+    if (params[:user][:password_reset_token])
+      if User.find_by_password_reset_token(params[:user][:password_reset_token]) != User.find_by_id(params[:id])
+        flash[:danger] = "Invalid reset token specified"
+        redirect_to root_path
+      end
+    else
+      require_user
+    end
+  end
 end
