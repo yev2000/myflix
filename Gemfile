@@ -36,6 +36,7 @@ group :test do
   gem 'database_cleaner', '1.2.0'
   gem 'shoulda-matchers'
   gem 'capybara'
+  gem 'capybara-email'
 end
 
 group :production do
