@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_user, except: [:new, :create]
-  before_action :set_user, only: [:edit, :update]
+  before_action :set_user, only: [:show, :edit, :update]
 
   def new
     @user = User.new
@@ -33,6 +33,10 @@ class UsersController < ApplicationController
   def edit
   end
 
+  def show
+    @fresh_following = Following.new unless (@user.followers.include?(current_user) || @user == current_user)
+  end
+
   def update
     input_password = params[:user][:password]
 
@@ -51,10 +55,6 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :fullname)
-  end
-
-  def set_current_user
-    @user = current_user_get
   end
 
   def set_user

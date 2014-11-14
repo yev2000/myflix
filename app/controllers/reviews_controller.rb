@@ -1,26 +1,19 @@
 class ReviewsController < ApplicationController
   before_action :require_user
+  before_action :set_video
 
   def create
-    @video = Video.find_by(id: params[:video_id])
-    if (@video.nil?)
-      flash[:danger] = "There is no video with ID #{params[:video_id]}.  Showing all videos instead."
-      redirect_to videos_path
-    else
-      # the video being reviewed does exist.
+    @review = Review.new(review_params)
+    @review.video = @video
+    @review.user = current_user
 
-      @review = Review.new(review_params)
-      @review.video = @video
-      @review.user = current_user_get
-  
-      if (@review.save)
-        flash[:success] = "Your review for #{@video.title} has been recorded"
-        redirect_to video_path(@video)
-      else
-        # error messages should already be set on the @review instance
-        # if validations have failed.
-        render :show
-      end
+    if (@review.save)
+      flash[:success] = "Your review for #{@video.title} has been recorded"
+      redirect_to video_path(@video)
+    else
+      # error messages should already be set on the @review instance
+      # if validations have failed.
+      render :show
     end
   end
 
@@ -29,6 +22,14 @@ class ReviewsController < ApplicationController
   end
 
   private
+
+  def set_video
+    @video = Video.find_by(id: params[:video_id])
+    if (@video.nil?)
+      flash[:danger] = "There is no video with ID #{params[:video_id]}.  Showing all videos instead."
+      redirect_to videos_path
+    end
+  end
 
   def review_params
     params.require(:review).permit(:title, :body, :rating)

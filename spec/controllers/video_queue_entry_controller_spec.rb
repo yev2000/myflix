@@ -25,7 +25,7 @@ describe VideoQueueEntryController do
           before { get :index, user_id: user2.id }
           
           it("redirects to home path") { expect(response).to redirect_to home_path }
-          it("sets a danger flash message") { expect(flash[:danger]).not_to be_nil }
+          it("sets a danger flash message") { expect_danger_flash }
         end
 
         it "sets @user to the user specified by the user_id parameter" do

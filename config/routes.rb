@@ -8,6 +8,9 @@ Myflix::Application.routes.draw do
   get 'logout',     to: 'sessions#destroy'
   get 'my_queue',   to: 'video_queue_entry#index'
   post 'my_queue',  to: 'video_queue_entry#create', as: :add_queue_entry
+  
+  get 'people',     to: "followings#index"
+
   post 'update_queue', to: 'video_queue_entry#update', as: :update_queue
 
   get   'forgot_password',        to: 'forgot_passwords#new'
@@ -18,8 +21,9 @@ Myflix::Application.routes.draw do
   post  'update_password',        to: 'forgot_passwords#update_password'
   get   'invalid_token',          to: 'forgot_passwords#invalid_token', as: :invalid_password_reset_token
 
-  resources :users,  only: [:create, :edit, :update] do
+  resources :users,  only: [:create, :edit, :update, :show] do
     resources :video_queue_entry, only: [:index, :create, :destroy]
+    resources :followings, only: [:create]
   end
 
   resources :sessions, only: [:create]
@@ -31,6 +35,8 @@ Myflix::Application.routes.draw do
 
     resources :reviews, only: [:create]
   end
+
+  resources :followings, only: [:destroy]
 
   resources :categories, only: [:index, :show]
 
