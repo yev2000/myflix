@@ -11,8 +11,11 @@ class ForgotPasswordsController < ApplicationController
 
   def update_password
     new_password = params[:password]
-    if (password_confirm!(@user, new_password, params[:password_confirm]) &&
-        @user.update({ password: new_password }) && @user.valid?)
+
+    # if password was supplied, then test for its validity
+    if !valid_password_change_input(@user, new_password, params[:password_confirm])
+      render :reset_password
+    elsif (@user.update({ password: new_password }) && @user.valid?)
       @user.password_reset_token = nil
       @user.save
 

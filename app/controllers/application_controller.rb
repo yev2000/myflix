@@ -58,6 +58,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def valid_password_change_input(user, input_password, password_confirmation)
+    input_password.blank? ||
+      (user.password_sufficient?(input_password, true) &&
+      password_confirm!(user, input_password, password_confirmation))
+  end
+
   def password_confirm!(user, password, confirm_password)
     if (password && (password != confirm_password))
       # user's password confirmation field did not match

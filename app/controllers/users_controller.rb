@@ -34,11 +34,13 @@ class UsersController < ApplicationController
   end
 
   def update
-    # if password was supplied, then set it
-    if (password_confirm!(@user, params[:user][:password], params[:user][:password_confirm]) && @user.update(user_params) && @user.valid?)
-      # (will validations make sure duplicate username is not set?)
-      flash[:success] = "The account for \"#{@user.email}\" was updated."
+    input_password = params[:user][:password]
 
+    # if password was supplied, then test for its validity
+    if !valid_password_change_input(@user, input_password, params[:user][:password_confirm])
+      render :edit
+    elsif (@user.update(user_params) && @user.valid?)
+      flash[:success] = "The account for \"#{@user.email}\" was updated."
       redirect_to user_path(@user)
     else
       render :edit
