@@ -12,8 +12,11 @@ class UsersController < ApplicationController
     # we want to run both validations so cannot use them in a simple
     # && or || expression since both must fire...
     test1 = @user.valid?
-    test2 = password_confirm!(@user)
+    test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
     if (test1 && test2 && @user.save)
+
+      AppMailer.notify_on_new_user_account(@user).deliver
+
       flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
       # if we want to log the user in, we simply create
@@ -35,17 +38,18 @@ class UsersController < ApplicationController
   end
 
   def update
-    # if password was supplied, then set it
-    if (password_confirm!(@user) && @user.update(user_params) && @user.valid?)
-      # (will validations make sure duplicate username is not set?)
+    input_password = params[:user][:password]
+
+    # if password was supplied, then test for its validity
+    if !valid_password_change_input(@user, input_password, params[:user][:password_confirm])
+      render :edit
+    elsif (@user.update(user_params) && @user.valid?)
       flash[:success] = "The account for \"#{@user.email}\" was updated."
       redirect_to user_path(@user)
     else
       render :edit
-    end     
-
+    end
   end
-
 
   private
 
@@ -60,15 +64,4 @@ class UsersController < ApplicationController
       redirect_to root_path
     end
   end
-
-  def password_confirm!(user)
-    if (params[:user][:password] && (params[:user][:password] != params[:user][:password_confirm]))
-      # user's password confirmation field did not match
-      user.errors.add(:password_confirm, "Confirmation did not match.  Your password and password confirmation must match.")
-      return false
-    else
-      return true
-    end
-  end
-
 end

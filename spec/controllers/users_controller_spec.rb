@@ -74,6 +74,8 @@ describe UsersController do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
       end
 
+      after { ActionMailer::Base.deliveries.clear }
+
       it "creates a new user if user does not already exist" do
         u = User.first
         expect(u.email).to eq("joe@company.com")
@@ -85,6 +87,28 @@ describe UsersController do
 
       it "logs user in, if user created" do
         expect(session[:userid]).to eq(1)
+      end
+
+      it "sends an email" do
+        expect(ActionMailer::Base.deliveries).not_to be_empty
+      end
+
+      it "sends an email to the email address of the created user" do
+        message = ActionMailer::Base.deliveries.first
+        expect(message.to).to eq([User.first.email])
+      end
+
+      it "has a welcome message in the email body" do
+        message = ActionMailer::Base.deliveries.first
+        if message.parts.size > 0
+          message.parts.each do |part|
+            expect(part.body).to include("Welcome to MyFlix!")
+            expect(part.body).to include(User.first.fullname)
+          end
+        else
+          expect(message.body).to include("Welcome to MyFlix!")
+          expect(message.body).to include(User.first.fullname)
+        end
       end
     end
 
@@ -109,6 +133,16 @@ describe UsersController do
         expect(User.all.size).to eq(1)
         expect(response).to render_template :new
       end
+
+      it "does not send out a welcome email if user already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+
+        # this should fail because this is a duplicate email"
+        post :create, { user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
+        
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
+
     end
   end
 
@@ -201,5 +235,5 @@ describe UsersController do
 
     end
 
-  end
+  end # POST update
 end
