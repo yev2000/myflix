@@ -13,8 +13,7 @@ describe ReviewsController do
     end
   
     context "logged in user" do
-      let(:user) { Fabricate(:user) }
-      before { session[:userid] = user.id }
+      before { set_current_user }
 
       context "missing video" do
         before { post :create, {video_id: 1, review: Fabricate.attributes_for(:review) } }
@@ -69,7 +68,7 @@ describe ReviewsController do
         context "video exists and required review fields filled in" do
           context "video already reviewed by logged in user" do
             before do
-              prior_review = Fabricate(:review, video: Video.first, user: user)
+              prior_review = Fabricate(:review, video: Video.first, user: spec_get_current_user)
               post :create, {video_id: Video.first.id, review: Fabricate.attributes_for(:review) }
             end
 
@@ -87,7 +86,7 @@ describe ReviewsController do
             it("flashes success message for a valid review") { expect(flash[:success]).not_to be_nil }
             it("creates the review") { expect(Review.all.size).to eq(1) }
             it("associates the review with the reviewed video") { expect(Video.first.reviews.size).to eq(1) }
-            it("associates the review with the current logged in user") { expect(Review.first.user).to eq(user) }
+            it("associates the review with the current logged in user") { expect(Review.first.user).to eq(spec_get_current_user) }
             it("redirects to show video page") { expect(response).to redirect_to video_path(Video.first) }
           end
 

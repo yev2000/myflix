@@ -121,6 +121,8 @@ describe UsersController do
         post :create, { user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass", invitation_token: @invitation.token} }
         @inviter.reload
       end
+      
+      after { ActionMailer::Base.deliveries.clear }
 
       it "creates a new user" do
         invited_user = User.find_by_email(@invitation_email)
@@ -146,6 +148,8 @@ describe UsersController do
     end # registration due to invitation
 
     context "invalid user creation" do
+      after { ActionMailer::Base.deliveries.clear }
+
       it "fails to create a new user if the password confirmation does not match password" do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
 

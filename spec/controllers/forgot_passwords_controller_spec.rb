@@ -92,12 +92,16 @@ describe ForgotPasswordsController do
 
     context "email does not match any user's email" do
       before do
+        ActionMailer::Base.deliveries.clear
+
         3.times do
           Fabricate(:user)
         end  
 
         post :create, email: "NONEXISTENT@nowhere.org"
       end
+
+      after { ActionMailer::Base.deliveries.clear }
 
       it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
 

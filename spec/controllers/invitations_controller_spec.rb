@@ -31,7 +31,11 @@ describe InvitationsController do
     end
 
     context "logged in user" do
-      before { set_current_user }
+      before do
+        ActionMailer::Base.deliveries.clear
+        set_current_user
+      end
+      
       after { ActionMailer::Base.deliveries.clear }
 
 
