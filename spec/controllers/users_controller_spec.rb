@@ -110,7 +110,40 @@ describe UsersController do
           expect(message.body).to include(User.first.fullname)
         end
       end
-    end
+    end # valid user creation
+
+    context "valid user creation from an invitation" do
+      before do
+        @inviter = Fabricate(:user)
+        @invitation = Fabricate(:invitation, user: @inviter)
+        @invitation_email = @invitation.email
+        @invitation_token = @invitation.token
+        post :create, { user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass", invitation_token: @invitation.token} }
+        @inviter.reload
+      end
+
+      it "creates a new user" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(invited_user).not_to be_nil
+        expect(User.count).to eq(2)
+      end 
+
+      it "adds a follow relationship between the inviter and invitee user" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(invited_user.followers).to eq([@inviter])
+      end
+
+      it "adds a follow relationship between the invitee and inviter" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(@inviter.followers).to eq([invited_user])
+      end
+
+      it "destroys the invitation identified by the invitation token parameter" do
+        expect(Invitation.find_by_token(@invitation_token)).to be_nil
+        expect(Invitation.count).to eq(0)
+      end
+
+    end # registration due to invitation
 
     context "invalid user creation" do
       it "fails to create a new user if the password confirmation does not match password" do

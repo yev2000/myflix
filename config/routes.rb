@@ -40,8 +40,8 @@ Myflix::Application.routes.draw do
 
   resources :categories, only: [:index, :show]
 
-  get 'ui(/:action)', controller: 'ui'
+  resources :invitations, only: [:new, :create, :show]
 
-  get '*path', to: 'pages#front'
+  get 'ui(/:action)', controller: 'ui'
 
 end

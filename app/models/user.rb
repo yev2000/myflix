@@ -29,6 +29,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def add_follow_relationships_from_invitation(invitation)
+    if invitation
+      Following.create(leader_id: self.id, follower_id: invitation.user.id)
+      Following.create(leader_id: invitation.user.id, follower_id: self.id)
+    end
+  end
+
   def followed_leaders
     User.find(following_relationships.pluck(:leader_id))
   end

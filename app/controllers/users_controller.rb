@@ -14,6 +14,7 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
     if (test1 && test2 && @user.save)
+      handle_invitation_tasks(@user, params[:user][:invitation_token])
 
       AppMailer.notify_on_new_user_account(@user).deliver
 
@@ -62,6 +63,16 @@ class UsersController < ApplicationController
     if @user.nil? 
       flash[:danger] = "There is no user account for #{params[:id]}." 
       redirect_to root_path
+    end
+  end
+
+  def handle_invitation_tasks(user, invitation_token)
+    return unless invitation_token
+
+    invitation = Invitation.find_by_token(invitation_token)
+    if invitation
+      user.add_follow_relationships_from_invitation(invitation)
+      invitation.destroy
     end
   end
 end
