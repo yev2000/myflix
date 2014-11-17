@@ -24,22 +24,29 @@ feature "invite someone to MyFlix" do
 
   scenario "user attempts to use invitation link twice" do
     sign_in_user(@inviter)
-    
+
+    # we invite someone to join MyFlix    
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
+
+    # we then log out the inviter
     visit logout_path
     expect(page).to have_content "Unlimited Movies"
     expect(page).to have_content "has logged out"
-    binding.pry
-    
+   
+    # the invitee performs a signup based upon the invitation email
     email_node = open_email(invitee_email)
     perform_invited_signup(email_node, @inviter, invitee_email)
+
+    # the invitee then logs out   
     visit logout_path
     expect(page).to have_content "Unlimited Movies"
     expect(page).to have_content "has logged out"
-    binding.pry
+
+    # now we try to follow the link that was in the invitation email
+    # to try to register again
     email_node.click_link "Sign Up Here"
-    binding.pry
+
     expect(page).to have_content "Your invitation has expired or is not valid."
     expect(page).to have_content "Sign In"
     expect(page).not_to have_content "People"
@@ -54,19 +61,21 @@ feature "invite someone to MyFlix" do
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
     original_email_node = open_email(invitee_email)
-
     submit_invitation_request(@inviter, invitee_email)
+
     second_email_node = open_email(invitee_email)
-    perform_invited_signup(second_email_node, @inviter, invitee_email)
+
     visit logout_path
     expect(page).to have_content "Unlimited Movies"
     expect(page).to have_content "has logged out"
-    binding.pry
+
     expect(original_email_node).not_to eq(second_email_node)
 
     original_email_node.click_link "Sign Up Here"
-    binding.pry
     expect(page).to have_content "Your invitation has expired or is not valid."
+
+    second_email_node.click_link "Sign Up Here"
+    perform_invited_signup(second_email_node, @inviter, invitee_email)
   end
 
 end
@@ -85,6 +94,7 @@ end
 
 def perform_invited_signup(email, inviter, invitee_email)
   email.click_link "Sign Up Here"
+  ##visit "/invitations/" + Invitation.first.token
   expect(page).to have_content "Register"
   expect(page).to have_content "Invitation to register from #{inviter.fullname}"
 

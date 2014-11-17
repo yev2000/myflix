@@ -9,9 +9,7 @@ class InvitationsController < ApplicationController
 
   def create
     @invitation = Invitation.new(invitation_params)
-    @invitation.token = SecureRandom.urlsafe_base64
-    @invitation.user = current_user
-    if @invitation.save
+    if @invitation.ensure_unique_invitation!(current_user)
       AppMailer.notify_invitation(@invitation).deliver
       flash[:success] = "We have sent an invitation to #{@invitation.email}.  Thank you!"
       redirect_to home_path
@@ -21,7 +19,6 @@ class InvitationsController < ApplicationController
   end
 
   def show
-    binding.pry
     @user = User.new
     @user.email = @invitation.email
     @user.fullname = @invitation.fullname

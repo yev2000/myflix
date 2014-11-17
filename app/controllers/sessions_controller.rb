@@ -12,8 +12,6 @@ class SessionsController < ApplicationController
     if (user && user.authenticate(params[:password]))
       # the user was found so set the current user to this and
       # create the session
-      binding.pry
-
       session[:userid] = user.id
 
       flash[:success] = "Welcome, #{user.email}!"
@@ -40,7 +38,6 @@ class SessionsController < ApplicationController
   def destroy
     flash[:success] = "User #{current_user.email} has logged out." if current_user
     
-    binding.pry
     session[:userid] = nil
 
     # is the following unnecessary since if @current_user is not cleared
