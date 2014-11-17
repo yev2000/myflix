@@ -118,7 +118,7 @@ describe UsersController do
         @invitation = Fabricate(:invitation, user: @inviter)
         @invitation_email = @invitation.email
         @invitation_token = @invitation.token
-        post :create, { user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass", invitation_token: @invitation.token} }
+        post :create, { invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
         @inviter.reload
       end
       
@@ -154,14 +154,14 @@ describe UsersController do
         user3 = Fabricate(:user)
 
         @invitee_email = "alice@aaa.com"
-        @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
-        @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1, created_at: 4.days.ago)
-        @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2, created_at: 4.days.ago)
-        @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3, created_at: 4.days.ago)
-        @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
-        @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2, created_at: 4.days.ago)
+        @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1)
+        @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1)
+        @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2)
+        @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3)
+        @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1)
+        @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
 
-        get :create, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123", invitation_token: @prior_invitation2.token }
+        get :create,  invitation_token: @prior_invitation2.token, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123"}
       end
 
       it "deletes any prior invitations for that invitee email address" do

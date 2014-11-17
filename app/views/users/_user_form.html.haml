@@ -14,5 +14,5 @@
         = f.password_field :password_confirm, label: "Confirm Password"
         = f.text_field :fullname, label: "Full Name"
         - if @invitation
-          = f.hidden_field :invitation_token, value: @invitation.token
+          = hidden_field_tag :invitation_token, @invitation.token
         = f.submit submit_title

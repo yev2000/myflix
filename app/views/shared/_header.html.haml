@@ -18,7 +18,7 @@
             %b.caret
           %ul.dropdown-menu(role="menu" aria-labelledby="dlabel")
             %li
+              = link_to "Invite a friend", new_invitation_path
               %a{href: edit_user_path(current_user)} Account
               %a(href="#") Plan and Billing
               %a{href: logout_path} Sign Out
-

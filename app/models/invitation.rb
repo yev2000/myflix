@@ -8,11 +8,7 @@ class Invitation < ActiveRecord::Base
     return token
   end
 
-  def perform_invitation_tasks(user)
-    user.add_follow_relationships_from_invitation(self)
-
-    # now delete all invitations that target that email address, since we want to consider
-    # that target user as "claimed"
-    Invitation.delete_all(["email = ?", self.email])
+  def self.delete_invitations_by_email(email)
+    Invitation.delete_all(["email = ?", email])
   end
 end

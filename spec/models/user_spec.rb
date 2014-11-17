@@ -11,6 +11,29 @@ describe User do
   it { should have_many(:sorted_video_queue_entries).order("position") }
   it { should have_many(:following_relationships) }
 
+  describe "#follow" do
+    before do
+      @leader = Fabricate(:user)
+      @bob = Fabricate(:user)
+    end
+
+    it "adds a following relationship for this user to follow a leader" do
+      @bob.follow(@leader)
+
+      expect(@leader.followers).to eq([@bob])
+      expect(@bob.follows?(@leader)).to be true
+    end
+
+    it "does not follow oneself" do
+      @bob.follow(@bob)
+
+      expect(@leader.followers).to eq([])
+      expect(@bob.follows?(@bob)).to be false
+      expect(@bob.followers).to eq([])
+    end
+
+  end # follow
+
   describe "#followers" do
 
     it "should return empty collection if this user is not being followed by anyone" do
@@ -111,4 +134,30 @@ describe User do
       expect(user.follows?(charlie)).to be false
     end
   end # follows?
+
+  describe "#can_follow?" do
+    it "returns true if the leader is not yourself and not nil and not someone you're already following" do
+      alice = Fabricate(:user)
+      bob = Fabricate(:user)
+      expect(alice.can_follow?(bob)).to be true
+    end
+
+
+    it "returns false if leader is nil" do
+      alice = Fabricate(:user)
+      expect(alice.can_follow?(nil)).to be false
+    end
+
+    it "returns false if leader is yourself" do
+      alice = Fabricate(:user)
+      expect(alice.can_follow?(alice)).to be false
+    end
+
+    it "returns false if leader is someone you're already following" do
+      alice = Fabricate(:user)
+      bob = Fabricate(:user)
+      alice.follow(bob)
+      expect(alice.can_follow?(bob)).to be false
+    end
+  end # can_follow?
 end

@@ -6,6 +6,8 @@ feature "invite someone to MyFlix" do
     clear_emails
   end
 
+  after { clear_emails }
+
   scenario "user signs in and invites a friend, who then registers" do
     sign_in_user(@inviter)
 

@@ -29,11 +29,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  def add_follow_relationships_from_invitation(invitation)
-    if invitation
-      Following.create(leader_id: self.id, follower_id: invitation.user.id)
-      Following.create(leader_id: invitation.user.id, follower_id: self.id)
-    end
+  def can_follow?(leader)
+    # you cannot follow a "nil" leader nor a leader who is yourself nor someone you're already following
+    !(leader.nil? || (leader == self) || follows?(leader))
+  end
+
+  def follow(leader)
+    Following.create(leader_id: leader.id, follower_id: self.id) if can_follow?(leader)
   end
 
   def followed_leaders

@@ -14,8 +14,7 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
     if (test1 && test2 && @user.save)
-      invitation = Invitation.find_by_token(params[:user][:invitation_token])
-      invitation.perform_invitation_tasks(@user) if invitation
+      handle_creation_from_invitation(@user, params[:invitation_token])
 
       AppMailer.notify_on_new_user_account(@user).deliver
 
@@ -67,4 +66,12 @@ class UsersController < ApplicationController
     end
   end
 
+  def handle_creation_from_invitation(newly_created_user, invitation_token)
+    invitation = Invitation.find_by_token(invitation_token)
+    if invitation
+      newly_created_user.follow(invitation.user)
+      invitation.user.follow(newly_created_user)
+      Invitation.delete_invitations_by_email(invitation.email)
+    end
+  end
 end
