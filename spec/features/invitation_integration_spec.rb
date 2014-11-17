@@ -94,7 +94,6 @@ end
 
 def perform_invited_signup(email, inviter, invitee_email)
   email.click_link "Sign Up Here"
-  ##visit "/invitations/" + Invitation.first.token
   expect(page).to have_content "Register"
   expect(page).to have_content "Invitation to register from #{inviter.fullname}"
 
