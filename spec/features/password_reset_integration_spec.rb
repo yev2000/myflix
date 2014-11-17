@@ -1,4 +1,3 @@
-# password reset testing
 require 'rails_helper'
 
 feature "reset existing user password" do

@@ -21,6 +21,7 @@ class InvitationsController < ApplicationController
   end
 
   def show
+    binding.pry
     @user = User.new
     @user.email = @invitation.email
     @user.fullname = @invitation.fullname
