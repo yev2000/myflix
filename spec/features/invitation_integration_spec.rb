@@ -13,37 +13,32 @@ feature "invite someone to MyFlix" do
 
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
+    logout_user_via_ui # logs out inviter
 
     email_node = open_email(invitee_email)
     perform_invited_signup(email_node, @inviter, invitee_email)
 
-    # visit people page to find that you follow the user who invited you
-    click_link "People"
-    leader_row = find_leader_row_in_people_table(@inviter)
-    expect(leader_row).not_to be_nil
-    expect(page).to have_content @inviter.fullname
+    # make sure the new user if following the user who invited them
+    confirm_following_relationship(@inviter)
+    logout_user_via_ui
+
+    # log in as the inviter and see that you're following your invitee
+    sign_in_user(@inviter)
+    confirm_following_relationship(User.find_by_email(invitee_email))
   end
 
   scenario "user attempts to use invitation link twice" do
     sign_in_user(@inviter)
 
-    # we invite someone to join MyFlix    
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
+    logout_user_via_ui # logs out inviter
 
-    # we then log out the inviter
-    visit logout_path
-    expect(page).to have_content "Unlimited Movies"
-    expect(page).to have_content "has logged out"
-   
     # the invitee performs a signup based upon the invitation email
     email_node = open_email(invitee_email)
     perform_invited_signup(email_node, @inviter, invitee_email)
-
     # the invitee then logs out   
-    visit logout_path
-    expect(page).to have_content "Unlimited Movies"
-    expect(page).to have_content "has logged out"
+    logout_user_via_ui
 
     # now we try to follow the link that was in the invitation email
     # to try to register again
@@ -64,12 +59,8 @@ feature "invite someone to MyFlix" do
     submit_invitation_request(@inviter, invitee_email)
     original_email_node = open_email(invitee_email)
     submit_invitation_request(@inviter, invitee_email)
-
     second_email_node = open_email(invitee_email)
-
-    visit logout_path
-    expect(page).to have_content "Unlimited Movies"
-    expect(page).to have_content "has logged out"
+    logout_user_via_ui
 
     expect(original_email_node).not_to eq(second_email_node)
 
@@ -82,7 +73,8 @@ feature "invite someone to MyFlix" do
 end
 
 def submit_invitation_request(user, invitee_email)
-  visit new_invitation_path
+  page.find('#dlabel').click
+  find_link("Invite a friend").click
 
   expect(page).to have_content "Invite a friend"
   fill_in "Friend's Name", with: "Jane Doe"
@@ -103,4 +95,11 @@ def perform_invited_signup(email, inviter, invitee_email)
   click_button "Sign Up"
 
   expect(page).to have_content "Your user account (for #{invitee_email}) was created. You are logged in."
+end
+
+def confirm_following_relationship(leader)
+  click_link "People"
+  leader_row = find_leader_row_in_people_table(leader)
+  expect(leader_row).not_to be_nil
+  expect(page).to have_content leader.fullname
 end
