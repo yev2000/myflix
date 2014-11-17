@@ -147,6 +147,32 @@ describe UsersController do
 
     end # registration due to invitation
 
+    context "user creation from invitation where other invitations already exist for the invitee" do
+      before do
+        user1 = Fabricate(:user)
+        user2 = Fabricate(:user)
+        user3 = Fabricate(:user)
+
+        @invitee_email = "alice@aaa.com"
+        @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
+        @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1, created_at: 4.days.ago)
+        @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2, created_at: 4.days.ago)
+        @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3, created_at: 4.days.ago)
+        @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
+        @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2, created_at: 4.days.ago)
+
+        get :create, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123", invitation_token: @prior_invitation2.token }
+      end
+
+      it "deletes any prior invitations for that invitee email address" do
+        expect(Invitation.all).not_to include(@prior_invitation1, @prior_invitation2, @prior_invitation3)
+      end
+
+      it "does not delete any invitations for other invitees" do
+        expect(Invitation.all).to include(@to_still_preserve_invitation1, @to_still_preserve_invitation2, @to_still_preserve_invitation3)
+      end
+    end # other invitations exist 
+
     context "invalid user creation" do
       after { ActionMailer::Base.deliveries.clear }
 

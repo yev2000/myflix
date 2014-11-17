@@ -8,14 +8,11 @@ class Invitation < ActiveRecord::Base
     return token
   end
 
-  def ensure_unique_invitation!(inviter)
-    self.user = inviter
-    self.token = SecureRandom.urlsafe_base64
-    if (self.save)
-      Invitation.delete_all(["email = ? AND token <> ?", email, token])
-      return true
-    else
-      return false
-    end        
+  def perform_invitation_tasks(user)
+    user.add_follow_relationships_from_invitation(self)
+
+    # now delete all invitations that target that email address, since we want to consider
+    # that target user as "claimed"
+    Invitation.delete_all(["email = ?", self.email])
   end
 end

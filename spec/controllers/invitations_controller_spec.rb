@@ -83,36 +83,24 @@ describe InvitationsController do
       end # valid inputs
 
       context "other invitations already exist for the invitee" do
-        before do
+        it "creates a new invitation" do
           user1 = Fabricate(:user)
           user2 = Fabricate(:user)
           user3 = Fabricate(:user)
 
-          @invitee_email = "alice@aaa.com"
-          @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
-          @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1, created_at: 4.days.ago)
-          @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2, created_at: 4.days.ago)
-          @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3, created_at: 4.days.ago)
-          @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1, created_at: 4.days.ago)
-          @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2, created_at: 4.days.ago)
+          invitee_email = "alice@aaa.com"
+          prior_invitation1 = Fabricate(:invitation, email: invitee_email, user: user1)
+          to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1)
+          prior_invitation2 = Fabricate(:invitation, email: invitee_email, user: user2)
+          to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3)
+          prior_invitation3 = Fabricate(:invitation, email: invitee_email, user: user1)
+          to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
 
-          get :create, invitation: { fullname: "Alice Doe", email: @invitee_email, message: "Hey, Join MyFlix, Alice!", user_id: User.first.id }
+          get :create, invitation: { fullname: "Alice Doe", email: invitee_email, message: "Hey, Join MyFlix, Alice!", user_id: User.first.id }
+
+          expect(Invitation.last.email).to eq(invitee_email)
+          expect(Invitation.count).to eq(7)
         end
-
-        it "creates a new invitation" do
-          expect(Invitation.last.email).to eq(@invitee_email)
-          expect(Invitation.last.created_at).to be > 3.days.ago
-        end
-
-        it "deletes any prior invitations for that invitee email address" do
-          expect(Invitation.count).to eq(4)
-          expect(Invitation.all).not_to include(@prior_invitation1, @prior_invitation2, @prior_invitation3)
-        end
-
-        it "does not delete any invitations for other invitees" do
-          expect(Invitation.all).to include(@to_still_preserve_invitation1, @to_still_preserve_invitation2, @to_still_preserve_invitation3)
-        end
-
       end # other invitations exist 
 
       context "invalid inputs" do

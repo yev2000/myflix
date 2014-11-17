@@ -55,7 +55,7 @@ feature "invite someone to MyFlix" do
   end
 
 
-  scenario "user attempts to use an old invitation link" do
+  scenario "user attempts to use an invitation after already having registered their email address" do
     sign_in_user(@inviter)
     
     invitee_email = "jdoe@gmail.com"
@@ -71,11 +71,10 @@ feature "invite someone to MyFlix" do
 
     expect(original_email_node).not_to eq(second_email_node)
 
-    original_email_node.click_link "Sign Up Here"
-    expect(page).to have_content "Your invitation has expired or is not valid."
+    perform_invited_signup(original_email_node, @inviter, invitee_email)
 
     second_email_node.click_link "Sign Up Here"
-    perform_invited_signup(second_email_node, @inviter, invitee_email)
+    expect(page).to have_content "Your invitation has expired or is not valid."
   end
 
 end
