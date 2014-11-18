@@ -22,15 +22,15 @@ Myflix::Application.configure do
     like_operator: 'ILIKE'
   }
 
-  ## if using MailTrap
+  ## if using Mailgun on Heroku
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :user_name => ENV['mailtrap_username'],
-    :password => ENV['mailtrap_password'],
-    :address => 'mailtrap.io',
-    :domain => 'mailtrap.io',
-    :port => '2525',
-    :authentication => :cram_md5
+    :user_name => ENV['MAILGUN_SMTP_LOGIN'],
+    :password => ENV['MAILGUN_SMTP_PASSWORD'],
+    :address => ENV['MAILGUN_SMTP_SERVER'],
+    :domain => ENV['myflix_email_host'],
+    :port => ENV['MAILGUN_SMTP_PORT'],
+    :authentication => :plain
   }
 
   config.action_mailer.default_url_options = { host: ENV['myflix_email_host'] }
