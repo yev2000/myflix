@@ -51,10 +51,6 @@ describe InvitationsController do
           expect(Invitation.first.fullname).to eq("Batman")
         end
 
-        it "sets a unique token in the invitation" do
-          expect(Invitation.first.token).not_to be_nil
-        end
-
         it "sets the user associated with the invitation to the current user" do
           expect(Invitation.first.user_id).to eq(spec_get_current_user.id)
         end

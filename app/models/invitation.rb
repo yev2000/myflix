@@ -1,4 +1,6 @@
 class Invitation < ActiveRecord::Base
+  include Tokenable
+  
   belongs_to :user
 
   validates :email, presence: true

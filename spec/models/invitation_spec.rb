@@ -5,6 +5,8 @@ describe Invitation do
   it { should validate_presence_of(:fullname) }
   it { should belong_to(:user) }
 
+  it_behaves_like("tokenable") { let(:object) { Fabricate(:invitation) } }
+
   describe "#self.delete_invitations_by_email" do
     before do
       to_delete_email = "alice@aaa.com"

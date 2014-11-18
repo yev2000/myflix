@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-
   MIN_EMAIL_LENGTH = 3
   MIN_PASSWORD_LENGTH = 4
 

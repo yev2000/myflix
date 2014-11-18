@@ -3,7 +3,7 @@ class ForgotPasswordsController < ApplicationController
   before_action :set_user_by_token, only: [:reset_password, :update_password]
 
   def create
-    @user.password_reset_token = SecureRandom.urlsafe_base64
+    @user.token = SecureRandom.urlsafe_base64
     @user.save
     AppMailer.notify_password_reset(@user).deliver
     redirect_to confirm_password_reset_path
@@ -16,7 +16,7 @@ class ForgotPasswordsController < ApplicationController
     if !valid_password_change_input(@user, new_password, params[:password_confirm])
       render :reset_password
     elsif (@user.update({ password: new_password }) && @user.valid?)
-      @user.password_reset_token = nil
+      @user.token = nil
       @user.save
 
       flash[:success] = "Your password has been changed.  You can sign in with your new password now."
@@ -44,7 +44,7 @@ class ForgotPasswordsController < ApplicationController
   end
 
   def set_user_by_token
-    @user = User.find_by_password_reset_token(params[:token]) if params[:token]
+    @user = User.find_by_token(params[:token]) if params[:token]
     if @user.nil?
       redirect_to invalid_password_reset_token_path
     end
