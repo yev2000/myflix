@@ -13,4 +13,9 @@ class AppMailer < ActionMailer::Base
     @invitation = invitation
     mail from: "admin@myflix.com", to: invitation.email, subject: "Invitation to join MyFlix"
   end
+
+  def hardcoded_notify(from_email, to_email, subject, body)
+    @body = body
+    mail from: from_email, to: to_email, subject: subject
+  end
 end
