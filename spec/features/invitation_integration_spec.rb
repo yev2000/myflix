@@ -8,6 +8,31 @@ feature "invite someone to MyFlix" do
 
   after { clear_emails }
 
+  scenario "demonstrate capybara logout issue" do
+    # generate an invitation instance. The "inviter" is alice
+    grace = Fabricate(:user, fullname: "Grace Hopper")
+    invitation = Fabricate(:invitation, fullname: "Alan Turing", user: grace)
+
+    # mail out the invitation
+    retval = AppMailer.notify_invitation(invitation).deliver
+
+    email_node = open_email(invitation.email)
+
+    # let the user sign in
+    email_node.click_link "Sign Up Here"
+    fill_in "Password", with: "pass"
+    fill_in "Confirm Password", with: "pass"
+    click_button "Sign Up"
+
+    # at this point we expect the invited user to have been logged in
+    expect(page).to have_content "Your user account (for #{invitation.email}) was created. You are logged in."
+
+    # now the fun part - we try to log out the user via visiting the logout path
+    visit logout_path
+    ##logout_user_via_ui
+  end
+
+
   scenario "user signs in and invites a friend, who then registers" do
     sign_in_user(@inviter)
 

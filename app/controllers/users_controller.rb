@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    
+
     # we want to run both validations so cannot use them in a simple
     # && or || expression since both must fire...
     test1 = @user.valid?
