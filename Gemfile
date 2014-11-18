@@ -15,6 +15,7 @@ gem 'bootstrap_form'
 gem 'faker'
 gem 'fabrication'
 gem 'figaro'
+gem 'sidekiq'
 
 group :development do
   gem 'sqlite3'

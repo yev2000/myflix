@@ -16,7 +16,7 @@ class UsersController < ApplicationController
     if (test1 && test2 && @user.save)
       handle_creation_from_invitation(@user, params[:invitation_token])
 
-      AppMailer.notify_on_new_user_account(@user).deliver
+      AppMailer.delay.notify_on_new_user_account(@user)
 
       flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
