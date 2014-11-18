@@ -58,12 +58,14 @@ feature "invite someone to MyFlix" do
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
     logout_user_via_ui # logs out inviter
+    ##visit logout_path
 
     # the invitee performs a signup based upon the invitation email
     email_node = open_email(invitee_email)
     perform_invited_signup(email_node, @inviter, invitee_email)
     # the invitee then logs out   
     logout_user_via_ui
+    ##visit logout_path
 
     # now we try to follow the link that was in the invitation email
     # to try to register again
