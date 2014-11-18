@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-
   MIN_EMAIL_LENGTH = 3
   MIN_PASSWORD_LENGTH = 4
 
@@ -27,6 +26,15 @@ class User < ActiveRecord::Base
       errors.add(:password, "Your password must be at least #{MIN_PASSWORD_LENGTH} characters.") if set_errors
       return false
     end
+  end
+
+  def can_follow?(leader)
+    # you cannot follow a "nil" leader nor a leader who is yourself nor someone you're already following
+    !(leader.nil? || (leader == self) || follows?(leader))
+  end
+
+  def follow(leader)
+    Following.create(leader_id: leader.id, follower_id: self.id) if can_follow?(leader)
   end
 
   def followed_leaders

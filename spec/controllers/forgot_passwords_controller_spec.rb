@@ -31,21 +31,21 @@ describe ForgotPasswordsController do
 
       it "sets a one-time token for the user" do
         @forgetful.reload
-        expect(@forgetful.password_reset_token).not_to be_nil
+        expect(@forgetful.token).not_to be_nil
       end
 
       it "sets a unique token each time" do
         post :create, email: @forgetful.email
         @forgetful.reload
-        token1 = @forgetful.password_reset_token
+        token1 = @forgetful.token
         
         post :create, email: @forgetful.email
         @forgetful.reload
-        token2 = @forgetful.password_reset_token
+        token2 = @forgetful.token
         
         post :create, email: @forgetful.email
         @forgetful.reload
-        token3 = @forgetful.password_reset_token
+        token3 = @forgetful.token
 
         expect([token1, token2, token3].uniq.size).to eq(3)
       end
@@ -64,10 +64,10 @@ describe ForgotPasswordsController do
         message = ActionMailer::Base.deliveries.first
         if message.parts.size > 0
           message.parts.each do |part|
-            expect(part.body).to include(@forgetful.password_reset_token)
+            expect(part.body).to include(@forgetful.token)
           end
         else
-          expect(message.body).to include(@forgetful.password_reset_token)
+          expect(message.body).to include(@forgetful.token)
         end
       end
 
@@ -92,12 +92,16 @@ describe ForgotPasswordsController do
 
     context "email does not match any user's email" do
       before do
+        ActionMailer::Base.deliveries.clear
+
         3.times do
           Fabricate(:user)
         end  
 
         post :create, email: "NONEXISTENT@nowhere.org"
       end
+
+      after { ActionMailer::Base.deliveries.clear }
 
       it("flashes a danger message") { expect(flash[:danger]).not_to be_nil }
 
@@ -109,7 +113,7 @@ describe ForgotPasswordsController do
 
       it "does not generate a reset token" do
         User.all.each do |user|
-          expect(user.password_reset_token).to be_nil
+          expect(user.token).to be_nil
         end
       end
     end
@@ -127,11 +131,11 @@ describe ForgotPasswordsController do
     context "valid token" do
       before do
         @alice = Fabricate(:user, password: "old_alice_password")
-        @bob = Fabricate(:user, password: "old_bob_password", password_reset_token: SecureRandom.urlsafe_base64)
+        @bob = Fabricate(:user, password: "old_bob_password", token: SecureRandom.urlsafe_base64)
 
         token = SecureRandom.urlsafe_base64
-        @charlie = Fabricate(:user, password: "old_charlie_password", password_reset_token: token)
-        
+        @charlie = Fabricate(:user, password: "old_charlie_password", token: token)
+
         get :reset_password, token: token
       end
 
@@ -148,7 +152,7 @@ describe ForgotPasswordsController do
     context "invalid token" do
       before do
         @alice = Fabricate(:user, password: "old_alice_password")
-        @bob = Fabricate(:user, password: "old_bob_password", password_reset_token: SecureRandom.urlsafe_base64)
+        @bob = Fabricate(:user, password: "old_bob_password", token: SecureRandom.urlsafe_base64)
         
         token = SecureRandom.urlsafe_base64
 
@@ -172,14 +176,14 @@ describe ForgotPasswordsController do
 
   describe "POST update_password" do
     before do
-      @alice = Fabricate(:user, password: "old_alice_password", password_reset_token: SecureRandom.urlsafe_base64)
-      @bob = Fabricate(:user, password: "old_bob_password", password_reset_token: SecureRandom.urlsafe_base64)
+      @alice = Fabricate(:user, password: "old_alice_password", token: SecureRandom.urlsafe_base64)
+      @bob = Fabricate(:user, password: "old_bob_password", token: SecureRandom.urlsafe_base64)
     end
 
     context "successful password change" do
       before do
-        @original_token = @alice.password_reset_token
-        post :update_password, token: @alice.password_reset_token, password: "first_new_password", password_confirm: "first_new_password"
+        @original_token = @alice.token
+        post :update_password, token: @alice.token, password: "first_new_password", password_confirm: "first_new_password"
         @alice.reload
         @bob.reload
       end
@@ -188,8 +192,8 @@ describe ForgotPasswordsController do
         expect(@alice.authenticate("first_new_password")).to eq(@alice)
       end
 
-      it "sets the password_reset_token for the user to nil" do
-        expect(@alice.password_reset_token).to be_nil
+      it "sets the token for the user to nil" do
+        expect(@alice.token).to be_nil
       end
 
       it "redirects to the sign_in page" do
@@ -217,7 +221,7 @@ describe ForgotPasswordsController do
 
     context "password confirmation did not match" do
       before do
-        post :update_password, token: @alice.password_reset_token, password: "new_password", password_confirm: "new_passwordXX"
+        post :update_password, token: @alice.token, password: "new_password", password_confirm: "new_passwordXX"
         @alice.reload
       end
       
@@ -229,8 +233,8 @@ describe ForgotPasswordsController do
         expect(@alice.authenticate("old_alice_password")).to eq(@alice)
       end
 
-      it "does not set the user's password_reset_token to nil" do
-        expect(@alice.password_reset_token).not_to be_nil
+      it "does not set the user's token to nil" do
+        expect(@alice.token).not_to be_nil
       end
 
     end # not matching password confirmation
@@ -251,9 +255,9 @@ describe ForgotPasswordsController do
         expect(@bob.authenticate("old_bob_password")).to eq(@bob)
       end
 
-      it "does not set any user's password_reset_token to nil" do
-        expect(@alice.password_reset_token).not_to be_nil
-        expect(@bob.password_reset_token).not_to be_nil
+      it "does not set any user's token to nil" do
+        expect(@alice.token).not_to be_nil
+        expect(@bob.token).not_to be_nil
       end
     end
 

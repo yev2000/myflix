@@ -13,7 +13,7 @@ class ReviewsController < ApplicationController
     else
       # error messages should already be set on the @review instance
       # if validations have failed.
-      render :show
+      render "videos/show"
     end
   end
 

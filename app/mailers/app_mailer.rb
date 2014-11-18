@@ -8,4 +8,9 @@ class AppMailer < ActionMailer::Base
     @user = user
     mail from: "admin@myflix.com", to: user.email, subject: "Password Reset Request"
   end
+
+  def notify_invitation(invitation)
+    @invitation = invitation
+    mail from: "admin@myflix.com", to: invitation.email, subject: "Invitation to join MyFlix"
+  end
 end

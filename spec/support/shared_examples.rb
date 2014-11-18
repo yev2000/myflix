@@ -41,3 +41,9 @@ shared_examples "danger_flash_and_people_path_redirect" do
     expect(response).to redirect_to people_path
   end
 end
+
+shared_examples "tokenable" do
+  it "generates a random token" do
+    expect(object.token).to be_present
+  end
+end

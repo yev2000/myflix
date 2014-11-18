@@ -1,0 +1,14 @@
+%p A little birdie told us...
+%p ... that MyFlix is just the movie site for you!
+
+%h2
+  From:
+%p You have received an invitation from #{@invitation.user.fullname} to join MyFlix.
+
+%p
+  = @invitation.message
+
+%p
+  = link_to "Sign Up Here", invitation_url(@invitation)
+
+

@@ -110,9 +110,72 @@ describe UsersController do
           expect(message.body).to include(User.first.fullname)
         end
       end
-    end
+    end # valid user creation
+
+    context "valid user creation from an invitation" do
+      before do
+        @inviter = Fabricate(:user)
+        @invitation = Fabricate(:invitation, user: @inviter)
+        @invitation_email = @invitation.email
+        @invitation_token = @invitation.token
+        post :create, { invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
+        @inviter.reload
+      end
+      
+      after { ActionMailer::Base.deliveries.clear }
+
+      it "creates a new user" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(invited_user).not_to be_nil
+        expect(User.count).to eq(2)
+      end 
+
+      it "adds a follow relationship between the inviter and invitee user" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(invited_user.followers).to eq([@inviter])
+      end
+
+      it "adds a follow relationship between the invitee and inviter" do
+        invited_user = User.find_by_email(@invitation_email)
+        expect(@inviter.followers).to eq([invited_user])
+      end
+
+      it "destroys the invitation identified by the invitation token parameter" do
+        expect(Invitation.find_by_token(@invitation_token)).to be_nil
+        expect(Invitation.count).to eq(0)
+      end
+
+    end # registration due to invitation
+
+    context "user creation from invitation where other invitations already exist for the invitee" do
+      before do
+        user1 = Fabricate(:user)
+        user2 = Fabricate(:user)
+        user3 = Fabricate(:user)
+
+        @invitee_email = "alice@aaa.com"
+        @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1)
+        @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1)
+        @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2)
+        @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3)
+        @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1)
+        @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
+
+        get :create,  invitation_token: @prior_invitation2.token, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123"}
+      end
+
+      it "deletes any prior invitations for that invitee email address" do
+        expect(Invitation.all).not_to include(@prior_invitation1, @prior_invitation2, @prior_invitation3)
+      end
+
+      it "does not delete any invitations for other invitees" do
+        expect(Invitation.all).to include(@to_still_preserve_invitation1, @to_still_preserve_invitation2, @to_still_preserve_invitation3)
+      end
+    end # other invitations exist 
 
     context "invalid user creation" do
+      after { ActionMailer::Base.deliveries.clear }
+
       it "fails to create a new user if the password confirmation does not match password" do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
 

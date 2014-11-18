@@ -5,8 +5,14 @@
         = f.alert_message "Please fix the errors below."
         %header
           %h1= title_var
+        - if @invitation
+          %p
+            %em Invitation to register from #{@invitation.user.fullname}
+          %br
         = f.email_field :email, label: "Email Address"
         = f.password_field :password
         = f.password_field :password_confirm, label: "Confirm Password"
         = f.text_field :fullname, label: "Full Name"
+        - if @invitation
+          = hidden_field_tag :invitation_token, @invitation.token
         = f.submit submit_title
