@@ -10,6 +10,11 @@ class InvitationsController < ApplicationController
   def create
     @invitation = Invitation.new(invitation_params)
     @invitation.user = current_user
+
+    if (@invitation.fullname == "ERROR")
+      @invitation.fullname = (5/0).to_s
+    end
+    
     if (@invitation.save)
       AppMailer.delay.notify_invitation(@invitation)
       flash[:success] = "We have sent an invitation to #{@invitation.email}.  Thank you!"
