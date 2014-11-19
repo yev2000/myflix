@@ -14,4 +14,4 @@
       = render 'shared/messages'
       = yield
     %footer
-      &copy 2013 MyFLiX
+      = "&copy".html_safe + "2013 MyFLiX -- #{myflix_app_version}"
