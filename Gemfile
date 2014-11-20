@@ -17,6 +17,9 @@ gem 'figaro'
 gem 'sidekiq'
 gem 'unicorn'
 gem 'paratrooper'
+gem 'carrierwave'
+gem 'fog'
+gem 'mini_magick'
 
 group :development do
   gem 'sqlite3'

@@ -11,8 +11,8 @@
           %br
           %fieldset
             = f.text_field :title
-            = f.select :categories, Category.all.each.collect { |c| [c.name, c.id] }, {}, {multiple: true, size: 4 }
+            = f.select :category_ids, Category.all.each.collect { |c| [c.name, c.id] }, {}, {multiple: true, size: 4 }
             = f.text_area :description, rows: 8
-            = f.file_field(:cover_url_large, label: "Large Cover", accept: 'image/png,image/gif,image/jpeg')
-            = f.file_field(:cover_url_small, label: "Small Cover", accept: 'image/png,image/gif,image/jpeg')
+            = image_tag(@video.cover_url(:thumb)) if @video.cover?
+            = f.file_field(:cover, label: "Cover", accept: 'image/png,image/gif,image/jpeg')
             = f.submit "Add Video", class: "btn btn-default"

@@ -11,6 +11,8 @@ class Video < ActiveRecord::Base
 
   validates :title, :description, presence: true
 
+  mount_uploader :cover, VideoCoverUploader
+
   # the following is are class methods used to assist
   # seeding the test database.  Could also be useful
   # later for import/export.
