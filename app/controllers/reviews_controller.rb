@@ -1,5 +1,4 @@
-class ReviewsController < ApplicationController
-  before_action :require_user
+class ReviewsController < AuthenticatedController
   before_action :set_video
 
   def create

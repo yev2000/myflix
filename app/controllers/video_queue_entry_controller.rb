@@ -1,7 +1,6 @@
 require Rails.root.to_s + "/lib/myflix_exception"
 
-class VideoQueueEntryController < ApplicationController
-  before_action :require_user
+class VideoQueueEntryController < AuthenticatedController
   before_action :set_user
   before_action :require_current_user
 
