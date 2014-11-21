@@ -11,7 +11,7 @@
         .actions
           - if logged_in? && current_user.admin?
             = link_to "Edit Video", edit_admin_video_path(@video), class: "btn btn-default"
-          %a.btn.btn-primary(href="") Watch Now
+          = link_to "Watch Now", watch_video_path(@video), class: "btn btn-primary"
           - if @video_queue_entry
             = form_for(@video_queue_entry, url: user_video_queue_entry_index_path(@video_queue_entry.user, user_id: @video_queue_entry.user_id, format: :html)) do |f|
               = f.hidden_field :video_id

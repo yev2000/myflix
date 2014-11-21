@@ -3,6 +3,15 @@ class VideosController < AuthenticatedController
     @categories = Category.all
   end
 
+  def watch
+    begin
+      @video = Video.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      flash[:danger] = "There is no video with ID #{params[:id]}.  Showing all videos instead."
+      redirect_to videos_path
+    end
+  end
+
   def show
     begin
       @video = Video.find(params[:id])
