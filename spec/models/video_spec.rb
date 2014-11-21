@@ -2,7 +2,7 @@ require 'rails_helper'
 require Rails.root.to_s + "/lib/seed_support"
 
 def create_base_video_set
-  seed_videos(Rails.root.to_s + "/db/movie_text.json", {silent: true, skip_category: true})
+  seed_videos(Rails.root.to_s + "/db/movie_text.json", {silent: true, skip_category: true, skip_covers: true})
 end
 
 describe Video do

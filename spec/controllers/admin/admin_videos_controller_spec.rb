@@ -63,7 +63,8 @@ describe Admin::VideosController do
         end
 
         it "assigns the no_image file to the video, if no cover art has been provided" do
-          expect(Video.first.cover_url).to match("no_image.jpg")
+          expect(Video.first.small_cover_url).to match("no_image.jpg")
+          expect(Video.first.large_cover_url).to match("no_image.jpg")
         end
 
         it "flashes a success message" do
@@ -73,13 +74,13 @@ describe Admin::VideosController do
         it "redirects to the show_video path for the newly created video" do
           expect(response).to redirect_to video_path(Video.first)
         end
-
-      end
+      end # valid args without supplied file
 
       context "valid arguments with supplied file" do
         before do
-          image = Rack::Test::UploadedFile.new(Rails.root + "spec/support/attachments/monk.jpg")
-          post :create, video: {title: "a title", category_ids: [@comedies.id.to_s, @drama.id.to_s], description: "a description", cover: image }
+          image_large = Rack::Test::UploadedFile.new(Rails.root + "spec/support/attachments/monk_large.jpg")
+          image_small = Rack::Test::UploadedFile.new(Rails.root + "spec/support/attachments/monk_small.jpg")
+          post :create, video: {title: "a title", category_ids: [@comedies.id.to_s, @drama.id.to_s], description: "a description", large_cover: image_large, small_cover: image_small }
         end
 
         after do
@@ -94,9 +95,10 @@ describe Admin::VideosController do
 
         it "assigns an Amazon S3 file to the video" do
           # file name structure for successful upload is
-          # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/cover/<video ID>/<file name>"
-
-          expect(Video.first.cover_url).to eq("https://myflix-yev.s3.amazonaws.com/test/uploads/video/cover/#{Video.first.id}/monk.jpg")
+          # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/<video ID>/<file name>"
+          # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/<video ID>/<file name>"
+          expect(Video.first.large_cover_url).to eq("https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/#{Video.first.id}/monk_large.jpg")
+          expect(Video.first.small_cover_url).to eq("https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/#{Video.first.id}/monk_small.jpg")
         end
 
         it "flashes a success message" do
@@ -106,13 +108,18 @@ describe Admin::VideosController do
         it "redirects to the show_video path for the newly created video" do
           expect(response).to redirect_to video_path(Video.first)
         end
-      end
+      end # valid args with supplied file
 
       context "missing title" do
         before { post :create, video: {category_ids: [@comedies.id.to_s, @drama.id.to_s], description: "a description" } }
 
         it "renders the new template" do
           expect(response).to render_template :new
+        end
+        
+        it "sets @video instance variable" do
+          expect(assigns(:video)).not_to be_nil
+          expect(assigns(:video).description).to eq("a description")
         end
 
         it "does not create a new video" do
@@ -126,12 +133,16 @@ describe Admin::VideosController do
           expect(response).to render_template :new
         end
 
+        it "sets @video instance variable" do
+          expect(assigns(:video)).not_to be_nil
+          expect(assigns(:video).title).to eq("a title")
+        end
+
         it "does not create a new video" do
           expect(Video.all.size).to eq(0)
         end
       end
-
-    end
+    end # admin logged in
   end # POST create
 end # Admin::VideosController
 

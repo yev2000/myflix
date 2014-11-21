@@ -34,8 +34,15 @@ def expect_danger_flash
 end
 
 def delete_s3_video_upload(video)
-  if(video && video.cover && !video.cover_url.include?("no_image"))
-    video.remove_cover! 
+  if video
+    if (video.large_cover && !video.large_cover_url.include?("no_image"))
+      video.remove_large_cover!
+    end
+
+    if (video.small_cover && !video.small_cover_url.include?("no_image"))
+      video.remove_small_cover!
+    end
+    
     video.save
   end
 end

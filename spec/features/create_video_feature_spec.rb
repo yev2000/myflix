@@ -18,20 +18,23 @@ feature "create video" do
     visit new_admin_video_path
 
     expect(page).to have_content "Add a New Video"
-    fill_in_new_video_form("Batman", @category, "A superhero movie", Rails.root + "spec/support/attachments/monk.jpg")
+    fill_in_new_video_form("Batman", @category, "A superhero movie", 
+      Rails.root + "spec/support/attachments/monk_large.jpg",
+      Rails.root + "spec/support/attachments/monk_small.jpg")
 
     expect(page).to have_content "Batman"
     expect(page).to have_content "Rate this video"
-    expect(page).to have_xpath("//img[contains(@src, \"monk.jpg\")]")
+    expect(page).to have_xpath("//img[contains(@src, \"monk_large.jpg\")]")
     expect(page).to have_content "User Reviews"
   end  
 end
 
-def fill_in_new_video_form(title, category, description, file_path)
+def fill_in_new_video_form(title, category, description, large_cover_file_path, small_cover_file_path)
   fill_in "Title", with: title
   fill_in "Description", with: description
   select category.name, from: "Categories"
-  attach_file "video_cover", file_path
+  attach_file "video_large_cover", large_cover_file_path
+  attach_file "video_small_cover", small_cover_file_path
 
   click_button "Add Video"
 end

@@ -13,6 +13,8 @@
             = f.text_field :title
             = f.select :category_ids, Category.all.each.collect { |c| [c.name, c.id] }, { label: "Categories", selected: @video.categories.map(&:id) }, {multiple: true, size: 4 }
             = f.text_area :description, rows: 8
-            = image_tag(@video.cover_url(:thumb)) if @video.cover?
-            = f.file_field(:cover, label: "Cover", accept: 'image/png,image/gif,image/jpeg')
+            = image_tag(@video.large_cover_url) if @video.large_cover?
+            = f.file_field(:large_cover, accept: 'image/png,image/gif,image/jpeg', class: "btn btn-file")
+            = image_tag(@video.small_cover_url) if @video.small_cover?
+            = f.file_field(:small_cover, accept: 'image/png,image/gif,image/jpeg', class: "btn btn-file")
             = f.submit "Add Video", class: "btn btn-default"

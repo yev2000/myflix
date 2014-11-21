@@ -4,7 +4,7 @@ feature "video queue management" do
   background do
     @user = Fabricate(:user)
     category = Fabricate(:category)
-    4.times { Fabricate(:video, cover_small_url: "/tmp/forrest_gump_small.PNG", categories: [category]) }
+    4.times { Fabricate(:video, categories: [category]) }
   end
 
   scenario "user adds and reorders queue items after signing in" do

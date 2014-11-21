@@ -11,7 +11,8 @@ class Video < ActiveRecord::Base
 
   validates :title, :description, presence: true
 
-  mount_uploader :cover, VideoCoverUploader
+  mount_uploader :large_cover, LargeCoverUploader
+  mount_uploader :small_cover, SmallCoverUploader
 
   # the following is are class methods used to assist
   # seeding the test database.  Could also be useful
@@ -32,8 +33,13 @@ class Video < ActiveRecord::Base
     v = self.new
     v.title = json_obj["title"]
     v.description = json_obj["description"]
-    v.cover_small_url = json_obj["cover_small_url"]
-    v.cover_large_url = json_obj["cover_large_url"]
+
+    # special case for covers now needs to associate files to S3
+    # the json object contains the local file path for the covers
+    # which we will need to push up to S3
+    v.small_cover = File.open(Rails.root.to_s + "/public/" + json_obj["cover_small_url"]) unless options[:skip_covers]
+    v.large_cover = File.open(Rails.root.to_s + "/public/" + json_obj["cover_large_url"]) unless options[:skip_covers]
+
     v.year = json_obj["age"].to_i
 
     # now handle setting categories

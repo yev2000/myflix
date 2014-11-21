@@ -7,4 +7,4 @@
       - cat.recent_videos.each do |video|
         .video.col-sm-2
           = link_to video_path(video), nil do
-            %img{src: video.cover_url(:thumb), alt: "#{video.title} (#{video.year.to_s})", title: "#{video.title} (#{video.year.to_s})"}
+            %img{src: video.small_cover_url, alt: "#{video.title} (#{video.year.to_s})", title: "#{video.title} (#{video.year.to_s})"}
