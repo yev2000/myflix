@@ -1,0 +1,21 @@
+%section.admin_add_video
+  .container
+    .row
+      .col-md-10.col-md-offset-1
+        = bootstrap_form_for([:admin, @video], layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-8") do |f|
+          %ul.nav.nav-tabs
+            %li
+              %a(href="") Recent Payments
+            %li.active
+              %a(href="")= title_var
+          %br
+          %fieldset
+            = f.text_field :title
+            = f.select :category_ids, Category.all.each.collect { |c| [c.name, c.id] }, { label: "Categories", selected: @video.categories.map(&:id) }, {multiple: true, size: 4 }
+            = f.text_area :description, rows: 8
+            = image_tag(@video.large_cover_url) if @video.large_cover?
+            = f.file_field(:large_cover, accept: 'image/png,image/gif,image/jpeg', class: "btn btn-file")
+            = image_tag(@video.small_cover_url) if @video.small_cover?
+            = f.file_field(:small_cover, accept: 'image/png,image/gif,image/jpeg', class: "btn btn-file")
+            = f.text_field :video_url
+            = f.submit submit_title, class: "btn btn-primary"

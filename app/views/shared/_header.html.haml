@@ -6,6 +6,8 @@
       %li= link_to("Videos", videos_path)
       %li= link_to("My Queue", my_queue_path)
       %li= link_to "People", people_path
+      - if logged_in? && current_user.admin?
+        %li= link_to "Add Video", new_admin_video_path
     = form_tag(search_videos_path, :method => "get", class: "col-md-5 navbar-form for-search") do
       .form-group
         %input.form-control#search_string{type: "text", placeholder: "Search for videos here", value: "#{params[:title_string]}", name: :title_string}

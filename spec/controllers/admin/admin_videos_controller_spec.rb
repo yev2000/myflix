@@ -144,5 +144,54 @@ describe Admin::VideosController do
       end
     end # admin logged in
   end # POST create
+
+  describe "GET edit" do
+    before do
+      Fabricate(:video)
+    end
+
+    context "no logged in user" do
+      it_behaves_like("require_sign_in") { let(:action) { get :edit, id: Video.first.id } }
+    end
+
+    context "not logged in admin" do
+      it_behaves_like("require_admin") { let(:action) { get :edit, id: Video.first.id } }
+    end
+
+    context "admin logged in" do
+      context "valid video ID" do
+        before do
+          set_current_admin_user
+          @batman = Fabricate(:video)
+          superman = Fabricate(:video)
+          get :edit, id: @batman.id
+        end
+
+        it "renders the edit template" do
+          expect(response).to render_template :edit
+        end
+
+        it "sets @video to the video identified by the id" do
+          expect(assigns(:video)).to eq(@batman)
+        end
+      end
+
+      context "invalid video ID" do
+        before do
+          set_current_admin_user
+          Fabricate(:video)
+          get :edit, id: Video.last.id + 1
+        end
+
+        it "flashes an error message if id does not identify a valid video" do
+          expect_danger_flash
+        end
+
+        it "redirects to the home path" do
+          expect(response).to redirect_to home_path
+        end
+      end
+    end # admin logged in
+  end # GET edit
 end # Admin::VideosController
 

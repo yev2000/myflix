@@ -44,7 +44,7 @@ Myflix::Application.routes.draw do
   resources :invitations, only: [:new, :create, :show]
 
   namespace :admin do
-    resources :videos, only: [:new, :create]
+    resources :videos, only: [:new, :create, :edit, :update]
   end
 
   get 'ui(/:action)', controller: 'ui'
