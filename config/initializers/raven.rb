@@ -1,4 +1,4 @@
-if !Rails.env.test?
+if Rails.env.production?
   require 'raven'
 
   Raven.configure do |config|

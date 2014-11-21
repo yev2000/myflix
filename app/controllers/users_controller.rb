@@ -13,22 +13,35 @@ class UsersController < ApplicationController
     # && or || expression since both must fire...
     test1 = @user.valid?
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
-    if (test1 && test2 && @user.save)
-      handle_creation_from_invitation(@user, params[:invitation_token])
 
-      AppMailer.delay.notify_on_new_user_account(@user)
+    begin
+      User.transaction do
+        if (test1 && test2 && @user.save)
 
-      flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
+          if perform_payment(params[:stripeToken], params[:stripeEmail], 999) == false
+            # if the payment processing failed, we want to raise the exception to roll back the transaction
+            raise(PaymentError, "Unable to create new user account because of a payment problem")
+          end
 
-      # if we want to log the user in, we simply create
-      # a session for the user implicitly.
-      session[:userid] = @user.id
+          handle_creation_from_invitation(@user, params[:invitation_token])
 
-      redirect_to home_path
-    else
+          AppMailer.delay.notify_on_new_user_account(@user)
+
+          flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
+
+          # if we want to log the user in, we simply create
+          # a session for the user implicitly.
+          session[:userid] = @user.id
+
+          redirect_to home_path
+        else
+          render :new
+        end
+      end # transaction
+    rescue
+      flash[:danger] += "  No user has been created."
       render :new
     end
-
   end
 
   def edit
@@ -74,4 +87,24 @@ class UsersController < ApplicationController
       Invitation.delete_invitations_by_email(invitation.email)
     end
   end
+
+  def perform_payment(token, email, amount)
+    begin
+      customer = Stripe::Customer.create(:email => email, :card  => token)
+    rescue => e
+      flash[:danger] = "Error in proceessing your credit card (#{e})"
+      return false
+    end
+  
+    begin
+      charge = Stripe::Charge.create(customer: customer.id, amount: amount,
+        description: "MyFlix Monthly Membership", currency: 'usd')
+    rescue Stripe::CardError => e
+      flash[:danger] = "Error in proceessing your credit card (#{e})"
+      return false
+    end
+
+    return true
+  end
+
 end

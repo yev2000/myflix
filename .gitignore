@@ -19,3 +19,7 @@ public/tmp/Thumbs.db
 
 # Ignore application configuration
 /config/application.yml
+
+# ignore temporary files for image uploading
+public/uploads/tmp
+

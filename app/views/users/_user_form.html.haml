@@ -15,4 +15,7 @@
         = f.text_field :fullname, label: "Full Name"
         - if @invitation
           = hidden_field_tag :invitation_token, @invitation.token
-        = f.submit submit_title
+        -# = f.submit submit_title
+
+        %script{src: "https://checkout.stripe.com/checkout.js", class: "stripe-button", data: {key: "#{ENV['stripe_test_public_key']}", description: "Monthly subscription to MyFlix!", amount: "999"} }
+
