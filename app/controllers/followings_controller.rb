@@ -1,6 +1,4 @@
-class FollowingsController < ApplicationController
-  before_action :require_user
-
+class FollowingsController < AuthenticatedController
   def index
     @followings = current_user.following_relationships
   end

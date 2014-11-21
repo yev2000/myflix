@@ -12,3 +12,8 @@ def logout_user_via_ui
   expect(page).to have_content "Unlimited Movies"
   expect(page).to have_content "has logged out"
 end
+
+def expect_user_name_on_page(user)
+  expect(page).to have_content user.fullname
+end
+
