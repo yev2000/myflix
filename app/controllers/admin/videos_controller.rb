@@ -22,7 +22,7 @@ class Admin::VideosController < AdminController
   def update
     if (@video.update(video_params) && @video.valid?)
       flash[:success] = "The Video \"#{@video.title}\" was updated."
-      redirect_to videos_path
+      redirect_to video_path(@video)
     else
       render :edit
     end
