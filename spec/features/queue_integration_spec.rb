@@ -63,10 +63,6 @@ feature "video queue management" do
   end
 end
 
-def expect_user_name_on_page(user)
-  expect(page).to have_content user.fullname
-end
-
 def expect_video_details(video)
   expect(page).to have_content video.title
   expect(page).to have_content video.description

@@ -11,7 +11,7 @@
           %br
           %fieldset
             = f.text_field :title
-            = f.select :category_ids, Category.all.each.collect { |c| [c.name, c.id] }, {}, {multiple: true, size: 4 }
+            = f.select :category_ids, Category.all.each.collect { |c| [c.name, c.id] }, { label: "Categories", selected: @video.categories.map(&:id) }, {multiple: true, size: 4 }
             = f.text_area :description, rows: 8
             = image_tag(@video.cover_url(:thumb)) if @video.cover?
             = f.file_field(:cover, label: "Cover", accept: 'image/png,image/gif,image/jpeg')
