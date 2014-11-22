@@ -1,7 +1,15 @@
+- action ||= :new_user
+
+= content_for :head do
+  %script(src="https://js.stripe.com/v1/")
+  :javascript
+    Stripe.setPublishableKey("#{ENV['stripe_test_public_key']}");
+  = javascript_include_tag 'payments'
+
 %section.register.container
   .row
     .col-sm-10.col-sm-offset-1
-      = bootstrap_form_for(@user, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-6") do |f|
+      = bootstrap_form_for(@user, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-6", html: {id: "payment-form"}) do |f|
         = f.alert_message "Please fix the errors below."
         %header
           %h1= title_var
@@ -15,7 +23,22 @@
         = f.text_field :fullname, label: "Full Name"
         - if @invitation
           = hidden_field_tag :invitation_token, @invitation.token
-        -# = f.submit submit_title
-
-        %script{src: "https://checkout.stripe.com/checkout.js", class: "stripe-button", data: {key: "#{ENV['stripe_test_public_key']}", description: "Monthly subscription to MyFlix!", amount: "999"} }
+        - if action == :new_user
+          %fieldset.credit_card
+            %span.help-block.payment-errors
+            .form-group
+              %label.control-label.col-sm-2 Credit Card Number
+              .col-sm-6
+                %input.card-number.form-control(type="text")
+            .form-group
+              %label.control-label.col-sm-2 Security Code
+              .col-sm-6
+                %input.card-cvc.form-control(type="text")
+            .form-group
+              %label.control-label.col-sm-2 Expiration
+              .col-sm-3
+                = select_month(Date.today, {add_month_numbers: true},  name:nil, class: 'form-control card-expiry-month')
+              .col-sm-2
+                = select_year(Date.today.year, {start_year: Date.today.year, end_year: Date.today.year + 4}, name:nil, class: 'form-control card-expiry-year')
+        = f.submit submit_title, class: "btn btn-primary payment_submit"
 
