@@ -20,6 +20,7 @@ gem 'paratrooper'
 gem 'carrierwave'
 gem 'fog'
 gem 'mini_magick'
+gem 'stripe'
 
 group :development do
   gem 'sqlite3'
@@ -49,4 +50,5 @@ group :production do
   gem 'rails_12factor'
   gem 'sentry-raven', :git => "https://github.com/getsentry/raven-ruby.git"
 end
+
 

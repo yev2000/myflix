@@ -7,6 +7,9 @@ end
 class ReviewCreationError < StandardError
 end
 
+class PaymentError < StandardError
+end
+
 class DuplicatePositionIDError < QueuePositionError
 end
 
