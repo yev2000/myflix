@@ -1,9 +1,10 @@
 - action ||= :new_user
 
 = content_for :head do
-  %script(src="https://js.stripe.com/v1/")
-  :javascript
-    Stripe.setPublishableKey("#{ENV['stripe_test_public_key']}");
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script type="text/javascript">
+  Stripe.setPublishableKey("#{ENV['stripe_test_public_key']}");
+  </script>
   = javascript_include_tag 'payments'
 
 %section.register.container
@@ -25,20 +26,20 @@
           = hidden_field_tag :invitation_token, @invitation.token
         - if action == :new_user
           %fieldset.credit_card
-            %span.help-block.payment-errors
+            %span.payment-errors
             .form-group
               %label.control-label.col-sm-2 Credit Card Number
               .col-sm-6
-                %input.card-number.form-control(type="text")
+                %input.card-number.form-control(type="text" data-stripe="number")
             .form-group
               %label.control-label.col-sm-2 Security Code
               .col-sm-6
-                %input.card-cvc.form-control(type="text")
+                %input.card-cvc.form-control(type="text" data-stripe="cvc")
             .form-group
               %label.control-label.col-sm-2 Expiration
               .col-sm-3
-                = select_month(Date.today, {add_month_numbers: true},  name:nil, class: 'form-control card-expiry-month')
+                = select_month(Date.today, {add_month_numbers: true},  name:nil, class: 'form-control card-expiry-month', data: { stripe: "exp-month"})
               .col-sm-2
-                = select_year(Date.today.year, {start_year: Date.today.year, end_year: Date.today.year + 4}, name:nil, class: 'form-control card-expiry-year')
+                = select_year(Date.today.year, {start_year: Date.today.year, end_year: Date.today.year + 4}, name:nil, class: 'form-control card-expiry-year', data: { stripe: "exp-year"})
         = f.submit submit_title, class: "btn btn-primary payment_submit"
 
