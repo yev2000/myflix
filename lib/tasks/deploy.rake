@@ -8,6 +8,8 @@ namespace :deploy do
     command_to_run = 'heroku config:set MYFLIX_BUILD_DATE="' + Time.now.to_s + '" --app myflix-yev-staging'
     system(command_to_run)
 
+    ## should I also run figaro heroku:set -e production --app myflix-yev-staging ??
+
     deployment = Paratrooper::Deploy.new("myflix-yev-staging", tag: 'staging')
 
     deployment.deploy
@@ -17,6 +19,8 @@ namespace :deploy do
   task :production do
     command_to_run = 'heroku config:set MYFLIX_BUILD_DATE="' + Time.now.to_s + '" --app myflix-yev'
     system(command_to_run)
+
+    ## should I also run figaro heroku:set -e production --app myflix-yev??
 
     deployment = Paratrooper::Deploy.new("myflix-yev") do |deploy|
       deploy.tag              = 'production'

@@ -33,6 +33,10 @@ Myflix::Application.routes.draw do
     collection do
       get 'search'
     end
+    
+    member do
+      get 'watch'
+    end
 
     resources :reviews, only: [:create]
   end
@@ -42,6 +46,10 @@ Myflix::Application.routes.draw do
   resources :categories, only: [:index, :show]
 
   resources :invitations, only: [:new, :create, :show]
+
+  namespace :admin do
+    resources :videos, only: [:new, :create, :edit, :update]
+  end
 
   get 'ui(/:action)', controller: 'ui'
 

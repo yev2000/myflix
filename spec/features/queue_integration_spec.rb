@@ -4,7 +4,7 @@ feature "video queue management" do
   background do
     @user = Fabricate(:user)
     category = Fabricate(:category)
-    4.times { Fabricate(:video, cover_small_url: "/tmp/forrest_gump_small.PNG", categories: [category]) }
+    4.times { Fabricate(:video, categories: [category]) }
   end
 
   scenario "user adds and reorders queue items after signing in" do
@@ -61,10 +61,6 @@ feature "video queue management" do
     # and confirm new ordering
     expect_queue_page_with_videos(new_order)
   end
-end
-
-def expect_user_name_on_page(user)
-  expect(page).to have_content user.fullname
 end
 
 def expect_video_details(video)

@@ -9,6 +9,30 @@ describe VideosController do
     end
   end
 
+  describe "GET watch" do
+    before do
+      Fabricate(:video)
+    end
+
+    context "no logged in user" do
+      it_behaves_like("require_sign_in") { let(:action) { get :watch, id: Video.first.id } }
+    end
+
+    context "user is logged in" do
+      before { set_current_user }
+
+      it "sets @video to the specified video" do
+        get :watch, id: Video.first.id
+        expect(assigns(:video)).to eq(Video.first)
+      end
+
+      it "sets redirects to the videos path if the ID does not identify a valid video" do
+        get :watch, id: Video.first.id + 1
+        expect(response).to redirect_to videos_path
+      end
+    end
+  end
+
   #####################################
   #
   # Show

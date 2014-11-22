@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 ruby '2.1.2'
 
-##gem 'bootstrap-sass', '~> 2.3.2.0'
 gem 'bootstrap-sass', '~> 3.1.1.1'
 gem 'coffee-rails'
 gem 'rails', '4.1.5'
@@ -18,6 +17,9 @@ gem 'figaro'
 gem 'sidekiq'
 gem 'unicorn'
 gem 'paratrooper'
+gem 'carrierwave'
+gem 'fog'
+gem 'mini_magick'
 gem 'stripe'
 
 group :development do

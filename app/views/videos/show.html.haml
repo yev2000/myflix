@@ -2,14 +2,16 @@
   .container
     .row
       .video_large_cover.col-sm-7.col-sm-offset-1
-        %img{src: @video.cover_large_url}
+        %img{src: @video.large_cover_url}
       .video_info.col-sm-3
         %header
           %h3= @video.title
           %span= "Rating: #{@video.average_rating_string}"
         %p= @video.description
         .actions
-          %a.btn.btn-primary(href="") Watch Now
+          - if logged_in? && current_user.admin?
+            = link_to "Edit Video", edit_admin_video_path(@video), class: "btn btn-default"
+          = link_to "Watch Now", watch_video_path(@video), class: "btn btn-primary"
           - if @video_queue_entry
             = form_for(@video_queue_entry, url: user_video_queue_entry_index_path(@video_queue_entry.user, user_id: @video_queue_entry.user_id, format: :html)) do |f|
               = f.hidden_field :video_id

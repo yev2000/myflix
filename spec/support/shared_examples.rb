@@ -6,6 +6,20 @@ shared_examples "require_sign_in" do
   end
 end
 
+shared_examples "require_admin" do
+  it "flashes a danger message" do
+    set_current_user
+    action
+    expect_danger_flash
+  end
+
+  it "redirects to the sign in page if current user is a non-admin user" do
+    set_current_user
+    action
+    expect(response).to redirect_to sign_in_path
+  end
+end
+
 shared_examples "require_valid_video" do
   it "sets @video to nil" do
     action

@@ -21,6 +21,8 @@ charlie = Fabricate(:user, email: "charlie@ccc.com", fullname: "Charlie Doe", pa
 daisy = Fabricate(:user, email: "daisy@ddd.com", fullname: "Daisy Doe", password: "pass")
 emeril = Fabricate(:user, email: "emeril@eee.com", fullname: "Emeril Doe", password: "pass")
 
+admin = Fabricate(:admin, email: "admin@myflix.com", fullname: "Admin User", password: "admin")
+
 seed_videoqueues()
 seed_specific_user_reviews([bob, charlie])
 seed_specific_followings(alice, [bob, charlie])
