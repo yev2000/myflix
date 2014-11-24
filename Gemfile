@@ -43,6 +43,8 @@ group :test do
   gem 'shoulda-matchers'
   gem 'capybara'
   gem 'capybara-email'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :production do
