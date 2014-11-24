@@ -71,7 +71,7 @@ describe UsersController do
   describe "POST create" do
     context "valid user creation" do
       before do
-        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
+        post :create, { stripeToken: get_stripe_token_id, user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
       end
 
       after { ActionMailer::Base.deliveries.clear }
@@ -118,7 +118,7 @@ describe UsersController do
         @invitation = Fabricate(:invitation, user: @inviter)
         @invitation_email = @invitation.email
         @invitation_token = @invitation.token
-        post :create, { invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
+        post :create, { stripeToken: get_stripe_token_id, invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
         @inviter.reload
       end
       
@@ -161,7 +161,7 @@ describe UsersController do
         @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1)
         @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
 
-        get :create,  invitation_token: @prior_invitation2.token, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123"}
+        post :create, {stripeToken: get_stripe_token_id, invitation_token: @prior_invitation2.token, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123"} }
       end
 
       it "deletes any prior invitations for that invitee email address" do
@@ -177,21 +177,21 @@ describe UsersController do
       after { ActionMailer::Base.deliveries.clear }
 
       it "fails to create a new user if the password confirmation does not match password" do
-        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+        post :create, { stripeToken: get_stripe_token_id, user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
 
         u = User.first
         expect(u).to eq(nil)
       end
 
       it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
-        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+        post :create, { stripeToken: get_stripe_token_id, user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
         expect(assigns(:user).email).to eq("joe@company.com")
         expect(assigns(:user).fullname).to eq("joe smith")
       end
 
       it "fails to create a new user if the email already exists, and renders the new template again" do
         joe_user = Fabricate(:user, email: "joe@company.com")
-        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
+        post :create, { stripeToken: get_stripe_token_id, user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
 
         expect(User.all.size).to eq(1)
         expect(response).to render_template :new
@@ -201,7 +201,7 @@ describe UsersController do
         joe_user = Fabricate(:user, email: "joe@company.com")
 
         # this should fail because this is a duplicate email"
-        post :create, { user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
+        post :create, { stripeToken: get_stripe_token_id, user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
         
         expect(ActionMailer::Base.deliveries).to be_empty
       end

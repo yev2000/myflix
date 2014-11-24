@@ -43,6 +43,8 @@ group :test do
   gem 'shoulda-matchers'
   gem 'capybara'
   gem 'capybara-email'
+  gem 'selenium-webdriver'
+  gem 'poltergeist'
 end
 
 group :production do

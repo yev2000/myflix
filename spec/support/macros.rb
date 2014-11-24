@@ -46,3 +46,18 @@ def delete_s3_video_upload(video)
     video.save
   end
 end
+
+def get_stripe_token_id
+  Stripe.api_key = ENV["stripe_test_secret_key"]
+
+  @token ||= Stripe::Token.create(
+    :card => {
+    :number => "4242424242424242",
+    :exp_month => 11,
+    :exp_year => 2015,
+    :cvc => "123"
+    }
+  )
+  
+  @token.id
+end

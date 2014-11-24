@@ -1,6 +1,9 @@
 require 'rails_helper'
 
-feature "invite someone to MyFlix" do
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
+
+feature "invite someone to MyFlix", js: true do
   background do
     @inviter = Fabricate(:user, password: "pass", email: "svengali@svenco.com")
     clear_emails
@@ -20,9 +23,7 @@ feature "invite someone to MyFlix" do
 
     # let the user sign in
     email_node.click_link "Sign Up Here"
-    fill_in "Password", with: "pass"
-    fill_in "Confirm Password", with: "pass"
-    click_button "Sign Up"
+    fill_in_invited_register_form
 
     # at this point we expect the invited user to have been logged in
     expect(page).to have_content "Your user account (for #{invitation.email}) was created. You are logged in."
@@ -34,7 +35,7 @@ feature "invite someone to MyFlix" do
 
 
   scenario "user signs in and invites a friend, who then registers" do
-    sign_in_user(@inviter)
+    sign_in_user_via_ui(@inviter.email, @inviter.password)
 
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
@@ -58,14 +59,12 @@ feature "invite someone to MyFlix" do
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
     logout_user_via_ui # logs out inviter
-    ##visit logout_path
 
     # the invitee performs a signup based upon the invitation email
     email_node = open_email(invitee_email)
     perform_invited_signup(email_node, @inviter, invitee_email)
     # the invitee then logs out   
     logout_user_via_ui
-    ##visit logout_path
 
     # now we try to follow the link that was in the invitation email
     # to try to register again
@@ -100,8 +99,9 @@ feature "invite someone to MyFlix" do
 end
 
 def submit_invitation_request(user, invitee_email)
-  page.find('#dlabel').click
-  find_link("Invite a friend").click
+#  page.find('#dlabel').click
+#  find_link("Invite a friend").click
+  visit new_invitation_path
 
   expect(page).to have_content "Invite a friend"
   fill_in "Friend's Name", with: "Jane Doe"
@@ -117,9 +117,7 @@ def perform_invited_signup(email, inviter, invitee_email)
   expect(page).to have_content "Register"
   expect(page).to have_content "Invitation to register from #{inviter.fullname}"
 
-  fill_in "Password", with: "pass"
-  fill_in "Confirm Password", with: "pass"
-  click_button "Sign Up"
+  fill_in_invited_register_form
 
   expect(page).to have_content "Your user account (for #{invitee_email}) was created. You are logged in."
 end
@@ -129,4 +127,15 @@ def confirm_following_relationship(leader)
   leader_row = find_leader_row_in_people_table(leader)
   expect(leader_row).not_to be_nil
   expect(page).to have_content leader.fullname
+end
+
+def fill_in_invited_register_form
+    fill_in "Password", with: "pass"
+    fill_in "Confirm Password", with: "pass"
+    page.find(".card-number").set("4242424242424242")
+    page.find(".card-cvc").set("123")
+    find("#date_month").find(:xpath, "option[12]").select_option
+    find("#date_year").find(:xpath, "option[4]").select_option
+    click_button "Pay and Sign Up"
+    sleep(3)
 end

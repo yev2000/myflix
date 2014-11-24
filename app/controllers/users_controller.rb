@@ -95,7 +95,7 @@ class UsersController < ApplicationController
       flash[:danger] = "Error in proceessing your credit card (#{e})"
       return false
     end
-  
+
     begin
       charge = Stripe::Charge.create(customer: customer.id, amount: amount,
         description: "MyFlix Monthly Membership", currency: 'usd')
