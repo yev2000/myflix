@@ -8,7 +8,7 @@ feature "invite someone to MyFlix" do
 
   after { clear_emails }
 
-  scenario "demonstrate capybara logout issue" do
+  scenario "demonstrate capybara logout issue", {js: true, vcr: true} do
     # generate an invitation instance. The "inviter" is alice
     grace = Fabricate(:user, fullname: "Grace Hopper")
     invitation = Fabricate(:invitation, fullname: "Alan Turing", user: grace)
@@ -19,10 +19,7 @@ feature "invite someone to MyFlix" do
     email_node = open_email(invitation.email)
 
     # let the user sign in
-    email_node.click_link "Sign Up Here"
-    fill_in "Password", with: "pass"
-    fill_in "Confirm Password", with: "pass"
-    click_button "Sign Up"
+    perform_invited_signup(email_node, grace, invitation.email)
 
     # at this point we expect the invited user to have been logged in
     expect(page).to have_content "Your user account (for #{invitation.email}) was created. You are logged in."
@@ -33,7 +30,7 @@ feature "invite someone to MyFlix" do
   end
 
 
-  scenario "user signs in and invites a friend, who then registers" do
+  scenario "user signs in and invites a friend, who then registers", {js: true, vcr: true} do
     sign_in_user(@inviter)
 
     invitee_email = "jdoe@gmail.com"
@@ -52,7 +49,7 @@ feature "invite someone to MyFlix" do
     confirm_following_relationship(User.find_by_email(invitee_email))
   end
 
-  scenario "user attempts to use invitation link twice" do
+  scenario "user attempts to use invitation link twice", {js: true, vcr: true } do
     sign_in_user(@inviter)
 
     invitee_email = "jdoe@gmail.com"
@@ -78,8 +75,7 @@ feature "invite someone to MyFlix" do
     expect(page).not_to have_content "Jane Doe"
   end
 
-
-  scenario "user attempts to use an invitation after already having registered their email address" do
+  scenario "user attempts to use an invitation after already having registered their email address", {js: true, vcr: true} do
     sign_in_user(@inviter)
     
     invitee_email = "jdoe@gmail.com"
@@ -96,7 +92,6 @@ feature "invite someone to MyFlix" do
     second_email_node.click_link "Sign Up Here"
     expect(page).to have_content "Your invitation has expired or is not valid."
   end
-
 end
 
 def submit_invitation_request(user, invitee_email)
@@ -119,7 +114,11 @@ def perform_invited_signup(email, inviter, invitee_email)
 
   fill_in "Password", with: "pass"
   fill_in "Confirm Password", with: "pass"
-  click_button "Sign Up"
+  fill_in "Credit Card Number", with: "4242424242424242"
+  fill_in "Security Code", with: "123"
+  select "7 - July", from: "date_month"
+  select "2016", from: "date_year"
+  click_button "Pay and Sign Up"
 
   expect(page).to have_content "Your user account (for #{invitee_email}) was created. You are logged in."
 end

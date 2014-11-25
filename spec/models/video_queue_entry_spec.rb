@@ -114,10 +114,12 @@ describe VideoQueueEntry do
 
     it "does not persist any ordering changes if false is returned" do
       vqe2.video = nil
+      binding.pry
       VideoQueueEntry.renumber_positions!([vqe1, vqe2])
 
       vqe1.reload
       vqe2.reload
+      binding.pry
       expect(vqe1.position).to eq(9)
       expect(vqe2.position).to eq(7)
     end

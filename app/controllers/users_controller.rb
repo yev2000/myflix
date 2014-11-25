@@ -14,35 +14,33 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
 
-    begin
-      User.transaction do
-        if (test1 && test2 && @user.save)
+    if (test1 && test2 && @user.valid?)
 
-          if perform_payment(params[:stripeToken], params[:stripeEmail], 999) == false
-            # if the payment processing failed, we want to raise the exception to roll back the transaction
-            raise(PaymentError, "Unable to create new user account because of a payment problem")
-          end
+      if(perform_payment(params[:stripeToken], params[:stripeEmail], 999) == true)
+        @user.save
+        handle_creation_from_invitation(@user, params[:invitation_token])
 
-          handle_creation_from_invitation(@user, params[:invitation_token])
+        AppMailer.delay.notify_on_new_user_account(@user)
 
-          AppMailer.delay.notify_on_new_user_account(@user)
+        flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
-          flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
+        # if we want to log the user in, we simply create
+        # a session for the user implicitly.
+        session[:userid] = @user.id
 
-          # if we want to log the user in, we simply create
-          # a session for the user implicitly.
-          session[:userid] = @user.id
-
-          redirect_to home_path
-        else
-          render :new
-        end
-      end # transaction
-    rescue
-      flash[:danger] += "  No user has been created."
+        redirect_to home_path
+      else
+        # if the payment processing failed, we want to raise the exception to roll back the transaction
+        flash[:danger] = "Unable to create new user account because of a payment problem"
+        render :new
+      end
+    else
+      # validation problem in the fields of the user even before
+      # a charge is attempted
+      # error should already be set on the object, so no extra flash danger is needed
       render :new
     end
-  end
+  end # create
 
   def edit
   end
@@ -89,22 +87,11 @@ class UsersController < ApplicationController
   end
 
   def perform_payment(token, email, amount)
-    begin
-      customer = Stripe::Customer.create(:email => email, :card  => token)
-    rescue => e
-      flash[:danger] = "Error in proceessing your credit card (#{e})"
-      return false
-    end
-  
-    begin
-      charge = Stripe::Charge.create(customer: customer.id, amount: amount,
-        description: "MyFlix Monthly Membership", currency: 'usd')
-    rescue Stripe::CardError => e
-      flash[:danger] = "Error in proceessing your credit card (#{e})"
-      return false
-    end
+    response = StripeWrapper::Charge.create(amount: amount, card: token)
+    return true if response.successful?
 
-    return true
+    flash[:danger] = "Error in proceessing your credit card (#{response.error_message})"
+    return false
   end
 
 end
