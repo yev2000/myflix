@@ -69,16 +69,16 @@ describe UsersController do
   end # GET show
 
   describe "POST create" do
-    context "successful credit card charge" do
+    context "valid credit card info" do
       before do
         charge = double('charge')
         charge.stub(:successful?).and_return(true)
-        StripeWrapper::Charge.stub(:create).and_return(charge)
+        StripeWrapper::Charge.should_receive(:create).and_return(charge)
       end
 
       after { ActionMailer::Base.deliveries.clear }
 
-      context "valid user creation" do
+      context "valid personal user info" do
         before do
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
         end
@@ -119,7 +119,7 @@ describe UsersController do
         end
       end # valid user creation
 
-      context "valid user creation from an invitation" do
+      context "valid user personal info created from an invitation" do
         before do
           @inviter = Fabricate(:user)
           @invitation = Fabricate(:invitation, user: @inviter)
@@ -179,51 +179,56 @@ describe UsersController do
           expect(Invitation.all).to include(@to_still_preserve_invitation1, @to_still_preserve_invitation2, @to_still_preserve_invitation3)
         end
       end # other invitations exist 
+    end # valid credit card charge is called
 
-      context "invalid user creation" do
-        after { ActionMailer::Base.deliveries.clear }
+    context "valid credit card info with invalid personal info" do
+      before { StripeWrapper::Charge.should_not_receive(:create) }
+      after { ActionMailer::Base.deliveries.clear }
 
-        it "fails to create a new user if the password confirmation does not match password" do
-          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+      it "fails to create a new user if the password confirmation does not match password" do
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
 
-          u = User.first
-          expect(u).to eq(nil)
-        end
-
-        it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
-          post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
-          expect(assigns(:user).email).to eq("joe@company.com")
-          expect(assigns(:user).fullname).to eq("joe smith")
-        end
-
-        it "fails to create a new user if the email already exists, and renders the new template again" do
-          joe_user = Fabricate(:user, email: "joe@company.com")
-          post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
-
-          expect(User.all.size).to eq(1)
-          expect(response).to render_template :new
-        end
-
-        it "does not send out a welcome email if user already exists" do
-          joe_user = Fabricate(:user, email: "joe@company.com")
-
-          # this should fail because this is a duplicate email"
-          post :create, { user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
-          
-          expect(ActionMailer::Base.deliveries).to be_empty
-        end
-      end # invalid user creation
-    end # successful credit card charge
-
-    context "unsuccessful credit card charge" do
-      before do
-        charge = double('charge')
-        charge.stub(:successful?).and_return(false)
-        charge.stub(:error_message).and_return("Invalid Credit Card")
-        StripeWrapper::Charge.stub(:create).and_return(charge)
+        u = User.first
+        expect(u).to eq(nil)
       end
 
-      context "valid user creation" do
+      it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
+        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
+        expect(assigns(:user).email).to eq("joe@company.com")
+        expect(assigns(:user).fullname).to eq("joe smith")
+      end
+
+      it "fails to create a new user if the email already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
+
+        expect(User.all.size).to eq(1)
+      end
+
+      it "renders the new template if the email already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
+
+        expect(response).to render_template :new
+      end
+
+      it "does not send out a welcome email if user already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+
+        # this should fail because this is a duplicate email"
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
+        
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end # valid card but invalid personal info
+    end # successful credit card charge
+
+    context "invalid credit card info (unsuccessful charge)" do
+      before do
+        charge = double('charge', successful?: false, error_message: "Your card was declined.")
+        StripeWrapper::Charge.should_receive(:create).and_return(charge)
+      end
+
+      context "valid user personal info" do
         before do
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
@@ -238,10 +243,10 @@ describe UsersController do
 
         it "does not create a new user" do
           expect(User.count).to eq(0)
-        end
+        end  
       end # valid user creation
 
-      context "valid user creation from an invitation" do
+      context "valid user personal info created from an invitation" do
         before do
           @inviter = Fabricate(:user)
           @invitation = Fabricate(:invitation, user: @inviter)

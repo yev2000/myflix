@@ -14,8 +14,7 @@ class UsersController < ApplicationController
     test1 = @user.valid?
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
 
-    if (test1 && test2 && @user.valid?)
-
+    if test1 && test2
       if(perform_payment(params[:stripeToken], params[:stripeEmail], 999) == true)
         @user.save
         handle_creation_from_invitation(@user, params[:invitation_token])
@@ -89,7 +88,7 @@ class UsersController < ApplicationController
   def perform_payment(token, email, amount)
     response = StripeWrapper::Charge.create(amount: amount, card: token)
     return true if response.successful?
-
+    
     flash[:danger] = "Error in proceessing your credit card (#{response.error_message})"
     return false
   end
