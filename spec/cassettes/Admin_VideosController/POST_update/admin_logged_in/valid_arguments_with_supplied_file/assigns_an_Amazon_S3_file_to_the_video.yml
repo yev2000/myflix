@@ -20,22 +20,22 @@ http_interactions:
       Content-Encoding:
       - aws-chunked
       X-Amz-Date:
-      - 20141125T013546Z
+      - 20141125T021531Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
         SignedHeaders=content-encoding;content-type;host;x-amz-acl;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length,
-        Signature=ded9c914c35f4e1c6415e421f4af94306b82a9728c0999717811cc767348a391
+        Signature=6f92ba8aa3d5d93843103566150c81f69a4e7709a550b03c7e1c39e6b1d372ec
   response:
     status:
       code: 200
       message: ''
     headers:
       X-Amz-Id-2:
-      - 47O8A4kwSgiqHUkdScp3MRAbBpoHcsP6bRItbUpmUaeY7L8RAKLK9z7vMvCjZs6d
+      - QJC1zSmfETfea4aDHcij/mPkryPVSqYQK1wsJP6gYayj/DdJfoOnqlm8IQXeaaAZ
       X-Amz-Request-Id:
-      - 16E483A6260CA05D
+      - 95A7153CCD9BA9D4
       Date:
-      - Tue, 25 Nov 2014 01:35:50 GMT
+      - Tue, 25 Nov 2014 02:15:36 GMT
       Etag:
       - '"79c4c439ef414517c5e3519dc80393ec"'
       Content-Length:
@@ -46,7 +46,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:47 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:33 GMT
 - request:
     method: put
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/1/monk_small.jpg
@@ -67,22 +67,22 @@ http_interactions:
       Content-Encoding:
       - aws-chunked
       X-Amz-Date:
-      - 20141125T013547Z
+      - 20141125T021533Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
         SignedHeaders=content-encoding;content-type;host;x-amz-acl;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length,
-        Signature=1a9073a8c031659b8e460faa2c804de010b9ca8bce29b9e112a0cd5bae9e5032
+        Signature=03e2e4d2df17a09869102377cbdda0bddb520503b22e4450a52c15a9df599b17
   response:
     status:
       code: 200
       message: ''
     headers:
       X-Amz-Id-2:
-      - EA2l3XaQBEioX2+0gYbx83+tSe047y+4zaENcEfv5YVrptMBBCH4c8LJeDRrMqKs
+      - 35AV1TlTgZ/PFYDC0IzWK9jYrL/UDlhQP7ByTohWTw/YXGgSJmrkRwvBdBACG9EuGm5Ncz9pEOU=
       X-Amz-Request-Id:
-      - 4A912A30107B97D3
+      - 51ADA44AA02D0F6F
       Date:
-      - Tue, 25 Nov 2014 01:35:51 GMT
+      - Tue, 25 Nov 2014 02:15:37 GMT
       Etag:
       - '"fecf4facac21c8d7cf6ba9027213e704"'
       Content-Length:
@@ -93,7 +93,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:48 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:34 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/1/monk_large.jpg
@@ -106,28 +106,28 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141125T013548Z
+      - 20141125T021534Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=e2aaccb12161ceab944243874bbf786418fc044d51f84834f2924e205e0bd3c9
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=e2afc479d57c15049258d3d95d97b7761ebaab487455c24ba2696c086db3a569
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - RccxvnUsBQnaJGiQqajywkI80O/bfA8Wvz/vlVla5SdpU7yTT+GVZHFn8kSyKL/f
+      - 75KJurnMBuTrz1lOWiSl39s7nSBCJf5CotLkbboJ1+YU4vK3h6sexkH/sl62cyQiag53CEftrpQ=
       X-Amz-Request-Id:
-      - 65715FB55842D926
+      - 88DA17CE22372A67
       Date:
-      - Tue, 25 Nov 2014 01:35:52 GMT
+      - Tue, 25 Nov 2014 02:15:38 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:49 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:35 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/1/monk_small.jpg
@@ -140,28 +140,28 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141125T013549Z
+      - 20141125T021535Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=c783c4cb8905da5527a000f85196894c638f5e059ec17b04be776ad8b666d6f9
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=6bb0b0f9b901fa34a3e075433a221618959fbee9d83581a927cca97825b78247
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - 8GPc+LqEZYZ/Ew6nj6sA17BakW5OU7xt5QzJchBAWb1o457hDV1yd6piYvpHTEBN
+      - YTg8r1hjRNvZUADocNVVhv2EoxVE8Q9X5/9NuA2CJL7hcx8+k1euHQ7uFHE1MTEdKZaIs3s7cK0=
       X-Amz-Request-Id:
-      - 3172F57B624B933F
+      - B63F80CD345618F4
       Date:
-      - Tue, 25 Nov 2014 01:35:52 GMT
+      - Tue, 25 Nov 2014 02:15:42 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:49 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:38 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/1/monk_large.jpg
@@ -174,28 +174,28 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141125T013549Z
+      - 20141125T021538Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=4de42c576713a73fcee4446f9404d2a9a3e53f78e42698fc34993b2879c6470d
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=7dcb3521b600efbf7e556c5901becec1c31cf1e5348b40b02cf01007b021c852
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - XejzTvoxByqRpkC45cab98Ojauz3LFydA7PSyVcVEkcBgKZSx5mbQUDqkj0CH8ox
+      - qF9gN8S0u1aYSmfw9H+UTiexuy7KWwAdLtQsnlvEanTuocm09VHyJF1XSM8t6Lt2
       X-Amz-Request-Id:
-      - 39F223B9D9F1A1B8
+      - 8C73803476FECBC1
       Date:
-      - Tue, 25 Nov 2014 01:35:53 GMT
+      - Tue, 25 Nov 2014 02:15:42 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:50 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:39 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/1/monk_small.jpg
@@ -208,26 +208,26 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141125T013550Z
+      - 20141125T021539Z
       Authorization:
       - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141125/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=58eddb47d9a25584dd263fcb1c41d4166bd7be5f57b41c0eff802d1b1bd958e6
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=bc11befd7b97dd1b78b9a4940cecf285ab1280a0952b04bbee3793ce4830374e
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - zXo92zWxV+lC6OC217q5+etQEIyV+AO/AiuFYtBxm2ldGAqi7kbv66DzmKf7smNV
+      - Zz8HYaNxwfdjn2e9/nNXchUCNbxz4q9lZMzUSGmiOZl9zmcIDtbujdTS/ZzVFDdimcSYRFGfln8=
       X-Amz-Request-Id:
-      - E6BFE57DC0797493
+      - D86113CF5EEC7554
       Date:
-      - Tue, 25 Nov 2014 01:35:54 GMT
+      - Tue, 25 Nov 2014 02:15:44 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 01:35:51 GMT
+  recorded_at: Tue, 25 Nov 2014 02:15:41 GMT
 recorded_with: VCR 2.9.3

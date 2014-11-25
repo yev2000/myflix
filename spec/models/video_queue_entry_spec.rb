@@ -113,13 +113,13 @@ describe VideoQueueEntry do
     end
 
     it "does not persist any ordering changes if false is returned" do
+      # the following will force the vqe2 entry to be invalid when renumber_positions! tries to save the models
       vqe2.video = nil
-      binding.pry
+      
       VideoQueueEntry.renumber_positions!([vqe1, vqe2])
 
       vqe1.reload
       vqe2.reload
-      binding.pry
       expect(vqe1.position).to eq(9)
       expect(vqe2.position).to eq(7)
     end

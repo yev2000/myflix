@@ -5,7 +5,7 @@ http_interactions:
     uri: https://api.stripe.com/v1/charges
     body:
       encoding: US-ASCII
-      string: amount=999&currency=usd&card=tok_152V5WHLIyFXpgjHWD0kG5Pf
+      string: amount=999&currency=usd&card=tok_152YqSHLIyFXpgjHPOkMzHMY
     headers:
       Accept:
       - "*/*; q=0.5, application/xml"
@@ -31,7 +31,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 24 Nov 2014 22:13:43 GMT
+      - Tue, 25 Nov 2014 02:14:25 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -45,7 +45,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - a4f36374-3087-4d7f-a35a-542e2326ad9f
+      - af15f4a3-886c-4d49-b2fa-fd16d473d9f7
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -54,9 +54,9 @@ http_interactions:
       encoding: UTF-8
       string: |
         {
-          "id": "ch_152V5XHLIyFXpgjHhRaSG1w0",
+          "id": "ch_152YqTHLIyFXpgjHIh5aujFS",
           "object": "charge",
-          "created": 1416867223,
+          "created": 1416881665,
           "livemode": false,
           "paid": true,
           "amount": 999,
@@ -67,11 +67,11 @@ http_interactions:
             "object": "list",
             "total_count": 0,
             "has_more": false,
-            "url": "/v1/charges/ch_152V5XHLIyFXpgjHhRaSG1w0/refunds",
+            "url": "/v1/charges/ch_152YqTHLIyFXpgjHIh5aujFS/refunds",
             "data": []
           },
           "card": {
-            "id": "card_152V5WHLIyFXpgjHQf26Ixx9",
+            "id": "card_152YqSHLIyFXpgjHJDfMpxWA",
             "object": "card",
             "last4": "4242",
             "brand": "Visa",
@@ -93,7 +93,7 @@ http_interactions:
             "dynamic_last4": null,
             "customer": null
           },
-          "balance_transaction": "txn_152V5XHLIyFXpgjHGNu21Ggx",
+          "balance_transaction": "txn_152YqTHLIyFXpgjHxNwqDsyB",
           "failure_message": null,
           "failure_code": null,
           "amount_refunded": 0,
@@ -112,5 +112,5 @@ http_interactions:
           "shipping": null
         }
     http_version: 
-  recorded_at: Mon, 24 Nov 2014 22:13:41 GMT
+  recorded_at: Tue, 25 Nov 2014 02:14:22 GMT
 recorded_with: VCR 2.9.3

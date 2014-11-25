@@ -98,7 +98,6 @@ class VideoQueueEntry < ActiveRecord::Base
         end
       end # transaction
     rescue 
-      binding.pry
       return false
     end
 
