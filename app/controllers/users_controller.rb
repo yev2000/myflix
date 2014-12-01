@@ -18,10 +18,10 @@ class UsersController < ApplicationController
 
     # we want to run both validations so cannot use them in a simple
     # && or || expression since both must fire...
-    test1 = @user.valid?
-    test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
+    user_valid = @user.valid?
+    password_confirmed = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
 
-    if test1 && test2
+    if user_valid && password_confirmed
       if(perform_payment(params[:stripeToken], params[:stripeEmail], User::REGISTRATION_COST_IN_CENTS) == true)
         perform_account_creation(@user, params[:invitation_token])
         redirect_to home_path
