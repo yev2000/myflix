@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature "invite someone to MyFlix" do
+feature "invite someone to MyFlix", {js: true, vcr: true} do
   background do
     @inviter = Fabricate(:user, password: "pass", email: "svengali@svenco.com")
     clear_emails
@@ -8,7 +8,7 @@ feature "invite someone to MyFlix" do
 
   after { clear_emails }
 
-  scenario "demonstrate capybara logout issue", {js: true, vcr: true} do
+  scenario "demonstrate capybara logout issue" do
     # generate an invitation instance. The "inviter" is alice
     grace = Fabricate(:user, fullname: "Grace Hopper")
     invitation = Fabricate(:invitation, fullname: "Alan Turing", user: grace)
@@ -19,18 +19,20 @@ feature "invite someone to MyFlix" do
     email_node = open_email(invitation.email)
 
     # let the user sign in
-    perform_invited_signup(email_node, grace, invitation.email)
+    perform_invited_signup_with_valid_credit_card(email_node, grace, invitation.email)
 
     # at this point we expect the invited user to have been logged in
     expect(page).to have_content "Your user account (for #{invitation.email}) was created. You are logged in."
 
     # now the fun part - we try to log out the user via visiting the logout path
     visit logout_path
-    ##logout_user_via_ui
+
+    # the above will not work; but if instead you use the below line, it will work
+    # logout_user_via_ui
   end
 
 
-  scenario "user signs in and invites a friend, who then registers", {js: true, vcr: true} do
+  scenario "user signs in and invites a friend, who then registers" do
     sign_in_user(@inviter)
 
     invitee_email = "jdoe@gmail.com"
@@ -38,7 +40,7 @@ feature "invite someone to MyFlix" do
     logout_user_via_ui # logs out inviter
 
     email_node = open_email(invitee_email)
-    perform_invited_signup(email_node, @inviter, invitee_email)
+    perform_invited_signup_with_valid_credit_card(email_node, @inviter, invitee_email)
 
     # make sure the new user if following the user who invited them
     confirm_following_relationship(@inviter)
@@ -49,20 +51,21 @@ feature "invite someone to MyFlix" do
     confirm_following_relationship(User.find_by_email(invitee_email))
   end
 
-  scenario "user attempts to use invitation link twice", {js: true, vcr: true } do
+  scenario "user attempts to use invitation link twice" do
     sign_in_user(@inviter)
 
     invitee_email = "jdoe@gmail.com"
     submit_invitation_request(@inviter, invitee_email)
-    logout_user_via_ui # logs out inviter
-    ##visit logout_path
+
+    # the inviter then logs out
+    logout_user_via_ui 
 
     # the invitee performs a signup based upon the invitation email
     email_node = open_email(invitee_email)
-    perform_invited_signup(email_node, @inviter, invitee_email)
+    perform_invited_signup_with_valid_credit_card(email_node, @inviter, invitee_email)
+
     # the invitee then logs out   
     logout_user_via_ui
-    ##visit logout_path
 
     # now we try to follow the link that was in the invitation email
     # to try to register again
@@ -75,7 +78,7 @@ feature "invite someone to MyFlix" do
     expect(page).not_to have_content "Jane Doe"
   end
 
-  scenario "user attempts to use an invitation after already having registered their email address", {js: true, vcr: true} do
+  scenario "user attempts to use an invitation after already having registered their email address" do
     sign_in_user(@inviter)
     
     invitee_email = "jdoe@gmail.com"
@@ -87,7 +90,7 @@ feature "invite someone to MyFlix" do
 
     expect(original_email_node).not_to eq(second_email_node)
 
-    perform_invited_signup(original_email_node, @inviter, invitee_email)
+    perform_invited_signup_with_valid_credit_card(original_email_node, @inviter, invitee_email)
 
     second_email_node.click_link "Sign Up Here"
     expect(page).to have_content "Your invitation has expired or is not valid."
@@ -105,22 +108,6 @@ def submit_invitation_request(user, invitee_email)
 
   click_button "Send Invitation"
   expect(page).to have_content "We have sent an invitation to #{invitee_email}"
-end
-
-def perform_invited_signup(email, inviter, invitee_email)
-  email.click_link "Sign Up Here"
-  expect(page).to have_content "Register"
-  expect(page).to have_content "Invitation to register from #{inviter.fullname}"
-
-  fill_in "Password", with: "pass"
-  fill_in "Confirm Password", with: "pass"
-  fill_in "Credit Card Number", with: "4242424242424242"
-  fill_in "Security Code", with: "123"
-  select "7 - July", from: "date_month"
-  select "2016", from: "date_year"
-  click_button "Pay and Sign Up"
-
-  expect(page).to have_content "Your user account (for #{invitee_email}) was created. You are logged in."
 end
 
 def confirm_following_relationship(leader)

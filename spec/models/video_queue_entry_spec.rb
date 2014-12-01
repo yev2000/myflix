@@ -125,6 +125,41 @@ describe VideoQueueEntry do
     end
   end # describe #self.renumber_positions!
 
+  describe "#self.renumber_positions_non_transactional!" do
+    let(:user) { Fabricate(:user) }
+    let(:vqe1) { Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 9) }
+    let(:vqe2) { Fabricate(:video_queue_entry, video: Fabricate(:video), user: user, position: 7) }
+    
+    it "reorders the queue entries" do
+      VideoQueueEntry.renumber_positions_non_transactional!([vqe1, vqe2])
+      vqe1.reload
+      vqe2.reload
+      expect(vqe1.position).to eq(1)
+      expect(vqe2.position).to eq(2)
+    end
+
+    it "returns true on successful reordering" do
+      expect(VideoQueueEntry.renumber_positions_non_transactional!([vqe1, vqe2])).to eq(true)
+    end
+
+    it "returns false if at least one record could not be saved" do
+      vqe2.video = nil
+      expect(VideoQueueEntry.renumber_positions_non_transactional!([vqe1, vqe2])).to eq(false)
+    end
+
+    it "does not persist any ordering changes if false is returned" do
+      # the following will force the vqe2 entry to be invalid when renumber_positions! tries to save the models
+      vqe2.video = nil
+      
+      VideoQueueEntry.renumber_positions_non_transactional!([vqe1, vqe2])
+
+      vqe1.reload
+      vqe2.reload
+      expect(vqe1.position).to eq(9)
+      expect(vqe2.position).to eq(7)
+    end
+  end # describe #self.renumber_positions!
+
   describe "#rating_value" do
     before do
       @user = Fabricate(:user)

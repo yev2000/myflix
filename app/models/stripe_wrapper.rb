@@ -9,7 +9,6 @@ module StripeWrapper
     end
 
     def self.create(options={})
-      StripeWrapper.set_api_key
       begin
         response = Stripe::Charge.create(amount: options[:amount],
           currency: "usd",
@@ -38,8 +37,4 @@ module StripeWrapper
     end
 
   end # Charge
-
-  def self.set_api_key
-    Stripe.api_key = Rails.configuration.stripe[:secret_key]
-  end
 end

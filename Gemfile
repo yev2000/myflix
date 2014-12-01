@@ -45,7 +45,7 @@ group :test do
   gem 'capybara-email'
   gem 'vcr'
   gem 'webmock'
-#  gem 'selenium-webdriver'
+  gem 'selenium-webdriver'
   gem 'capybara-webkit'
 end
 

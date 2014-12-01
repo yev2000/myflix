@@ -103,4 +103,21 @@ class VideoQueueEntry < ActiveRecord::Base
 
     return true
   end
+
+  def self.renumber_positions_non_transactional!(video_queue_entry_array)
+    # Renumber the position values of the videos in the array that is
+    # passed in.
+    # EXPECTS: The order of the entries in the input array is the intended
+    #          positional order (the first entry will get position value "1".
+    # RESULTS: The position values for the elements of the passed-in array are
+    #          persisted (saved).
+    # RETURNS: true on success.  false on failure.  If save failure occurs,
+    #          no position changes for any elements are persisted.
+
+    video_queue_entry_array.each_with_index { |entry, index| entry.position = index + 1 }
+    video_queue_entry_array.each { |entry| return false if !entry.valid? }
+    video_queue_entry_array.each { |entry| entry.save! }
+    return true
+  end
+
 end

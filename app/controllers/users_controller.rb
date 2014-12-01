@@ -9,6 +9,13 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     
+    # we want to clear the danger flash before processing the below conditions
+    # this is necessary because a prior execution may have set the danger flash
+    # due to credit card errors, but user validation may not necessarily set the
+    # danger flash (because we use in-line validation errors in the bootstrap form)
+    # in which case stale info is in the flash.
+    flash.delete(:danger)
+
     # we want to run both validations so cannot use them in a simple
     # && or || expression since both must fire...
     test1 = @user.valid?
@@ -26,11 +33,10 @@ class UsersController < ApplicationController
         # if we want to log the user in, we simply create
         # a session for the user implicitly.
         session[:userid] = @user.id
-
         redirect_to home_path
       else
         # if the payment processing failed, we want to raise the exception to roll back the transaction
-        flash[:danger] = "Unable to create new user account because of a payment problem"
+        flash[:danger] = "Unable to create new user account because of a payment problem" if !flash[:danger]
         render :new
       end
     else
@@ -89,7 +95,7 @@ class UsersController < ApplicationController
     response = StripeWrapper::Charge.create(amount: amount, card: token)
     return true if response.successful?
     
-    flash[:danger] = "Error in proceessing your credit card (#{response.error_message})"
+    flash[:danger] = "Error in processing your credit card (#{response.error_message})"
     return false
   end
 

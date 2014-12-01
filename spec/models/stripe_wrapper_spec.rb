@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 describe StripeWrapper do
-  before { StripeWrapper.set_api_key }
-
   describe StripeWrapper::Charge do
     
     describe ".create" do
@@ -19,6 +17,7 @@ describe StripeWrapper do
 
       context "with valid card" do
         let(:card_number) { "4242424242424242"}
+
         it "charges the card successfully", :vcr do
           amount = 429
 
