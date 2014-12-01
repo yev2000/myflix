@@ -4,8 +4,10 @@ require 'paratrooper'
 
 namespace :deploy do
   desc 'Deploy app in staging environment'
-  task staging: :environment do
-    BuildInfo.append_record
+  task staging: do
+    command_to_run = 'heroku run rake deploy:setbuildinfo --app myflix-yev-staging'
+    puts "Performing the following to set latest build information: #{command_to_run}"
+    system(command_to_run)
 
     ## should I also run figaro heroku:set -e production --app myflix-yev-staging ??
 
@@ -15,8 +17,10 @@ namespace :deploy do
   end
 
   desc 'Deploy app in production environment'
-  task production: :environment do
-    BuildInfo.append_record
+  task production: do
+    command_to_run = 'heroku run rake deploy:setbuildinfo --app myflix-yev'
+    puts "Performing the following to set latest build information: #{command_to_run}"
+    system(command_to_run)
 
     ## should I also run figaro heroku:set -e production --app myflix-yev??
 
@@ -44,7 +48,7 @@ namespace :deploy do
     puts "Now I'm done"
   end
 
-  desc 'test out build info creation'
+  desc 'append build information record to the active database'
   task setbuildinfo: :environment do
     BuildInfo.append_record
     puts "Latest build info now: #{BuildInfo.latest_build_string}"
