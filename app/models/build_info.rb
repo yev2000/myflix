@@ -18,6 +18,6 @@ class BuildInfo < ActiveRecord::Base
 
   def self.latest_build_string
     build_info = self.last
-    build_info ? build_info.created_at.to_s + " built by #{build_info.build_user}@#{build_info.build_machine}" : nil
+    build_info ? "Built on #{build_info.created_at.to_s} by #{build_info.build_user}@#{build_info.build_machine}" : nil
   end
 end
