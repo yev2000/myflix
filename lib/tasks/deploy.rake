@@ -4,7 +4,7 @@ require 'paratrooper'
 
 namespace :deploy do
   desc 'Deploy app in staging environment'
-  task staging: do
+  task :staging do
     command_to_run = 'heroku run rake deploy:setbuildinfo --app myflix-yev-staging'
     puts "Performing the following to set latest build information: #{command_to_run}"
     system(command_to_run)
@@ -17,7 +17,7 @@ namespace :deploy do
   end
 
   desc 'Deploy app in production environment'
-  task production: do
+  task :production do
     command_to_run = 'heroku run rake deploy:setbuildinfo --app myflix-yev'
     puts "Performing the following to set latest build information: #{command_to_run}"
     system(command_to_run)
