@@ -22,20 +22,14 @@ class UsersController < ApplicationController
     test2 = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
 
     if test1 && test2
-      if(perform_payment(params[:stripeToken], params[:stripeEmail], 999) == true)
-        @user.save
-        handle_creation_from_invitation(@user, params[:invitation_token])
-
-        AppMailer.delay.notify_on_new_user_account(@user)
-
-        flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
-
-        # if we want to log the user in, we simply create
-        # a session for the user implicitly.
-        session[:userid] = @user.id
+      if(perform_payment(params[:stripeToken], params[:stripeEmail], User::REGISTRATION_COST_IN_CENTS) == true)
+        perform_account_creation(@user, params[:invitation_token])
         redirect_to home_path
       else
-        # if the payment processing failed, we want to raise the exception to roll back the transaction
+        # we only set the danger flash if one has not already been set.
+        # the perform_payment would set a flash if there was an error in
+        # the credit card processing, so likely no need to add another
+        # flash.  But just in case, we have this clause below.
         flash[:danger] = "Unable to create new user account because of a payment problem" if !flash[:danger]
         render :new
       end
@@ -97,6 +91,19 @@ class UsersController < ApplicationController
     
     flash[:danger] = "Error in processing your credit card (#{response.error_message})"
     return false
+  end
+
+  def perform_account_creation(user, invitation_token)
+    user.save
+    handle_creation_from_invitation(user, invitation_token)
+
+    AppMailer.delay.notify_on_new_user_account(user)
+
+    flash[:success] = "Your user account (for #{user.email}) was created.  You are logged in."
+
+    # if we want to log the user in, we simply create
+    # a session for the user implicitly.
+    session[:userid] = user.id
   end
 
 end

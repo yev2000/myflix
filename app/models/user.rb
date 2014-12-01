@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   MIN_EMAIL_LENGTH = 3
   MIN_PASSWORD_LENGTH = 4
+  REGISTRATION_COST_IN_CENTS = 999
 
   has_secure_password validations: false
 
