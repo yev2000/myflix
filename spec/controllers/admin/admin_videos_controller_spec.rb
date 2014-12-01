@@ -87,13 +87,13 @@ describe Admin::VideosController do
           delete_s3_video_upload(Video.first)
         end
 
-        it "creates a video associated with the specified categories" do
+        it "creates a video associated with the specified categories", :vcr do
           expect(Video.all.size).to eq(1)
           expect(Video.first.categories).to match_array([@comedies, @drama])
           expect(Video.first.title).to eq("a title")
         end
 
-        it "assigns an Amazon S3 file to the video" do
+        it "assigns an Amazon S3 file to the video", :vcr do
           # file name structure for successful upload is
           # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/<video ID>/<file name>"
           # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/<video ID>/<file name>"
@@ -101,11 +101,11 @@ describe Admin::VideosController do
           expect(Video.first.small_cover_url).to eq("https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/#{Video.first.id}/monk_small.jpg")
         end
 
-        it "flashes a success message" do
+        it "flashes a success message", :vcr do
           expect(flash[:success]).not_to be_empty
         end
 
-        it "redirects to the show_video path for the newly created video" do
+        it "redirects to the show_video path for the newly created video", :vcr do
           expect(response).to redirect_to video_path(Video.first)
         end
       end # valid args with supplied file
@@ -250,7 +250,7 @@ describe Admin::VideosController do
           delete_s3_video_upload(Video.first)
         end
 
-        it "assigns an Amazon S3 file to the video" do
+        it "assigns an Amazon S3 file to the video", :vcr do
           # file name structure for successful upload is
           # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/large_cover/<video ID>/<file name>"
           # "https://myflix-yev.s3.amazonaws.com/test/uploads/video/small_cover/<video ID>/<file name>"

@@ -11,7 +11,7 @@ feature "create video" do
     delete_s3_video_upload(Video.find_by_title("Batman"))
   end
 
-  scenario "admin user creates a new video with file upload for cover art" do
+  scenario "admin user creates a new video with file upload for cover art", :vcr do
     # first log in
     sign_in_user(@admin_user)
     expect_user_name_on_page(@admin_user)
@@ -22,7 +22,7 @@ feature "create video" do
       Rails.root + "spec/support/attachments/monk_small.jpg")
   end  
 
-  scenario "admin user creates a new video, and regular user navigates to the video details and can select to watch it" do
+  scenario "admin user creates a new video, and regular user navigates to the video details and can select to watch it", :vcr do
     sign_in_user(@admin_user)
 
     admin_add_new_video("Batman", @category, "A superhero movie",
