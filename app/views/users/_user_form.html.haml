@@ -1,11 +1,10 @@
 - action ||= :new_user
 
-= content_for :head do
-  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-  <script type="text/javascript">
-  Stripe.setPublishableKey("#{ENV['stripe_test_public_key']}");
-  </script>
-  = javascript_include_tag 'payments'
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+<script type="text/javascript">
+Stripe.setPublishableKey("#{ENV['stripe_test_public_key']}");
+</script>
 
 %section.register.container
   .row
