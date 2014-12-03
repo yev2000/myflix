@@ -68,134 +68,58 @@ describe UsersController do
 
   end # GET show
 
-  describe "POST create" do
+  describe "POST create" do  
     context "valid credit card info" do
-      before do
-        charge = double('charge')
-        charge.stub(:successful?).and_return(true)
-        StripeWrapper::Charge.should_receive(:create).and_return(charge)
-      end
-
-      after { ActionMailer::Base.deliveries.clear }
-
       context "valid personal user info" do
         before do
-          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }  
+          @user_creation = double("user creation")
+          @user_creation.stub(:create_user).and_return(true)
+          UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
         end
 
-        it "creates a new user if user does not already exist" do
-          u = User.first
-          expect(u.email).to eq("joe@company.com")
+        it "delegates to UserCreation to create a user" do
+          expect(@user_creation).to receive(:create_user)
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
-        it "renders home template if user created" do
+        it "redirects to the home path" do
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
-        end
-
-        it "logs user in, if user created" do
-          expect(session[:userid]).to eq(1)
-        end
-
-        it "sends an email" do
-          expect(ActionMailer::Base.deliveries).not_to be_empty
-        end
-
-        it "sends an email to the email address of the created user" do
-          message = ActionMailer::Base.deliveries.first
-          expect(message.to).to eq([User.first.email])
-        end
-
-        it "has a welcome message in the email body" do
-          message = ActionMailer::Base.deliveries.first
-          if message.parts.size > 0
-            message.parts.each do |part|
-              expect(part.body).to include("Welcome to MyFlix!")
-              expect(part.body).to include(User.first.fullname)
-            end
-          else
-            expect(message.body).to include("Welcome to MyFlix!")
-            expect(message.body).to include(User.first.fullname)
-          end
         end
       end # valid user creation
 
-      context "valid user personal info created from an invitation" do
-        before do
-          @inviter = Fabricate(:user)
-          @invitation = Fabricate(:invitation, user: @inviter)
-          @invitation_email = @invitation.email
-          @invitation_token = @invitation.token
-          post :create, { stripeToken: "123", invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
-          @inviter.reload
-        end
-        
-        after { ActionMailer::Base.deliveries.clear }
-
-        it "creates a new user" do
-          invited_user = User.find_by_email(@invitation_email)
-          expect(invited_user).not_to be_nil
-          expect(User.count).to eq(2)
+      context "valid user personal info created from an invitation" do      
+        it "delegates to UserCreation to create a user" do
+          @user_creation = double("user creation")
+          ##UserCreation.stub(:new).with(User.new, FlashCreation.new(flash)).and_return(@user_creation)
+          UserCreation.stub(:new).and_return(@user_creation)
+          expect(@user_creation).to receive(:create_user)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "abc", fullname: "abc", password: "pass", password_confirm: "pass"} }
         end 
-
-        it "adds a follow relationship between the inviter and invitee user" do
-          invited_user = User.find_by_email(@invitation_email)
-          expect(invited_user.followers).to eq([@inviter])
-        end
-
-        it "adds a follow relationship between the invitee and inviter" do
-          invited_user = User.find_by_email(@invitation_email)
-          expect(@inviter.followers).to eq([invited_user])
-        end
-
-        it "destroys the invitation identified by the invitation token parameter" do
-          expect(Invitation.find_by_token(@invitation_token)).to be_nil
-          expect(Invitation.count).to eq(0)
-        end
-
       end # registration due to invitation
-
-      context "user creation from invitation where other invitations already exist for the invitee" do
-        before do
-          user1 = Fabricate(:user)
-          user2 = Fabricate(:user)
-          user3 = Fabricate(:user)
-
-          @invitee_email = "alice@aaa.com"
-          @prior_invitation1 = Fabricate(:invitation, email: @invitee_email, user: user1)
-          @to_still_preserve_invitation1 = Fabricate(:invitation, email: "charlie@ccc.com", user: user1)
-          @prior_invitation2 = Fabricate(:invitation, email: @invitee_email, user: user2)
-          @to_still_preserve_invitation2 = Fabricate(:invitation, email: "charlene@ccc.com", user: user3)
-          @prior_invitation3 = Fabricate(:invitation, email: @invitee_email, user: user1)
-          @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
-
-          get :create,  stripeToken: "123", invitation_token: @prior_invitation2.token, user: { fullname: "Alice Doe", email: @invitee_email, password: "abc123", password_confirm: "abc123"}
-        end
-
-        it "deletes any prior invitations for that invitee email address" do
-          expect(Invitation.all).not_to include(@prior_invitation1, @prior_invitation2, @prior_invitation3)
-        end
-
-        it "does not delete any invitations for other invitees" do
-          expect(Invitation.all).to include(@to_still_preserve_invitation1, @to_still_preserve_invitation2, @to_still_preserve_invitation3)
-        end
-      end # other invitations exist 
     end # valid credit card charge is called
 
-    context "valid credit card info with invalid personal info" do
-      before { StripeWrapper::Charge.should_not_receive(:create) }
-      after { ActionMailer::Base.deliveries.clear }
+    context "invalid personal info" do
+      before do
+        @user_creation = double("user creation")
+        UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
+      end
 
-      it "fails to create a new user if the password confirmation does not match password" do
+      it "does not delegate to UserCreation service if the password confirmation does not match password" do
+        expect(@user_creation).not_to receive(:create_user)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
-
-        u = User.first
-        expect(u).to eq(nil)
       end
 
       it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
         expect(assigns(:user).email).to eq("joe@company.com")
         expect(assigns(:user).fullname).to eq("joe smith")
+      end
+
+      it "does not delegate to UserCreation service if the email already exists" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+        expect(@user_creation).not_to receive(:create_user)
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
       end
 
       it "fails to create a new user if the email already exists" do
@@ -212,6 +136,8 @@ describe UsersController do
         expect(response).to render_template :new
       end
 
+      ### is the below unnecessary?
+      ### similarly, is it no longer necessary to test here that no credit card charging takes place?
       it "does not send out a welcome email if user already exists" do
         joe_user = Fabricate(:user, email: "joe@company.com")
 
@@ -222,56 +148,18 @@ describe UsersController do
       end # valid card but invalid personal info
     end # successful credit card charge
 
-    context "invalid credit card info (unsuccessful charge)" do
+    context "unsuccessful user creation by service" do
       before do
-        charge = double('charge', successful?: false, error_message: "Your card was declined.")
-        StripeWrapper::Charge.should_receive(:create).and_return(charge)
+        @user_creation = double("user creation")
+        @user_creation.stub(:create_user).and_return(false)
+        UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
       end
 
-      context "valid user personal info" do
-        before do
-          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
-        end
-
-        it "flashes a danger message" do
-          expect_danger_flash
-        end
-
-        it "renders the new template" do
-          expect(response).to render_template :new
-        end
-
-        it "does not create a new user" do
-          expect(User.count).to eq(0)
-        end  
-      end # valid user creation
-
-      context "valid user personal info created from an invitation" do
-        before do
-          @inviter = Fabricate(:user)
-          @invitation = Fabricate(:invitation, user: @inviter)
-          @invitation_email = @invitation.email
-          @invitation_token = @invitation.token
-          post :create, { stripeToken: "123", invitation_token: @invitation.token, user: {email: @invitation.email, fullname: @invitation.fullname, password: "pass", password_confirm: "pass"} }
-          @inviter.reload
-        end
-        
-        after { ActionMailer::Base.deliveries.clear }
-
-        it "flashes a danger message" do
-          expect_danger_flash
-        end
-
-        it "renders the new template" do
-          expect(response).to render_template :new
-        end
-
-        it "does not create a new user" do
-          expect(User.count).to eq(1)
-          expect(User.find_by_email(@invitation.email)).to be_nil
-        end
-      end # user creation from invitation
-    end # unsuccessful credit card charge
+      it "renders the new template" do
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        expect(response).to render_template :new
+      end
+    end
   end # POST create
 
   describe "GET edit" do

@@ -12,6 +12,8 @@ feature "New user registers with credit card payment", { js: true, vcr: true } d
     expect(User.count).to eq(user_count_before_registration_attempt + 1)
 
     expect(page).to have_content "Your user account (for alice@aaa.com) was created. You are logged in."
+
+    expect(page).to have_content User.find_by_email("alice@aaa.com").fullname
   end
 
   scenario "valid credit card and invalid email address" do
