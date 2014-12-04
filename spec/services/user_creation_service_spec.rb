@@ -23,7 +23,7 @@ describe UserCreation do
           expect(@return_value.successful?).to eq(true)
         end
 
-        it "creates a new user if user does not already exist" do
+        it "creates a new user" do
           expect(User.count).to eq(1)
           expect(User.first).to eq(@user)
         end
@@ -54,12 +54,10 @@ describe UserCreation do
       context "invitation token supplied" do
         before do
           @inviter = Fabricate(:user)
-          @invitation = Fabricate(:invitation, user: @inviter)
-          @invitation_email = @invitation.email
-          @invitation_token = @invitation.token
+          @invitation = Fabricate(:invitation, user: @inviter, fullname: "Joe Doe")
 
-          @invited_user = Fabricate.build(:user, email: @invitation.email)
-          creation_service = UserCreation.new(@invited_user, { stripeToken: "123", invitation_token: @invitation_token })
+          @invited_user = Fabricate.build(:user, email: @invitation.email, fullname: @invitation.fullname)
+          creation_service = UserCreation.new(@invited_user, { stripeToken: "123", invitation_token: @invitation.token })
           @return_value = creation_service.create_user
 
           @inviter.reload
@@ -70,25 +68,48 @@ describe UserCreation do
         end
 
         it "creates a new user" do
-          invited_user = User.find_by_email(@invitation_email)
+          invited_user = User.find_by_email(@invitation.email)
           expect(invited_user).not_to be_nil
           expect(User.count).to eq(2)
         end 
 
         it "adds a follow relationship between the inviter and invitee user" do
-          invited_user = User.find_by_email(@invitation_email)
+          invited_user = User.find_by_email(@invitation.email)
           expect(invited_user.followers).to eq([@inviter])
         end
 
         it "adds a follow relationship between the invitee and inviter" do
-          invited_user = User.find_by_email(@invitation_email)
+          invited_user = User.find_by_email(@invitation.email)
           expect(@inviter.followers).to eq([invited_user])
         end
 
         it "destroys the invitation identified by the invitation token parameter" do
-          expect(Invitation.find_by_token(@invitation_token)).to be_nil
+          expect(Invitation.find_by_token(@invitation.token)).to be_nil
           expect(Invitation.count).to eq(0)
         end
+
+        it "sends an email" do
+          expect(ActionMailer::Base.deliveries).not_to be_empty
+        end
+
+        it "sends an email to the email address of the created user" do
+          message = ActionMailer::Base.deliveries.first
+          expect(message.to).to eq([@invitation.email])
+        end
+
+        it "has a welcome message in the email body" do
+          message = ActionMailer::Base.deliveries.first
+          if message.parts.size > 0
+            message.parts.each do |part|
+              expect(part.body).to include("Welcome to MyFlix!")
+              expect(part.body).to include(@invited_user.fullname)
+            end
+          else
+            expect(message.body).to include("Welcome to MyFlix!")
+            expect(message.body).to include(@invited_user.fullname)
+          end
+        end
+
       end # registration due to invitation
 
       context "invitation token supplied where other invitations already exist for the invitee" do
@@ -197,14 +218,27 @@ describe UserCreation do
       end
     end # invalid user info
 
-    it "does not charge a credit card when invalid user info supplied" do
-      charge = double('charge')
-      StripeWrapper::Charge.should_not_receive(:create)
-      joe_user = Fabricate(:user, email: "joe@company.com")
-      user = Fabricate.build(:user, email: joe_user.email)
+    context "no credit card charge when invalid user info supplied" do
+      before do
+        charge = double('charge')
+        StripeWrapper::Charge.should_not_receive(:create)
+      end
 
-      creation_service = UserCreation.new(user, { stripeToken: "123" })
-      creation_service.create_user
+      it "it does not charge a credit card when a duplicate email is supplied for user info" do
+        joe_user = Fabricate(:user, email: "joe@company.com")
+        user = Fabricate.build(:user, email: joe_user.email)
+
+        creation_service = UserCreation.new(user, { stripeToken: "123" })
+        creation_service.create_user
+      end
+
+      it "it does not charge a credit card when the user's email is not set" do
+        user = Fabricate.build(:user, email: nil)
+
+        creation_service = UserCreation.new(user, { stripeToken: "123" })
+        creation_service.create_user
+      end
+
     end
   end # create_user
 end

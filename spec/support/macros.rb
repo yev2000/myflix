@@ -33,6 +33,10 @@ def expect_danger_flash
   expect(flash[:danger]).not_to be_nil
 end
 
+def expect_success_flash
+  expect(flash[:success]).not_to be_nil
+end
+
 def delete_s3_video_upload(video)
   if video
     if (video.large_cover && !video.large_cover_url.include?("no_image"))

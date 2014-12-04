@@ -71,15 +71,12 @@ describe UsersController do
   describe "POST create" do  
     context "successful user creation" do
       before do
-        @user_creation = double("user creation")
-        @user_creation.stub(:successful?).and_return(true)
-        @user_creation.stub(:create_user).and_return(@user_creation)
-        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
+        @user_creation = double("user creation", successful?: true)
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
       end
 
       context "without invitation" do
         it "delegates to UserCreation to create a user" do
-          expect(@user_creation).to receive(:create_user)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
@@ -91,12 +88,16 @@ describe UsersController do
         it "redirects to the home path" do
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
+        end
+
+        it "sets a successful flash" do
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+          expect_success_flash
         end
       end
 
       context "with invitation" do      
         it "delegates to UserCreation to create a user" do
-          expect(@user_creation).to receive(:create_user)
           post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
         end
 
@@ -109,6 +110,12 @@ describe UsersController do
           post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
         end
+
+        it "sets a successful flash" do
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+          expect_success_flash
+        end
+
       end
     end # successful creation
 
@@ -137,9 +144,7 @@ describe UsersController do
 
     context "unsuccessful user creation by service" do
       before do
-        @user_creation = double("user creation")
-        @user_creation.stub(:successful?).and_return(false)
-        @user_creation.stub(:error_message).and_return("ERROR")
+        @user_creation = double("user creation", successful?: false, error_message: "ERROR")
         @user_creation.stub(:create_user).and_return(@user_creation)
         UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
       end
@@ -166,7 +171,7 @@ describe UsersController do
 
       it "sets the danger flash" do
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
-        expect(flash[:danger]).not_to be_nil
+        expect_danger_flash
       end
     end # unsuccessful user creation
 
