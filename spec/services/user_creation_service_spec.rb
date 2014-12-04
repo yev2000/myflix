@@ -8,9 +8,6 @@ describe UserCreation do
         charge.stub(:successful?).and_return(true)
         StripeWrapper::Charge.should_receive(:create).and_return(charge)
 
-        flasher = double('flash')
-        FlashCreation.stub(:new).and_return(flasher)
-
         @user = Fabricate.build(:user)
       end
 
@@ -18,12 +15,12 @@ describe UserCreation do
 
       context "no invitation_token option supplied" do
         before do
-          creation_service = UserCreation.new(@user, FlashCreation.new(nil), { stripeToken: "123" })
+          creation_service = UserCreation.new(@user, { stripeToken: "123" })
           @return_value = creation_service.create_user
         end
 
-        it "returns true for successful user creation" do
-          expect(@return_value).to eq(true)
+        it "returns a successful creation object" do
+          expect(@return_value.successful?).to eq(true)
         end
 
         it "creates a new user if user does not already exist" do
@@ -62,12 +59,16 @@ describe UserCreation do
           @invitation_token = @invitation.token
 
           @invited_user = Fabricate.build(:user, email: @invitation.email)
-          creation_service = UserCreation.new(@invited_user, FlashCreation.new(nil), { stripeToken: "123", invitation_token: @invitation_token })
-          creation_service.create_user
+          creation_service = UserCreation.new(@invited_user, { stripeToken: "123", invitation_token: @invitation_token })
+          @return_value = creation_service.create_user
 
           @inviter.reload
         end
             
+        it "returns a successful creation object" do
+          expect(@return_value.successful?).to eq(true)
+        end
+
         it "creates a new user" do
           invited_user = User.find_by_email(@invitation_email)
           expect(invited_user).not_to be_nil
@@ -105,7 +106,7 @@ describe UserCreation do
           @to_still_preserve_invitation3 = Fabricate(:invitation, email: "cory@ccc.com", user: user2)
 
           @invited_user = Fabricate.build(:user, email: @invitee_email)
-          creation_service = UserCreation.new(@invited_user, FlashCreation.new(nil), { stripeToken: "123", invitation_token: @prior_invitation2.token })
+          creation_service = UserCreation.new(@invited_user, { stripeToken: "123", invitation_token: @prior_invitation2.token })
           creation_service.create_user
         end
 
@@ -128,34 +129,82 @@ describe UserCreation do
         charge = double('charge', successful?: false, error_message: "Your card was declined.")
         StripeWrapper::Charge.should_receive(:create).and_return(charge)
 
-        @flasher = double('flash')
-        @flasher.stub(:set_flash)
-        FlashCreation.stub(:new).and_return(@flasher)
-
         @user = Fabricate.build(:user)
 
-        @creation_service = UserCreation.new(@user, FlashCreation.new(nil), { stripeToken: "123" })
-      end
-
-      it "sends a danger type of message creation to the flash handler" do
-        expect(@flasher).to receive(:set_flash).with(:danger, kind_of(String))
+        @creation_service = UserCreation.new(@user, { stripeToken: "123" })
         @return_value = @creation_service.create_user
       end
 
-      it "returns false" do
-        return_value = @creation_service.create_user
-        expect(return_value).to eq(false)
+      it "returns an unsuccessful creation object" do
+        expect(@return_value.successful?).to eq(false)
+      end
+
+      it "sets an error message" do
+        expect(@return_value.error_message).not_to be_nil
       end
 
       it "does not create a new user" do
-        @creation_service.create_user
         expect(User.count).to eq(0)
       end
 
       it "does not send out any emails" do
-        @creation_service.create_user
         expect(ActionMailer::Base.deliveries).to be_empty
       end
     end # invalid credit card info
+
+    context "invalid user info" do
+      context "email already exists" do
+        before do
+          joe_user = Fabricate(:user, email: "joe@company.com")
+          @user = Fabricate.build(:user, email: joe_user.email)
+
+          creation_service = UserCreation.new(@user, { stripeToken: "123" })
+          @return_value = creation_service.create_user
+        end
+
+        it "fails to create a new user if the email already exists" do
+          expect(User.all.size).to eq(1)
+        end
+
+        it "returns an object which responds with successful? false" do
+          expect(@return_value.successful?).to eq(false)
+        end
+
+        it "does not send out a welcome email" do
+          expect(ActionMailer::Base.deliveries).to be_empty
+        end
+      end
+
+      context "email is blank" do
+        before do
+          @user = Fabricate.build(:user, email: nil)
+
+          creation_service = UserCreation.new(@user, { stripeToken: "123" })
+          @return_value = creation_service.create_user
+        end
+
+        it "fails to create a new user if the email already exists" do
+          expect(User.all.size).to eq(0)
+        end
+
+        it "returns an object which responds with successful? false" do
+          expect(@return_value.successful?).to eq(false)
+        end
+
+        it "does not send out a welcome email" do
+          expect(ActionMailer::Base.deliveries).to be_empty
+        end
+      end
+    end # invalid user info
+
+    it "does not charge a credit card when invalid user info supplied" do
+      charge = double('charge')
+      StripeWrapper::Charge.should_not_receive(:create)
+      joe_user = Fabricate(:user, email: "joe@company.com")
+      user = Fabricate.build(:user, email: joe_user.email)
+
+      creation_service = UserCreation.new(user, { stripeToken: "123" })
+      creation_service.create_user
+    end
   end # create_user
 end

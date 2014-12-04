@@ -20,12 +20,14 @@ class UsersController < ApplicationController
     # && or || expression since both must fire...
     user_valid = @user.valid?
     password_confirmed = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
-
-    if user_valid && password_confirmed
-      if UserCreation.new(@user, FlashCreation.new(flash),
+    if !password_confirmed
+      # error should already be set on the object, so no extra flash danger is needed
+      render :new
+    else
+      result = UserCreation.new(@user,
         stripeToken: params[:stripeToken],
         invitation_token: params[:invitation_token]).create_user
-        
+      if result.successful?
         flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
 
         # if we want to log the user in, we simply create
@@ -33,13 +35,9 @@ class UsersController < ApplicationController
         session[:userid] = @user.id
         redirect_to home_path
       else
-        render :new        
+        flash[:danger] = result.error_message if result.error_message
+        render :new
       end
-    else
-      # validation problem in the fields of the user even before
-      # a charge is attempted
-      # error should already be set on the object, so no extra flash danger is needed
-      render :new
     end
   end # create
 

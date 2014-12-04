@@ -1,30 +1,43 @@
 class UserCreation
 
-  def initialize(user, flash_handler, options)
+  attr_reader :error_message
+
+  def initialize(user, options)
     @user = user
     @stripe_token = options[:stripeToken]
     @invitation_token = options[:invitation_token]
-    @flash_handler = flash_handler
   end
 
   def create_user
-    return false if !perform_payment
 
-    @user.save
-    handle_creation_from_invitation
+    if @user.valid? && perform_payment
+      @user.save
+      handle_creation_from_invitation
 
-    AppMailer.delay.notify_on_new_user_account(@user)
-    return true
+      AppMailer.delay.notify_on_new_user_account(@user)
+
+      @creation_success = true
+    else
+      @creation_success = false
+    end
+
+    return self
+  end
+
+  def successful?
+    @creation_success
   end
 
   private
 
   def perform_payment
     response = StripeWrapper::Charge.create(amount: User::REGISTRATION_COST_IN_CENTS, card: @stripe_token)
-    return true if response.successful?
-    
-    @flash_handler.set_flash(:danger, "Error in processing your credit card (#{response.error_message})")
-    return false
+    if response.successful?
+      return true
+    else
+      @error_message = "Error in processing your credit card (#{response.error_message})"
+      return false
+    end
   end
 
   def handle_creation_from_invitation

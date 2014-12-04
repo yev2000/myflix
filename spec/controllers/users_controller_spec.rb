@@ -69,16 +69,22 @@ describe UsersController do
   end # GET show
 
   describe "POST create" do  
-    context "valid credit card info" do
-      context "valid personal user info" do
-        before do
-          @user_creation = double("user creation")
-          @user_creation.stub(:create_user).and_return(true)
-          UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
-        end
+    context "successful user creation" do
+      before do
+        @user_creation = double("user creation")
+        @user_creation.stub(:successful?).and_return(true)
+        @user_creation.stub(:create_user).and_return(@user_creation)
+        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
+      end
 
+      context "without invitation" do
         it "delegates to UserCreation to create a user" do
           expect(@user_creation).to receive(:create_user)
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        end
+
+        it "calls the successful? method of the UserCreation service" do
+          expect(@user_creation).to receive(:successful?)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
@@ -86,80 +92,84 @@ describe UsersController do
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
         end
-      end # valid user creation
-
-      context "valid user personal info created from an invitation" do      
-        it "delegates to UserCreation to create a user" do
-          @user_creation = double("user creation")
-          ##UserCreation.stub(:new).with(User.new, FlashCreation.new(flash)).and_return(@user_creation)
-          UserCreation.stub(:new).and_return(@user_creation)
-          expect(@user_creation).to receive(:create_user)
-          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "abc", fullname: "abc", password: "pass", password_confirm: "pass"} }
-        end 
-      end # registration due to invitation
-    end # valid credit card charge is called
-
-    context "invalid personal info" do
-      before do
-        @user_creation = double("user creation")
-        UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
       end
 
-      it "does not delegate to UserCreation service if the password confirmation does not match password" do
+      context "with invitation" do      
+        it "delegates to UserCreation to create a user" do
+          expect(@user_creation).to receive(:create_user)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+        end
+
+        it "calls the successful? method of the UserCreation service" do
+          expect(@user_creation).to receive(:successful?)
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        end
+
+        it "redirects to the home path" do
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+          expect(response).to redirect_to home_path
+        end
+      end
+    end # successful creation
+
+    context "password confirmation does not match password" do
+      before do
+        @user_creation = double("user creation")
+        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
+      end
+
+      it "does not delegate to UserCreation service" do
         expect(@user_creation).not_to receive(:create_user)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
       end
 
-      it "sets the @user instance variable to the email and username in the form if the password confirmation does not match password" do
+      it "sets the @user instance variable to the email and username in the form" do
         post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
         expect(assigns(:user).email).to eq("joe@company.com")
         expect(assigns(:user).fullname).to eq("joe smith")
       end
 
-      it "does not delegate to UserCreation service if the email already exists" do
-        joe_user = Fabricate(:user, email: "joe@company.com")
-        expect(@user_creation).not_to receive(:create_user)
-        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
-      end
-
-      it "fails to create a new user if the email already exists" do
-        joe_user = Fabricate(:user, email: "joe@company.com")
-        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
-
-        expect(User.all.size).to eq(1)
-      end
-
-      it "renders the new template if the email already exists" do
-        joe_user = Fabricate(:user, email: "joe@company.com")
-        post :create, { user: {email: "joe@company.com", fullname: "maggie_smith", password: "pass", password_confirm: "pass"} }
-
+      it "renders the new template" do
+        post :create, { user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "foo"} }
         expect(response).to render_template :new
-      end
-
-      ### is the below unnecessary?
-      ### similarly, is it no longer necessary to test here that no credit card charging takes place?
-      it "does not send out a welcome email if user already exists" do
-        joe_user = Fabricate(:user, email: "joe@company.com")
-
-        # this should fail because this is a duplicate email"
-        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "Joe Doe", password: "pass", password_confirm: "pass"} }
-        
-        expect(ActionMailer::Base.deliveries).to be_empty
-      end # valid card but invalid personal info
-    end # successful credit card charge
+      end     
+    end # password mismatch
 
     context "unsuccessful user creation by service" do
       before do
         @user_creation = double("user creation")
-        @user_creation.stub(:create_user).and_return(false)
-        UserCreation.stub(:new).with(kind_of(User), kind_of(FlashCreation), kind_of(Hash)).and_return(@user_creation)
+        @user_creation.stub(:successful?).and_return(false)
+        @user_creation.stub(:error_message).and_return("ERROR")
+        @user_creation.stub(:create_user).and_return(@user_creation)
+        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
+      end
+
+      it "delegates to UserCreation to create a user" do
+        expect(@user_creation).to receive(:create_user)
+        post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+      end
+
+      it "calls the successful? method of the UserCreation service" do
+        expect(@user_creation).to receive(:successful?)
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
       end
 
       it "renders the new template" do
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         expect(response).to render_template :new
       end
-    end
+
+      it "calls the error_message method of the user creation service" do
+        expect(@user_creation).to receive(:error_message)
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+      end
+
+      it "sets the danger flash" do
+        post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        expect(flash[:danger]).not_to be_nil
+      end
+    end # unsuccessful user creation
+
   end # POST create
 
   describe "GET edit" do
