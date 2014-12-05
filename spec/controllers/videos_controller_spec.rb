@@ -58,6 +58,13 @@ describe VideosController do
         expect(assigns(:video)).to eq(video)
       end
 
+      it "sets the @video instance variable to be decorated" do
+        video = Fabricate(:video)
+
+        get :show, {id: "1"}
+        expect(assigns(:video)).to be_decorated
+      end
+
       it "sets the @video instance variable to the record identified by the id parameter if there is more than one video in the system" do
         video1 = Fabricate(:video)
         video2 = Fabricate(:video)

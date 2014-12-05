@@ -1,4 +1,7 @@
 source 'https://rubygems.org'
+#source "https://production.cf.rubygems.org"
+
+
 ruby '2.1.2'
 
 gem 'bootstrap-sass', '~> 3.1.1.1'
@@ -21,6 +24,8 @@ gem 'carrierwave'
 gem 'fog'
 gem 'mini_magick'
 gem 'stripe'
+gem 'request_store'
+gem 'draper'
 
 group :development do
   gem 'sqlite3'

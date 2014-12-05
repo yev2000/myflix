@@ -14,7 +14,7 @@ class VideosController < AuthenticatedController
 
   def show
     begin
-      @video = Video.find(params[:id])
+      @video = Video.find(params[:id]).decorate
     rescue ActiveRecord::RecordNotFound
       flash[:danger] = "There is no video with ID #{params[:id]}.  Showing all videos instead."
       redirect_to videos_path

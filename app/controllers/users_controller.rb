@@ -20,24 +20,24 @@ class UsersController < ApplicationController
     # && or || expression since both must fire...
     user_valid = @user.valid?
     password_confirmed = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
-
-    if user_valid && password_confirmed
-      if(perform_payment(params[:stripeToken], params[:stripeEmail], User::REGISTRATION_COST_IN_CENTS) == true)
-        perform_account_creation(@user, params[:invitation_token])
-        redirect_to home_path
-      else
-        # we only set the danger flash if one has not already been set.
-        # the perform_payment would set a flash if there was an error in
-        # the credit card processing, so likely no need to add another
-        # flash.  But just in case, we have this clause below.
-        flash[:danger] = "Unable to create new user account because of a payment problem" if !flash[:danger]
-        render :new
-      end
-    else
-      # validation problem in the fields of the user even before
-      # a charge is attempted
+    if !password_confirmed
       # error should already be set on the object, so no extra flash danger is needed
       render :new
+    else
+      result = UserCreation.new(@user,
+        stripeToken: params[:stripeToken],
+        invitation_token: params[:invitation_token]).create_user
+      if result.successful?
+        flash[:success] = "Your user account (for #{result.created_user.email}) was created.  You are logged in."
+
+        # if we want to log the user in, we simply create
+        # a session for the user implicitly.
+        session[:userid] = result.created_user.id
+        redirect_to home_path
+      else
+        flash[:danger] = result.error_message if result.error_message
+        render :new
+      end
     end
   end # create
 
@@ -75,35 +75,4 @@ class UsersController < ApplicationController
       redirect_to root_path
     end
   end
-
-  def handle_creation_from_invitation(newly_created_user, invitation_token)
-    invitation = Invitation.find_by_token(invitation_token)
-    if invitation
-      newly_created_user.follow(invitation.user)
-      invitation.user.follow(newly_created_user)
-      Invitation.delete_invitations_by_email(invitation.email)
-    end
-  end
-
-  def perform_payment(token, email, amount)
-    response = StripeWrapper::Charge.create(amount: amount, card: token)
-    return true if response.successful?
-    
-    flash[:danger] = "Error in processing your credit card (#{response.error_message})"
-    return false
-  end
-
-  def perform_account_creation(user, invitation_token)
-    user.save
-    handle_creation_from_invitation(user, invitation_token)
-
-    AppMailer.delay.notify_on_new_user_account(user)
-
-    flash[:success] = "Your user account (for #{user.email}) was created.  You are logged in."
-
-    # if we want to log the user in, we simply create
-    # a session for the user implicitly.
-    session[:userid] = user.id
-  end
-
 end
