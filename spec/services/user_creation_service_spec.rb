@@ -28,6 +28,10 @@ describe UserCreation do
           expect(User.first).to eq(@user)
         end
 
+        it "has a created_user accessor method that returns the created user" do
+          expect(@return_value.created_user).to eq(User.first)
+        end
+
         it "sends an email" do
           expect(ActionMailer::Base.deliveries).not_to be_empty
         end
@@ -72,6 +76,10 @@ describe UserCreation do
           expect(invited_user).not_to be_nil
           expect(User.count).to eq(2)
         end 
+
+        it "has a created_user accessor method that returns the created user" do
+          expect(@return_value.created_user).to eq(User.find_by_email(@invitation.email))
+        end
 
         it "adds a follow relationship between the inviter and invitee user" do
           invited_user = User.find_by_email(@invitation.email)
@@ -168,6 +176,10 @@ describe UserCreation do
         expect(User.count).to eq(0)
       end
 
+      it "has a created_user accessor method that returns nil" do
+        expect(@return_value.created_user).to be_nil
+      end
+
       it "does not send out any emails" do
         expect(ActionMailer::Base.deliveries).to be_empty
       end
@@ -191,6 +203,10 @@ describe UserCreation do
           expect(@return_value.successful?).to eq(false)
         end
 
+        it "has a created_user accessor method that returns nil" do
+          expect(@return_value.created_user).to be_nil
+        end
+
         it "does not send out a welcome email" do
           expect(ActionMailer::Base.deliveries).to be_empty
         end
@@ -210,6 +226,10 @@ describe UserCreation do
 
         it "returns an object which responds with successful? false" do
           expect(@return_value.successful?).to eq(false)
+        end
+
+        it "has a created_user accessor method that returns nil" do
+          expect(@return_value.created_user).to be_nil
         end
 
         it "does not send out a welcome email" do

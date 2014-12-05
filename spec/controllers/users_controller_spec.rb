@@ -71,58 +71,89 @@ describe UsersController do
   describe "POST create" do  
     context "successful user creation" do
       before do
-        @user_creation = double("user creation", successful?: true)
-        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+        the_created_user = Fabricate(:user)
+        @user_creation = double("user creation", successful?: true, created_user: the_created_user)
       end
 
       context "without invitation" do
         it "delegates to UserCreation to create a user" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
         it "calls the successful? method of the UserCreation service" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
           expect(@user_creation).to receive(:successful?)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
+        it "calls the created_user method of the UserCreation service" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          expect(@user_creation).to receive(:created_user)
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        end
+
         it "redirects to the home path" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
         end
 
         it "sets a successful flash" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
           post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect_success_flash
+        end
+
+        it "logs user in, if user created" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+          expect(session[:userid]).to eq(@user_creation.created_user.id)
         end
       end
 
       context "with invitation" do      
         it "delegates to UserCreation to create a user" do
-          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
         it "calls the successful? method of the UserCreation service" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
           expect(@user_creation).to receive(:successful?)
-          post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+        end
+
+        it "calls the created_user method of the UserCreation service" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          expect(@user_creation).to receive(:created_user)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         end
 
         it "redirects to the home path" do
-          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect(response).to redirect_to home_path
         end
 
         it "sets a successful flash" do
-          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
           expect_success_flash
         end
 
+        it "logs user in, if user created" do
+          UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
+          post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
+          expect(session[:userid]).to eq(@user_creation.created_user.id)
+        end
       end
     end # successful creation
 
     context "password confirmation does not match password" do
       before do
         @user_creation = double("user creation")
-        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
+        UserCreation.stub(:new).and_return(@user_creation)
       end
 
       it "does not delegate to UserCreation service" do
@@ -145,31 +176,33 @@ describe UsersController do
     context "unsuccessful user creation by service" do
       before do
         @user_creation = double("user creation", successful?: false, error_message: "ERROR")
-        @user_creation.stub(:create_user).and_return(@user_creation)
-        UserCreation.stub(:new).with(kind_of(User), kind_of(Hash)).and_return(@user_creation)
       end
 
       it "delegates to UserCreation to create a user" do
-        expect(@user_creation).to receive(:create_user)
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
         post :create, { stripeToken: "123", invitation_token: "abc", user: {email: "def", fullname: "ghi", password: "pass", password_confirm: "pass"} }
       end
 
       it "calls the successful? method of the UserCreation service" do
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
         expect(@user_creation).to receive(:successful?)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
       end
 
       it "renders the new template" do
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         expect(response).to render_template :new
       end
 
       it "calls the error_message method of the user creation service" do
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
         expect(@user_creation).to receive(:error_message)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
       end
 
       it "sets the danger flash" do
+        UserCreation.any_instance.should_receive(:create_user).and_return(@user_creation)
         post :create, { stripeToken: "123", user: {email: "joe@company.com", fullname: "joe smith", password: "pass", password_confirm: "pass"} }
         expect_danger_flash
       end

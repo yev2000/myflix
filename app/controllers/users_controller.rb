@@ -28,11 +28,11 @@ class UsersController < ApplicationController
         stripeToken: params[:stripeToken],
         invitation_token: params[:invitation_token]).create_user
       if result.successful?
-        flash[:success] = "Your user account (for #{@user.email}) was created.  You are logged in."
+        flash[:success] = "Your user account (for #{result.created_user.email}) was created.  You are logged in."
 
         # if we want to log the user in, we simply create
         # a session for the user implicitly.
-        session[:userid] = @user.id
+        session[:userid] = result.created_user.id
         redirect_to home_path
       else
         flash[:danger] = result.error_message if result.error_message

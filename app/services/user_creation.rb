@@ -11,7 +11,10 @@ class UserCreation
   def create_user
 
     if @user.valid? && perform_payment
-      @user.save
+      if @user.save != false
+        @created_user = @user 
+      end
+      
       handle_creation_from_invitation
 
       AppMailer.delay.notify_on_new_user_account(@user)
@@ -26,6 +29,10 @@ class UserCreation
 
   def successful?
     @creation_success
+  end
+
+  def created_user
+    @created_user
   end
 
   private
