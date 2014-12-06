@@ -18,4 +18,5 @@
             = image_tag(@video.small_cover_url) if @video.small_cover?
             = f.file_field(:small_cover, accept: 'image/png,image/gif,image/jpeg', class: "btn btn-file")
             = f.text_field :video_url
+            = f.file_field(:movie_file, class: "btn btn-file")
             = f.submit submit_title, class: "btn btn-primary"

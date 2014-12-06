@@ -13,6 +13,7 @@ class Video < ActiveRecord::Base
 
   mount_uploader :large_cover, LargeCoverUploader
   mount_uploader :small_cover, SmallCoverUploader
+  mount_uploader :movie_file, MovieUploader
 
   # the following is are class methods used to assist
   # seeding the test database.  Could also be useful

@@ -142,6 +142,15 @@ describe Admin::VideosController do
           expect(Video.all.size).to eq(0)
         end
       end
+
+      context "movie file", :vcr do
+        it "uploads a movie file" do
+          movie_file = Rack::Test::UploadedFile.new(Rails.root + "spec/support/attachments/video.webm")
+          post :create, video: {title: "a title", category_ids: [@comedies.id.to_s, @drama.id.to_s], description: "a description", movie_file: movie_file }
+          expect(Video.first.movie_file_url).to eq("https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/#{Video.first.id}/video.webm")
+          delete_s3_video_upload(Video.first)
+        end
+      end
     end # admin logged in
   end # POST create
 

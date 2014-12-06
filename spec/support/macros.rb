@@ -46,6 +46,10 @@ def delete_s3_video_upload(video)
     if (video.small_cover && !video.small_cover_url.include?("no_image"))
       video.remove_small_cover!
     end
+
+    if (video.movie_file && !video.movie_file_url.include?("no_image"))
+      video.remove_movie_file!
+    end
     
     video.save
   end
