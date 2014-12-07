@@ -6,12 +6,15 @@ feature "invite someone to MyFlix", {js: true, vcr: true} do
     clear_emails
   end
 
-  after { clear_emails }
+  after do
+    clear_emails
+    delete_stripe_customer_by_email("an_invited_address@sample.com")
+  end
 
   scenario "demonstrate capybara logout issue" do
     # generate an invitation instance. The "inviter" is alice
     grace = Fabricate(:user, fullname: "Grace Hopper")
-    invitation = Fabricate(:invitation, fullname: "Alan Turing", user: grace)
+    invitation = Fabricate(:invitation, fullname: "Alan Turing", user: grace, email: "an_invited_address@sample.com")
 
     # mail out the invitation
     retval = AppMailer.notify_invitation(invitation).deliver
@@ -35,7 +38,7 @@ feature "invite someone to MyFlix", {js: true, vcr: true} do
   scenario "user signs in and invites a friend, who then registers" do
     sign_in_user(@inviter)
 
-    invitee_email = "jdoe@gmail.com"
+    invitee_email = "an_invited_address@sample.com"
     submit_invitation_request(@inviter, invitee_email)
     logout_user_via_ui # logs out inviter
 
@@ -54,7 +57,7 @@ feature "invite someone to MyFlix", {js: true, vcr: true} do
   scenario "user attempts to use invitation link twice" do
     sign_in_user(@inviter)
 
-    invitee_email = "jdoe@gmail.com"
+    invitee_email = "an_invited_address@sample.com"
     submit_invitation_request(@inviter, invitee_email)
 
     # the inviter then logs out
@@ -81,7 +84,7 @@ feature "invite someone to MyFlix", {js: true, vcr: true} do
   scenario "user attempts to use an invitation after already having registered their email address" do
     sign_in_user(@inviter)
     
-    invitee_email = "jdoe@gmail.com"
+    invitee_email = "an_invited_address@sample.com"
     submit_invitation_request(@inviter, invitee_email)
     original_email_node = open_email(invitee_email)
     submit_invitation_request(@inviter, invitee_email)

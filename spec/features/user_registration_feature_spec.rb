@@ -6,6 +6,10 @@ feature "New user registers with credit card payment", { js: true, vcr: true } d
     click_link "Sign Up Now!"
   end
 
+  after do
+    delete_stripe_customer_by_email("alice@aaa.com")
+  end
+
   scenario "valid credit card and user information" do
     user_count_before_registration_attempt = User.count
     perform_signup_with_valid_credit_card "alice@aaa.com", "Alice Doe"

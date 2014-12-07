@@ -10,7 +10,7 @@ class UserCreation
 
   def create_user
 
-    if @user.valid? && perform_payment
+    if @user.valid? && perform_subscription
       if @user.save != false
         @created_user = @user 
       end
@@ -37,12 +37,14 @@ class UserCreation
 
   private
 
-  def perform_payment
-    response = StripeWrapper::Charge.create(amount: User::REGISTRATION_COST_IN_CENTS, card: @stripe_token)
+  def perform_subscription
+
+    customer_creation = CustomerCreation.new(@user, @stripe_token)
+    response = customer_creation.create_customer
     if response.successful?
       return true
     else
-      @error_message = "Error in processing your credit card (#{response.error_message})"
+      @error_message = "Error in setting up subscription (#{response.error_message})"
       return false
     end
   end
