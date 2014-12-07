@@ -1,0 +1,118 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/1/video.webm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.25.0
+      Content-Type:
+      - text/plain
+      X-Amz-Acl:
+      - public-read
+      X-Amz-Content-Sha256:
+      - STREAMING-AWS4-HMAC-SHA256-PAYLOAD
+      X-Amz-Decoded-Content-Length:
+      - '12130621'
+      Content-Encoding:
+      - aws-chunked
+      X-Amz-Date:
+      - 20141207T062944Z
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
+        SignedHeaders=content-encoding;content-type;host;x-amz-acl;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length,
+        Signature=81c881a8cd5c3bd6344590af83906b392b0886c2aedb04334e54b367314d5d43
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      X-Amz-Id-2:
+      - N0g4/grTOrl7ivUjlibnANu5b2RcFFibvX9LZX5kPs02Y/f/iE05+tV0NOdOytoK
+      X-Amz-Request-Id:
+      - 3C837014196CCE15
+      Date:
+      - Sun, 07 Dec 2014 06:29:45 GMT
+      Etag:
+      - '"5cfaf3344422ba364f0d815140752261"'
+      Content-Length:
+      - '0'
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 07 Dec 2014 06:29:49 GMT
+- request:
+    method: delete
+    uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/1/video.webm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.25.0
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      X-Amz-Date:
+      - 20141207T062949Z
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1bc2e9d698005524764c29fbeaa35928f9d49a8befb1b33fd3007b066f6c55c8
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      X-Amz-Id-2:
+      - ovpRzqsrbH4j6skG+HevQdODtoOZn8gbQckzuasjjPEpVjwR4xVLb7zwK7lEmCmzNkK6Nk7GInI=
+      X-Amz-Request-Id:
+      - 04D40EAE0C2D183C
+      Date:
+      - Sun, 07 Dec 2014 06:29:51 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 07 Dec 2014 06:29:49 GMT
+- request:
+    method: delete
+    uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/1/video.webm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/1.25.0
+      X-Amz-Content-Sha256:
+      - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      X-Amz-Date:
+      - 20141207T062949Z
+      Authorization:
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1bc2e9d698005524764c29fbeaa35928f9d49a8befb1b33fd3007b066f6c55c8
+  response:
+    status:
+      code: 204
+      message: ''
+    headers:
+      X-Amz-Id-2:
+      - WKGLa2bshmr+qYV0MIczzknjEKz1oq2q/k3KDkrCXOWaIgxOfzVL3cp/3vYZAquLyGuh1QUbQi4=
+      X-Amz-Request-Id:
+      - F8DFDDF29400F0C8
+      Date:
+      - Sun, 07 Dec 2014 06:29:51 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 07 Dec 2014 06:29:50 GMT
+recorded_with: VCR 2.9.3
