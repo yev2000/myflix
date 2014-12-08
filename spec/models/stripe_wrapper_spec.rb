@@ -1,20 +1,19 @@
 require 'rails_helper'
 
 describe StripeWrapper do
-  describe StripeWrapper::Charge do
-    
-    describe ".create" do
-      let(:token) do
-        token = Stripe::Token.create(
-          card: {
-            number: card_number,
-            exp_month: 3,
-            exp_year: 2017,
-            cvc: 314
-          }
-        ).id  
-      end
+  let(:token) do
+    token = Stripe::Token.create(
+      card: {
+        number: card_number,
+        exp_month: 3,
+        exp_year: 2017,
+        cvc: 314
+      }
+    ).id  
+  end
 
+  describe StripeWrapper::Charge do  
+    describe ".create" do
       context "with valid card" do
         let(:card_number) { "4242424242424242"}
 
@@ -46,17 +45,6 @@ describe StripeWrapper do
   describe StripeWrapper::Customer do
     
     describe ".create" do
-      let(:token) do
-        token = Stripe::Token.create(
-          card: {
-            number: card_number,
-            exp_month: 3,
-            exp_year: 2017,
-            cvc: 314
-          }
-        ).id  
-      end
-
       context "with valid card" do
         let(:card_number) { "4242424242424242"}
 
@@ -87,5 +75,3 @@ describe StripeWrapper do
     end # create
   end # Customer
 end # StripeWrapper
-
-

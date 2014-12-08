@@ -8,6 +8,15 @@ module StripeWrapper
       @status = status
     end
 
+    def self.perform_action(&body)
+      begin
+        response = yield
+        new(response, :success)
+      rescue Stripe::CardError => e
+        new(e, :error)
+      end
+    end
+
     def successful?
       status == :success
     end
@@ -21,15 +30,10 @@ module StripeWrapper
   class Charge < BaseOperation
 
     def self.create(options={})
-      begin
-        response = Stripe::Charge.create(amount: options[:amount],
+      perform_action { Stripe::Charge.create(amount: options[:amount],
           currency: "usd",
           card: options[:card],
-          description: options[:description])
-        new(response, :success)
-      rescue Stripe::CardError => e
-        new(e, :error)
-      end
+          description: options[:description]) }
     end
 
     def currency
@@ -46,16 +50,11 @@ module StripeWrapper
     attr_reader :response, :status
 
     def self.create(options={})
-      begin
-        response = Stripe::Customer.create(
+      perform_action { Stripe::Customer.create(
           card: options[:card],
           plan: options[:plan],
           email: options[:email]
-          )
-        new(response, :success)
-      rescue Stripe::CardError => e
-        new(e, :error)
-      end
+          ) }
     end
 
     def id
