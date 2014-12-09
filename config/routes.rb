@@ -49,7 +49,10 @@ Myflix::Application.routes.draw do
 
   namespace :admin do
     resources :videos, only: [:new, :create, :edit, :update]
+    resources :payments, only: [:index]
   end
+
+  mount StripeEvent::Engine => '/_payments' # provide a custom path
 
   get 'ui(/:action)', controller: 'ui'
 

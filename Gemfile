@@ -26,6 +26,7 @@ gem 'mini_magick'
 gem 'stripe'
 gem 'request_store'
 gem 'draper'
+gem 'stripe_event'
 
 group :development do
   gem 'sqlite3'
