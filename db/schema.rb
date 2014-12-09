@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141208211547) do
+ActiveRecord::Schema.define(version: 20141209215727) do
 
   create_table "build_info", force: true do |t|
     t.string   "build_machine"
@@ -46,9 +46,9 @@ ActiveRecord::Schema.define(version: 20141208211547) do
   create_table "payments", force: true do |t|
     t.integer  "stripe_event_id"
     t.integer  "user_id"
-    t.string   "type"
+    t.string   "billing_event_type"
     t.integer  "amount"
-    t.string   "customer_id"
+    t.string   "reference_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

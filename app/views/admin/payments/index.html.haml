@@ -14,13 +14,11 @@
                 %th Email
                 %th Amount
                 %th Reference ID
-                %th Date
             %tbody
               - @payments.each do |payment|
                 %tr
                   %td= payment.user.fullname
                   %td= payment.user.email
                   -# This is a candidate for a decorator to print out the amount in a pretty way
-                  %td= payment.amount
-                  %td= payment.stripe_event_id
-                  %td "Date"
+                  %td= payment.decorate.charge_amount_string
+                  %td= payment.reference_id
