@@ -13,9 +13,6 @@ require 'shoulda/matchers'
 # Stub HTTP requests
 require 'webmock/rspec'
 
-###This is code to try to get the stubs working for StripeEvent
-###WebMock.disable_net_connect!(allow_localhost: true)
-
 #Capybara.javascript_driver = :selenium
 Capybara.javascript_driver = :webkit
 Capybara.server_port = 52662

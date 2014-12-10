@@ -1,19 +1,29 @@
 require 'rails_helper'
 
 describe "Billing Events", :vcr do
-  def stub_event(fixture_id, status = 200)
-    stub_request(:get, "https://api.stripe.com/v1/events/#{fixture_id}").
-      to_return(status: status, body: File.read("spec/support/fixtures/#{fixture_id}.json"))
+
+  # the following code does not work.  I cannot get stub_event to function even if Vcr is turned off
+  describe "charge.succeeded -- cannot stub out response" do
+    if (false)
+      before do
+        def stub_event(fixture_id, status = 200)
+          stub_request(:get, "https://api.stripe.com/v1/events/#{fixture_id}").
+            to_return(status: status, body: File.read("spec/support/fixtures/#{fixture_id}.json"))
+        end
+
+        stub_event 'evt_charge_succeeded_raw'
+      end
+
+      it "is successful" do
+        post '/_payments', id: 'evt_charge_succeeded_raw'
+        expect(response.code).to eq "200"
+      end
+    end
   end
 
   describe "charge.succeeded" do
-    before do
-##      stub_event 'evt_charge_succeeded'
-    end
-
     it "is successful" do
       post '/_payments', id: 'evt_156ychHLIyFXpgjHKoVF5uYo'
-##      post '/_payments', id: 'evt_charge_succeeded'
       expect(response.code).to eq "200"
     end
 

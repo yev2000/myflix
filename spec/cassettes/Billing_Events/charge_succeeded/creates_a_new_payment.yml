@@ -29,7 +29,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 09 Dec 2014 04:11:14 GMT
+      - Wed, 10 Dec 2014 16:08:54 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -45,7 +45,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - req_btZaAK3VK2JzNp7x
+      - req_3eIsVtwkY5u146Sy
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -124,5 +124,5 @@ http_interactions:
           "api_version": "2014-11-20"
         }
     http_version: 
-  recorded_at: Tue, 09 Dec 2014 04:11:13 GMT
+  recorded_at: Wed, 10 Dec 2014 16:08:54 GMT
 recorded_with: VCR 2.9.3

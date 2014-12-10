@@ -1,0 +1,25 @@
+{
+  "id": "evt_charge_succeeded_raw",
+  "created": 1384544738,
+  "livemode": false,
+  "type": "charge.succeeded",
+  "data": {
+    "object": {
+      "id": "SOME_CHARGE",
+      "object": "charge",
+      "created": "1417934067",
+      "livemode": "false",
+      "paid": "true",
+      "amount": "9999",
+      "currency": "usd",
+      "refunded": "false",
+      "captured": "true",
+      "customer": "CUS123",
+      "invoice": "in_156ychHLIyFXpgjHOyAexZLQ",
+      "description": "null"
+      },
+    },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": "iar_2wm5M67yu99gVP"
+}
