@@ -3,7 +3,7 @@ require 'rails_helper'
 
 feature "user signs in" do
   background do
-    Fabricate(:user, email: "alice@aaa.com", fullname: "Alice Doe", password: "pass")
+    @alice = Fabricate(:user, email: "alice@aaa.com", fullname: "Alice Doe", password: "pass")
   end
   
   scenario "valid account email and password" do
@@ -38,8 +38,22 @@ feature "user signs in" do
     click_button "Sign In"
     expect(page).to have_content "Invalid email or password"
     expect(page).to have_field("Email Address", with: "alice@aaa.com")
-
   end
+
+  scenario "locked account" do
+    @alice.account_locked = true
+    @alice.save
+
+    visit sign_in_path
+    fill_in "Email Address", with: "alice@aaa.com"
+    fill_in "Password", with: "pass"
+    click_button "Sign In"
+
+    expect(page).to have_content "locked"
+    expect(page).to have_field("Email Address", with: "alice@aaa.com")
+    expect(page).not_to have_content "Welcome, #{@alice.fullname}"
+  end
+
   
 end
 
