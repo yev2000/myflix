@@ -10,15 +10,22 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:email]) if params[:email]
 
     if (user && user.authenticate(params[:password]))
-      # the user was found so set the current user to this and
-      # create the session
-      session[:userid] = user.id
 
-      flash[:success] = "Welcome, #{user.email}!"
+      if (user.account_locked?)
+        flash[:danger] = "Your account is locked.  Please contact support."
+        @login_email = params[:email]
+        render :new
+      else
+        # the user was found so set the current user to this and
+        # create the session
+        session[:userid] = user.id
 
-      # try to go where the user was originally going before they
-      # hit the authentication challenge
-      redirect_to_original_action
+        flash[:success] = "Welcome, #{user.email}!"
+
+        # try to go where the user was originally going before they
+        # hit the authentication challenge
+        redirect_to_original_action
+      end
     else
       # create errors
       flash[:danger] = "Invalid email or password"

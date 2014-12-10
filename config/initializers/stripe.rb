@@ -22,5 +22,6 @@ StripeEvent.configure do |events|
   end
 
   events.subscribe 'charge.succeeded', ChargeCreated.new
+  events.subscribe 'charge.failed', ChargeFailed.new
 
 end

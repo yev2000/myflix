@@ -50,7 +50,7 @@ describe SessionsController do
       end
 
       it "sets error message" do
-        expect(flash[:danger]).not_to be_blank
+        expect_danger_flash
       end
 
       it "sets @login_email to value entered in form" do
@@ -64,16 +64,37 @@ describe SessionsController do
     end
 
     context "valid credentials" do
-      before { post :create, email: the_user.email, password: the_user.password }
+      context "account not locked" do
+        before { post :create, email: the_user.email, password: the_user.password }
 
-      it "sets session ID if user authenticated" do
-        expect(session[:userid]).to eq(the_user.id)
+        it "sets session ID if user authenticated" do
+          expect(session[:userid]).to eq(the_user.id)
+        end
+
+        it "redirects to home_path if user authenticated" do
+          expect(response).to redirect_to home_path
+        end
       end
 
-      it "redirects to home_path if user authenticated" do
-        expect(response).to redirect_to home_path
-      end
+      context "account locked" do
+        before do
+          the_user.account_locked = true
+          the_user.save
+          post :create, email: the_user.email, password: the_user.password
+        end
 
+        it "leaves session key for user_id as nil" do
+          expect(session[:userid]).to eq(nil)
+        end
+
+        it "sets a danger flash" do
+          expect_danger_flash
+        end
+
+        it "renders the new session template" do
+          expect(response).to render_template :new
+        end
+      end
     end
 
     it "redirects to categories path if prior to posting to session/create, the prior URL was the categories path" do

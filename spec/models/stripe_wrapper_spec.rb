@@ -9,7 +9,7 @@ describe StripeWrapper do
         exp_year: 2017,
         cvc: 314
       }
-    ).id  
+    ).id
   end
 
   describe StripeWrapper::Charge do  
