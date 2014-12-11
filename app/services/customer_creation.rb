@@ -1,6 +1,6 @@
 class CustomerCreation
 
-  attr_reader :error_message
+  attr_reader :error_message, :user
 
   def initialize(user, credit_card_token)
     @user = user
@@ -8,10 +8,10 @@ class CustomerCreation
   end
 
   def create_customer
-    response = StripeWrapper::Customer.create(card: @stripe_token, plan: User::MONTHLY_PLAN_ID, email: @user.email)
+    response = StripeWrapper::Customer.create(card: @stripe_token, plan: User::MONTHLY_PLAN_ID, email: user.email)
     if response.successful?
       @creation_success = true
-      @user.stripe_customer_id = response.id
+      user.stripe_customer_id = response.id
     else
       @error_message = "Error in processing your credit card (#{response.error_message})"
       @creation_success = false

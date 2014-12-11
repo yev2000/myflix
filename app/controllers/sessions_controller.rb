@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
     # here is where we authenticate the user
     user = User.find_by(email: params[:email]) if params[:email]
 
-    if (user && user.authenticate(params[:password]))
+    if user && user.authenticate(params[:password])
 
       if (user.account_locked?)
         flash[:danger] = "Your account is locked.  Please contact support."

@@ -1,6 +1,6 @@
 class UserCreation
 
-  attr_reader :error_message
+  attr_reader :error_message, :user
 
   def initialize(user, options)
     @user = user
@@ -10,14 +10,14 @@ class UserCreation
 
   def create_user
 
-    if @user.valid? && perform_subscription
+    if user.valid? && create_customer_and_charge_subscription
       if @user.save != false
-        @created_user = @user 
+        @created_user = user
       end
       
       handle_creation_from_invitation
 
-      AppMailer.delay.notify_on_new_user_account(@user)
+      AppMailer.delay.notify_on_new_user_account(user)
 
       @creation_success = true
     else
@@ -37,9 +37,9 @@ class UserCreation
 
   private
 
-  def perform_subscription
+  def create_customer_and_charge_subscription
 
-    customer_creation = CustomerCreation.new(@user, @stripe_token)
+    customer_creation = CustomerCreation.new(user, @stripe_token)
     response = customer_creation.create_customer
     if response.successful?
       return true
@@ -52,8 +52,8 @@ class UserCreation
   def handle_creation_from_invitation
     invitation = Invitation.find_by_token(@invitation_token)
     if invitation
-      @user.follow(invitation.user)
-      invitation.user.follow(@user)
+      user.follow(invitation.user)
+      invitation.user.follow(user)
       Invitation.delete_invitations_by_email(invitation.email)
     end
   end
