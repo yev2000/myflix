@@ -16,9 +16,6 @@ class UsersController < ApplicationController
     # in which case stale info is in the flash.
     flash.delete(:danger)
 
-    # we want to run both validations so cannot use them in a simple
-    # && or || expression since both must fire...
-    user_valid = @user.valid?
     password_confirmed = password_confirm!(@user, params[:user][:password], params[:user][:password_confirm])
     if !password_confirmed
       # error should already be set on the object, so no extra flash danger is needed

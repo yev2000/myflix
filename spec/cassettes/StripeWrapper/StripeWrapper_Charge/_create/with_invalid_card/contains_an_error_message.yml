@@ -19,7 +19,7 @@ http_interactions:
       - application/x-www-form-urlencoded
       X-Stripe-Client-User-Agent:
       - '{"bindings_version":"1.16.0","lang":"ruby","lang_version":"2.1.2 p95 (2014-05-08)","platform":"i686-linux","publisher":"stripe","uname":"Linux
-        ubuntu-vbox 3.13.0-39-generic #66-Ubuntu SMP Tue Oct 28 13:31:23 UTC 2014
+        ubuntu-vbox 3.13.0-40-generic #69-Ubuntu SMP Thu Nov 13 17:56:26 UTC 2014
         i686 i686 i686 GNU/Linux"}'
       Content-Length:
       - '81'
@@ -31,7 +31,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 25 Nov 2014 16:13:06 GMT
+      - Sun, 07 Dec 2014 06:31:32 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -45,7 +45,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - 1bda999e-00ef-4424-9b3e-752bdd17ec0c
+      - req_EIFM3CNhe8qVO3fA
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -54,14 +54,14 @@ http_interactions:
       encoding: UTF-8
       string: |
         {
-          "id": "tok_152lw6HLIyFXpgjHZu1mBQS8",
+          "id": "tok_156yZsHLIyFXpgjHZT4Wd18J",
           "livemode": false,
-          "created": 1416931986,
+          "created": 1417933892,
           "used": false,
           "object": "token",
           "type": "card",
           "card": {
-            "id": "card_152lw6HLIyFXpgjHX5ArJspp",
+            "id": "card_156yZsHLIyFXpgjHwJP700Di",
             "object": "card",
             "last4": "0002",
             "brand": "Visa",
@@ -82,13 +82,13 @@ http_interactions:
           }
         }
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 16:13:03 GMT
+  recorded_at: Sun, 07 Dec 2014 06:31:32 GMT
 - request:
     method: post
     uri: https://api.stripe.com/v1/charges
     body:
       encoding: US-ASCII
-      string: amount=429&currency=usd&card=tok_152lw6HLIyFXpgjHZu1mBQS8
+      string: amount=429&currency=usd&card=tok_156yZsHLIyFXpgjHZT4Wd18J
     headers:
       Accept:
       - "*/*; q=0.5, application/xml"
@@ -102,7 +102,7 @@ http_interactions:
       - application/x-www-form-urlencoded
       X-Stripe-Client-User-Agent:
       - '{"bindings_version":"1.16.0","lang":"ruby","lang_version":"2.1.2 p95 (2014-05-08)","platform":"i686-linux","publisher":"stripe","uname":"Linux
-        ubuntu-vbox 3.13.0-39-generic #66-Ubuntu SMP Tue Oct 28 13:31:23 UTC 2014
+        ubuntu-vbox 3.13.0-40-generic #69-Ubuntu SMP Thu Nov 13 17:56:26 UTC 2014
         i686 i686 i686 GNU/Linux"}'
       Content-Length:
       - '57'
@@ -114,7 +114,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 25 Nov 2014 16:13:06 GMT
+      - Sun, 07 Dec 2014 06:31:32 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -128,7 +128,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - 5aa14ff1-2e86-481d-ae2a-8c1d4bc106e6
+      - req_WHlWQWoRrsh23RAt
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -141,9 +141,9 @@ http_interactions:
             "message": "Your card was declined.",
             "type": "card_error",
             "code": "card_declined",
-            "charge": "ch_152lw6HLIyFXpgjHD6Uk4ISt"
+            "charge": "ch_156yZsHLIyFXpgjHCH4ecYT8"
           }
         }
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 16:13:03 GMT
+  recorded_at: Sun, 07 Dec 2014 06:31:32 GMT
 recorded_with: VCR 2.9.3

@@ -10,6 +10,9 @@ require 'vcr'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'shoulda/matchers'
 
+# Stub HTTP requests
+require 'webmock/rspec'
+
 #Capybara.javascript_driver = :selenium
 Capybara.javascript_driver = :webkit
 Capybara.server_port = 52662

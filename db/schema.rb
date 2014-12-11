@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141205205433) do
+ActiveRecord::Schema.define(version: 20141210035049) do
 
   create_table "build_info", force: true do |t|
     t.string   "build_machine"
@@ -43,6 +43,16 @@ ActiveRecord::Schema.define(version: 20141205205433) do
     t.datetime "updated_at"
   end
 
+  create_table "payments", force: true do |t|
+    t.integer  "stripe_event_id"
+    t.integer  "user_id"
+    t.string   "billing_event_type"
+    t.integer  "amount"
+    t.string   "reference_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "reviews", force: true do |t|
     t.string   "title"
     t.text     "body",       limit: 255
@@ -61,6 +71,8 @@ ActiveRecord::Schema.define(version: 20141205205433) do
     t.datetime "updated_at"
     t.string   "token"
     t.boolean  "admin"
+    t.string   "stripe_customer_id"
+    t.boolean  "account_locked"
   end
 
   create_table "video_categories", force: true do |t|

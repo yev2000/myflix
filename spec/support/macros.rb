@@ -54,3 +54,10 @@ def delete_s3_video_upload(video)
     video.save
   end
 end
+
+def delete_stripe_customer_by_email(email)
+  Stripe::Customer.all.each do |c|
+    cw = Stripe::Customer.retrieve(c.id)
+    cw.delete if cw.email == email
+  end
+end

@@ -19,7 +19,7 @@ http_interactions:
       - application/x-www-form-urlencoded
       X-Stripe-Client-User-Agent:
       - '{"bindings_version":"1.16.0","lang":"ruby","lang_version":"2.1.2 p95 (2014-05-08)","platform":"i686-linux","publisher":"stripe","uname":"Linux
-        ubuntu-vbox 3.13.0-39-generic #66-Ubuntu SMP Tue Oct 28 13:31:23 UTC 2014
+        ubuntu-vbox 3.13.0-40-generic #69-Ubuntu SMP Thu Nov 13 17:56:26 UTC 2014
         i686 i686 i686 GNU/Linux"}'
       Content-Length:
       - '81'
@@ -31,7 +31,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 25 Nov 2014 16:13:15 GMT
+      - Sun, 07 Dec 2014 06:31:29 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -45,7 +45,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - 6b9fdd42-f3a4-4b8e-af27-ec91ca17e601
+      - req_TdKFSDPlfSELTzIJ
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -54,14 +54,14 @@ http_interactions:
       encoding: UTF-8
       string: |
         {
-          "id": "tok_152lwFHLIyFXpgjHFNX2RaIT",
+          "id": "tok_156yZpHLIyFXpgjHyldIVptn",
           "livemode": false,
-          "created": 1416931995,
+          "created": 1417933889,
           "used": false,
           "object": "token",
           "type": "card",
           "card": {
-            "id": "card_152lwFHLIyFXpgjHkDW24hFX",
+            "id": "card_156yZpHLIyFXpgjHLksk97Mv",
             "object": "card",
             "last4": "4242",
             "brand": "Visa",
@@ -82,13 +82,13 @@ http_interactions:
           }
         }
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 16:13:12 GMT
+  recorded_at: Sun, 07 Dec 2014 06:31:29 GMT
 - request:
     method: post
     uri: https://api.stripe.com/v1/charges
     body:
       encoding: US-ASCII
-      string: amount=429&currency=usd&card=tok_152lwFHLIyFXpgjHFNX2RaIT
+      string: amount=429&currency=usd&card=tok_156yZpHLIyFXpgjHyldIVptn
     headers:
       Accept:
       - "*/*; q=0.5, application/xml"
@@ -102,7 +102,7 @@ http_interactions:
       - application/x-www-form-urlencoded
       X-Stripe-Client-User-Agent:
       - '{"bindings_version":"1.16.0","lang":"ruby","lang_version":"2.1.2 p95 (2014-05-08)","platform":"i686-linux","publisher":"stripe","uname":"Linux
-        ubuntu-vbox 3.13.0-39-generic #66-Ubuntu SMP Tue Oct 28 13:31:23 UTC 2014
+        ubuntu-vbox 3.13.0-40-generic #69-Ubuntu SMP Thu Nov 13 17:56:26 UTC 2014
         i686 i686 i686 GNU/Linux"}'
       Content-Length:
       - '57'
@@ -114,7 +114,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 25 Nov 2014 16:13:16 GMT
+      - Sun, 07 Dec 2014 06:31:30 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
@@ -128,7 +128,7 @@ http_interactions:
       Cache-Control:
       - no-cache, no-store
       Request-Id:
-      - a09d5a98-632f-4b6f-b9f4-b546d33cbe2c
+      - req_s1HEF1xhR3zaC8Bs
       Stripe-Version:
       - '2014-11-20'
       Strict-Transport-Security:
@@ -137,9 +137,9 @@ http_interactions:
       encoding: UTF-8
       string: |
         {
-          "id": "ch_152lwFHLIyFXpgjHNRBnMccX",
+          "id": "ch_156yZpHLIyFXpgjHy53xEGVf",
           "object": "charge",
-          "created": 1416931995,
+          "created": 1417933889,
           "livemode": false,
           "paid": true,
           "amount": 429,
@@ -150,11 +150,11 @@ http_interactions:
             "object": "list",
             "total_count": 0,
             "has_more": false,
-            "url": "/v1/charges/ch_152lwFHLIyFXpgjHNRBnMccX/refunds",
+            "url": "/v1/charges/ch_156yZpHLIyFXpgjHy53xEGVf/refunds",
             "data": []
           },
           "card": {
-            "id": "card_152lwFHLIyFXpgjHkDW24hFX",
+            "id": "card_156yZpHLIyFXpgjHLksk97Mv",
             "object": "card",
             "last4": "4242",
             "brand": "Visa",
@@ -176,7 +176,7 @@ http_interactions:
             "dynamic_last4": null,
             "customer": null
           },
-          "balance_transaction": "txn_152lwFHLIyFXpgjHRLMMMpTj",
+          "balance_transaction": "txn_156yZpHLIyFXpgjHJGr6D95Z",
           "failure_message": null,
           "failure_code": null,
           "amount_refunded": 0,
@@ -195,5 +195,5 @@ http_interactions:
           "shipping": null
         }
     http_version: 
-  recorded_at: Tue, 25 Nov 2014 16:13:13 GMT
+  recorded_at: Sun, 07 Dec 2014 06:31:30 GMT
 recorded_with: VCR 2.9.3

@@ -13,3 +13,15 @@ else
 
   Stripe.api_key = Rails.configuration.stripe[:secret_key]
 end
+
+StripeEvent.configure do |events|
+  events.subscribe 'customer.created' do |event|
+    Rails.logger.info '**************************************************'
+    Rails.logger.info event
+    Rails.logger.info '**************************************************'
+  end
+
+  events.subscribe 'charge.succeeded', ChargeCreated.new
+  events.subscribe 'charge.failed', ChargeFailed.new
+
+end

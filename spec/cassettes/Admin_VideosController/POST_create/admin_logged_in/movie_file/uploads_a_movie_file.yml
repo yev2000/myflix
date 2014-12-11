@@ -20,22 +20,22 @@ http_interactions:
       Content-Encoding:
       - aws-chunked
       X-Amz-Date:
-      - 20141205T213217Z
+      - 20141207T062944Z
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141205/us-east-1/s3/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
         SignedHeaders=content-encoding;content-type;host;x-amz-acl;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length,
-        Signature=463fb2e1931f7b3120cbf085b19f83075445ae3a6ff99d0cec7d8cbc2b8d56ea
+        Signature=81c881a8cd5c3bd6344590af83906b392b0886c2aedb04334e54b367314d5d43
   response:
     status:
       code: 200
       message: ''
     headers:
       X-Amz-Id-2:
-      - qWKsAtohQ9qWUa/hepAt036GtCRxICyxABVtRUAztAT37YrO6fVYpHtxrbICeWAm
+      - N0g4/grTOrl7ivUjlibnANu5b2RcFFibvX9LZX5kPs02Y/f/iE05+tV0NOdOytoK
       X-Amz-Request-Id:
-      - 62EB03EDF2A6FD2A
+      - 3C837014196CCE15
       Date:
-      - Fri, 05 Dec 2014 21:32:19 GMT
+      - Sun, 07 Dec 2014 06:29:45 GMT
       Etag:
       - '"5cfaf3344422ba364f0d815140752261"'
       Content-Length:
@@ -46,7 +46,7 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 05 Dec 2014 21:32:23 GMT
+  recorded_at: Sun, 07 Dec 2014 06:29:49 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/1/video.webm
@@ -59,28 +59,28 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141205T213223Z
+      - 20141207T062949Z
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141205/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=41d5fe8ec2fef6f5bde57b15fec7137b571a426dc66a27bb5bd7b7dc646eb49d
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1bc2e9d698005524764c29fbeaa35928f9d49a8befb1b33fd3007b066f6c55c8
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - B0R3UcpEfDFvCEvwvqiyyDiFdXvURt2rRk4jJHG4gTphTcr7EX8LDh0Pzv/F61ACEmCltzK9oDc=
+      - ovpRzqsrbH4j6skG+HevQdODtoOZn8gbQckzuasjjPEpVjwR4xVLb7zwK7lEmCmzNkK6Nk7GInI=
       X-Amz-Request-Id:
-      - 9AA532BE7914A161
+      - 04D40EAE0C2D183C
       Date:
-      - Fri, 05 Dec 2014 21:32:24 GMT
+      - Sun, 07 Dec 2014 06:29:51 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 05 Dec 2014 21:32:23 GMT
+  recorded_at: Sun, 07 Dec 2014 06:29:49 GMT
 - request:
     method: delete
     uri: https://myflix-yev.s3.amazonaws.com/test/uploads/video/movie_file/1/video.webm
@@ -93,26 +93,26 @@ http_interactions:
       X-Amz-Content-Sha256:
       - e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
       X-Amz-Date:
-      - 20141205T213223Z
+      - 20141207T062949Z
       Authorization:
-      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141205/us-east-1/s3/aws4_request,
-        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=41d5fe8ec2fef6f5bde57b15fec7137b571a426dc66a27bb5bd7b7dc646eb49d
+      - AWS4-HMAC-SHA256 Credential=AKIAJ52SLF2JDGH5YCJQ/20141207/us-east-1/s3/aws4_request,
+        SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1bc2e9d698005524764c29fbeaa35928f9d49a8befb1b33fd3007b066f6c55c8
   response:
     status:
       code: 204
       message: ''
     headers:
       X-Amz-Id-2:
-      - IZfdHmV6NpcZaa0nxnAu6iMQldVMiEOMhEE0L2Bu3odxd6wf0jrZt/W7GibHXX4l8zIqA8W8jCU=
+      - WKGLa2bshmr+qYV0MIczzknjEKz1oq2q/k3KDkrCXOWaIgxOfzVL3cp/3vYZAquLyGuh1QUbQi4=
       X-Amz-Request-Id:
-      - 9319B2A587FE707E
+      - F8DFDDF29400F0C8
       Date:
-      - Fri, 05 Dec 2014 21:32:25 GMT
+      - Sun, 07 Dec 2014 06:29:51 GMT
       Server:
       - AmazonS3
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 05 Dec 2014 21:32:24 GMT
+  recorded_at: Sun, 07 Dec 2014 06:29:50 GMT
 recorded_with: VCR 2.9.3

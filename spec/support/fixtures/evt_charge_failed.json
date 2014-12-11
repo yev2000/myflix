@@ -1,0 +1,71 @@
+{
+  "id": "evt_1581z8HLIyFXpgjHuqrwssi1",
+  "created": 1418185318,
+  "livemode": false,
+  "type": "charge.failed",
+  "data": {
+    "object": {
+      "id": "ch_1581z8HLIyFXpgjHEovUacsv",
+      "object": "charge",
+      "created": 1418185318,
+      "livemode": false,
+      "paid": false,
+      "amount": 999,
+      "currency": "usd",
+      "refunded": false,
+      "captured": false,
+      "refunds": {
+        "object": "list",
+        "total_count": 0,
+        "has_more": false,
+        "url": "/v1/charges/ch_1581z8HLIyFXpgjHEovUacsv/refunds",
+        "data": [
+
+        ]
+      },
+      "card": {
+        "id": "card_1581z5HLIyFXpgjHKTh74aZr",
+        "object": "card",
+        "last4": "0341",
+        "brand": "Visa",
+        "funding": "credit",
+        "exp_month": 3,
+        "exp_year": 2017,
+        "fingerprint": "tOSCupFAr2jnKQNg",
+        "country": "US",
+        "name": null,
+        "address_line1": null,
+        "address_line2": null,
+        "address_city": null,
+        "address_state": null,
+        "address_zip": null,
+        "address_country": null,
+        "cvc_check": "pass",
+        "address_line1_check": null,
+        "address_zip_check": null,
+        "dynamic_last4": null,
+        "customer": "cus_5IdFSrHFGolkot"
+      },
+      "balance_transaction": null,
+      "failure_message": "Your card was declined.",
+      "failure_code": "card_declined",
+      "amount_refunded": 0,
+      "customer": "cus_5IdFSrHFGolkot",
+      "invoice": null,
+      "description": null,
+      "dispute": null,
+      "metadata": {
+      },
+      "statement_description": null,
+      "fraud_details": {
+      },
+      "receipt_email": null,
+      "receipt_number": null,
+      "shipping": null
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 2,
+  "request": "iar_5IdFbvaUiLOmOv",
+  "api_version": "2014-11-20"
+}
